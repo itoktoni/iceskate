@@ -1,0 +1,8 @@
+{
+    "php.validate.executablePath": "",
+    "php.validate.run": "onSave",
+    "intelephense.environment.phpVersion": "8.1",
+    "search.exclude": {
+        "**/vendor": true
+    }
+}

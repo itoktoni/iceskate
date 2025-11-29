@@ -1,0 +1,11 @@
+// Note: This file is deprecated.
+// All color and design variables are now centralized in resources/sass/core/vars.scss
+// which is imported by app.scss via @import "core/vars"
+
+// Body
+$body-bg: #f8fafc;
+
+// Typography
+$font-family-sans-serif: 'Nunito', sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;

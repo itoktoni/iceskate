@@ -1,0 +1,225 @@
+body {
+  background: whitesmoke;
+}
+
+.page-footer {
+  position: fixed;
+  z-index: 99;
+  bottom: 27px;
+  background: white;
+  height: 60px;
+  width: 80%;
+  right: 0px;
+  box-shadow: 0 3px 10px rgb(62 85 120 / 7%);
+
+  .action {
+    position: absolute;
+    right: 25px;
+    top: 10px;
+  }
+}
+
+.help-block {
+  margin-left: 5px;
+  font-size: 12px;
+  color: $color-danger;
+}
+
+.action {
+  width: 5%;
+}
+
+a {
+  &.badge {
+    color: $color-badge-white !important;
+  }
+}
+
+
+.header-action {
+  z-index: 10;
+}
+
+.button {
+  text-align: right;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+
+  line-height: 35px !important;
+}
+
+body {
+  &.form-membership {
+    padding: 1rem 0px !important;
+
+    .form-wrapper {
+      #logo {
+        margin: 0px;
+        margin-bottom: 20px;
+      }
+    }
+  }
+}
+
+.chevron::before {
+  border-style: solid;
+  border-width: 0.25em 0.25em 0 0;
+  content: '';
+  display: inline-block;
+  height: 0.45em;
+  left: 0.15em;
+  position: relative;
+  top: 0.15em;
+  transform: rotate(-45deg);
+  vertical-align: top;
+  width: 0.45em;
+}
+
+.chevron.right:before {
+  left: 0;
+  transform: rotate(45deg);
+}
+
+.chevron.bottom:before {
+  top: 0;
+  transform: rotate(135deg);
+}
+
+.chevron.left:before {
+  left: 0.25em;
+  transform: rotate(-135deg);
+}
+
+.chevron-menu::before {
+  margin-top: 2px;
+  border-style: solid;
+  border-width: 0.20em 0.20em 0 0;
+  content: '';
+  display: inline-block;
+  height: 0.7em;
+  left: 0.15em;
+  position: relative;
+  transform: rotate(-45deg);
+  vertical-align: top;
+  width: 0.7em;
+  top: 0;
+  transform: rotate(135deg);
+}
+
+.rotate-chevron-menu {
+  transform: rotate(-45deg);
+}
+
+.date,
+.datetime {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.wrap-circles {
+  position: absolute;
+  right: 170px;
+  top: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle {
+  position: relative;
+  width: 47px;
+  height: 47px;
+  margin: 0.5rem;
+  border-radius: 50%;
+  background: $color-circle-blue;
+  overflow: hidden;
+
+  .inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: $color-badge-white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 0.65rem;
+    font-weight: bold;
+    color: $color-text-dark;
+  }
+}
+
+.progress
+{
+  .bar{
+    position:fixed;
+    z-index: 10;
+    top:0px;
+    left:0px;
+    height: 5px;
+    background: $color-progress-blue;
+    border-bottom-right-radius: 5px;
+  }
+}
+
+.megaphone button {
+  border: 0px;
+  width: 2.5rem;
+}
+
+.header-notification {
+  margin-top: 10px;
+  margin-right: 20px;
+  font-size: 1.2rem !important;
+  text-decoration: underline;
+  text-align: right !important;
+}
+
+.pl-3 .w-full {
+  padding-bottom: 10px;
+}
+
+.header-notification-unread {
+  font-size: 1.2rem !important;
+  padding-top: 1rem;
+}
+
+.button-close-notification {
+  border: 0.5px solid grey;
+  width: 2.5rem;
+  height: 2rem;
+  margin-top: -5px;
+  margin-right: -20px;
+}
+
+.filter-container{
+  margin-top: -0.5rem;
+}
+
+.megaphone {
+  .w-8 {
+    button {
+      border-radius: 5px;
+    }
+  }
+
+  .bg-white {
+    border-radius: 5px;
+    border: .5px solid $color-border-medium;
+    padding-bottom: 0.5rem !important;
+  }
+}
+
+.fl-wrapper[data-position^=top-]{
+  top: 4rem !important;
+}

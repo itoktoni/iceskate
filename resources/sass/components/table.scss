@@ -1,0 +1,251 @@
+
+.table {
+
+    border-radius: 5px;
+
+    thead {
+        th {
+            vertical-align: middle;
+			padding: 0.8rem 0.9rem;
+			font-size: 1rem;
+			color: $default-text-color;
+            background-color: $body-light;
+
+			a{
+				color: $default-text-color !important;
+			}
+        }
+    }
+
+    td {
+		padding: 0.8rem 0.5rem;
+        vertical-align: middle;
+
+		.form-group{
+			margin: 0;
+		}
+    }
+}
+
+.stacktable.large-only {
+    min-width: 100%;
+
+    &.overflow{
+        display: table;
+        width: max-content;
+    }
+}
+
+.stacktable.small-only {
+    display: none;
+}
+
+@media (max-width: 800px) {
+    .stacktable.large-only {
+        display: none !important;
+    }
+
+    .stacktable.small-only {
+        display: table;
+    }
+}
+
+.table-responsive{
+     width: 100%;
+    overflow-x: auto;         /* scroll horizontal */
+    -webkit-overflow-scrolling: touch;
+    display: block;
+}
+
+.table {
+    width: 100%;
+    min-width: 600px;         /* biar tabel tidak pecah */
+    table-layout: auto;
+    border-collapse: collapse;
+    border-radius: 10px;
+}
+
+thead, tbody, tfoot, tr, td, th {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.table th {
+    font-weight: 600;
+    background-color: var(--bg-light);
+}
+
+.no-users {
+    padding-top: 2rem;
+    width: 100%;
+}
+
+.checkbox-column {
+    width: 3rem;
+    text-align: center;
+}
+
+.action-table {
+    margin: 0px auto;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    border: none;
+}
+
+.actions {
+    width: 12rem;
+}
+
+.action-table .button, .action-table a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-table .button{
+    height: 3.2rem;
+}
+
+.action-table .button .bi {
+    font-size: 1.5rem;
+}
+
+.form-table-pagination{
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.pagination{
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    /* Responsive Table-to-Card */
+    .table{
+        min-width: unset !important;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table tr {
+        display: block;
+        margin-bottom: 1.5rem;
+    }
+
+    .table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1.5px solid #ced4da;
+    }
+
+    .flex-start{
+        justify-content: flex-start !important;
+    }
+
+    .checkbox{
+        margin-left: -1rem;
+    }
+
+    .table td:last-child {
+          border-bottom: 1.5px solid #ced4da;
+    }
+
+    .table td:first-child {
+          border-top: 1.5px solid #ced4da;
+    }
+
+    .table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+
+    .action-table {
+        width: -webkit-fill-available;
+        justify-content: flex-end;
+    }
+
+    .checkbox-column {
+        width: unset;
+        text-align: center;
+    }
+
+    /* Table Mobile Styles from _layout.css */
+    table{
+        border: unset;
+    }
+
+    table tbody{
+        border-style: none;
+    }
+
+    .pagination{
+        justify-content: center;
+    }
+}
+
+// Table column width utilities
+.column-action,
+.table-action {
+    width: 120px !important;
+}
+
+.column-active {
+    width: 80px !important;
+}
+
+.column-status {
+    width: 50px !important;
+    text-align: center;
+}
+
+.column-sort {
+    width: 50px !important;
+}
+
+.column-checkbox {
+    width: 30px !important;
+}
+
+// Stacktable styles for responsive tables
+.st-head-row {
+    padding-top: 1em;
+}
+
+.st-head-row.st-head-row-main {
+    font-size: 1.5em;
+    padding-top: 0;
+}
+
+.st-key {
+    width: 35%;
+    text-align: left;
+    padding-right: 1%;
+
+    .btn-check-d {
+        display: none;
+    }
+}
+
+.st-val {
+    width: 70%;
+    padding-left: 1%;
+    text-align: left !important;
+}
