@@ -66,22 +66,75 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-
                 <div class="card-body">
-                    <x-form-select col="6" name="user" label="User" :options="$user" />
+                    <x-form-select col="6" class="user" name="user" label="User" :options="$user" />
                 </div>
-
-                 <div class="card-body">
-                    {!! $chart->container() !!}
+                <div class="card-body">
+                    <canvas id="dashboardChart" width="400" height="200"></canvas>
                 </div>
             </div>
         </div>
-
     </div>
 
     @push('footer')
-    <script src="{{ @asset('vendor/larapex-charts/apexcharts.js') }}"></script>
-    {{ $chart->script() }}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const userSelect = document.getElementById('user');
+            if (userSelect) {
+                userSelect.addEventListener('change', function() {
+                    const selectedValue = this.value;
+                    const currentUrl = new URL(window.location);
+
+                    if (selectedValue) {
+                        currentUrl.searchParams.set('user', selectedValue);
+                    } else {
+                        currentUrl.searchParams.delete('user');
+                    }
+
+                    window.location.href = currentUrl.toString();
+                });
+            }
+
+
+            const ctx = document.getElementById('dashboardChart').getContext('2d');
+
+            // Chart data from PHP
+            const chartData = @json($chart ?? []);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels || [],
+                    datasets: chartData.datasets || []
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Performance Bimo'
+                        },
+                        subtitle: {
+                            display: false,
+                            text: 'Bimo vs Asian Open 2025'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            reverse: true // This inverts the Y-axis - smaller numbers at top
+                        },
+                        x: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        });
+    </script>
     @endpush
 
 </x-layout>
