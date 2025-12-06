@@ -153,6 +153,10 @@ thead, tbody, tfoot, tr, td, th {
         justify-content: space-between;
         align-items: center;
         border-bottom: 1.5px solid #ced4da;
+
+        .text-center{
+            text-align: left !important;
+        }
     }
 
     .flex-start{

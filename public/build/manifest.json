@@ -13,7 +13,7 @@
     "src": "resources/auth/images/bg-registration-form-9.jpg"
   },
   "resources/js/app.js": {
-    "file": "assets/app-Br8yASO4.js",
+    "file": "assets/app-CTsLtr8e.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -22,7 +22,7 @@
     ]
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-DUV4xMMu.css",
+    "file": "assets/app-B16s9rDJ.css",
     "src": "resources/sass/app.scss",
     "isEntry": true
   }

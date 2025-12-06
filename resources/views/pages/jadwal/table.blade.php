@@ -27,6 +27,9 @@
                                             {{ __($value->name) }}
                                         </th>
                                     @endforeach
+                                    <th>Category</th>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,7 +42,13 @@
                                         <td class="col-md-2 text-center column-action">
                                             <x-crud :model="$table" />
                                         </td>
-                                        {{tableBody}}
+
+										<td >{{ $table->jadwal_id }}</td>
+										<td >{{ $table->jadwal_nama }}</td>
+										<td >{{ $table->category_nama }}</td>
+										<td >{{ $table->jadwal_tanggal }}</td>
+										<td >{{ $table->jadwal_keterangan }}</td>
+
                                     </tr>
                                 @empty
                                 @endforelse

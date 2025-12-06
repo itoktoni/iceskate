@@ -223,3 +223,29 @@ body {
 .fl-wrapper[data-position^=top-]{
   top: 4rem !important;
 }
+
+/* Styling the entire scrollbar */
+::-webkit-scrollbar {
+  width: 7px; /* For vertical scrollbar */
+  height: 7px; /* For horizontal scrollbar */
+}
+
+/* Styling the scrollbar track (the background of the scrollbar) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Styling the scrollbar thumb (the draggable handle) */
+::-webkit-scrollbar-thumb {
+  background: lightgrey;
+}
+
+/* Styling the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+}
+
+/* Styling the scrollbar corner (where horizontal and vertical scrollbars meet) */
+::-webkit-scrollbar-corner {
+  background: #ccc;
+}

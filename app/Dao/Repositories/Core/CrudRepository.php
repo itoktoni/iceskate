@@ -7,11 +7,25 @@ use Plugins\Notes;
 
 trait CrudRepository
 {
-    public function dataRepository()
+    public function dataRepository($selected = [], $relation = [])
     {
-        $query = $this
-            ->select($this->getSelectedField())
-            ->filter();
+        $query = $this->select($this->getTable().'.*');
+
+        if($selected)
+        {
+            $query = $query->addSelect($selected);
+        }
+
+        if($relation)
+        {
+            foreach ($relation as $rel)
+            {
+                $query = $query->leftJoinRelationship($rel);
+            }
+        }
+
+        $query = $query
+        ->filter();
 
         $query = env('PAGINATION_SIMPLE') ? $query->simplePaginate(env('PAGINATION_NUMBER')) : $query->paginate(env('PAGINATION_NUMBER'));
 

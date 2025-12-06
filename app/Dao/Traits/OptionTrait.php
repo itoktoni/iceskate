@@ -73,7 +73,7 @@ trait OptionTrait
                 $query = self::$option_model->where(self::$option_model->field_active(), BooleanType::Yes);
             }
 
-            self::$option_model = $query->get()->pluck(self::$option_model->fieldSearching(), self::$option_model->getKeyName())
+            self::$option_model = $query->get()->pluck(self::$option_model->field_name(), self::$option_model->getKeyName())
             ?? [];
         }
 

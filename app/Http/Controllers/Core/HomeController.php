@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Core;
 use App\Charts\Dashboard;
 use App\Dao\Traits\RedirectAuth;
 use App\Http\Controllers\Controller;
+use Plugins\Query;
 
 class HomeController extends Controller
 {
@@ -50,8 +51,11 @@ class HomeController extends Controller
             header('Location: ' . route('public'));
         }
 
+        $user = Query::getUser();
+
         return view('core.home.dashboard', [
             'chart' => $chart->build(),
+            'user' => $user
         ]);
     }
 

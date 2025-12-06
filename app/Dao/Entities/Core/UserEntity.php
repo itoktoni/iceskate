@@ -81,6 +81,17 @@ trait UserEntity
         return $this->{self::field_active()};
     }
 
+    public static function field_category()
+    {
+        return 'category';
+    }
+
+    public function getFieldCategoryAttribute()
+    {
+        return $this->{self::field_category()};
+    }
+
+
     /**
      * Method field_role
      *

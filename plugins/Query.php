@@ -2,6 +2,9 @@
 
 namespace Plugins;
 
+use App\Dao\Enums\Core\RoleType;
+use App\Dao\Models\Core\User;
+use App\Dao\Models\Jadwal;
 use App\Facades\Model\FilterModel;
 use App\Facades\Model\GroupModel;
 use App\Facades\Model\LinkModel;
@@ -188,6 +191,34 @@ class Query
 
         if ($user) {
             $data = $user->pluck(UserModel::field_name(), UserModel::field_primary());
+        }
+
+        return $data;
+    }
+
+    public static function getJadwal()
+    {
+        $data = [];
+        $jadwal = Jadwal::get();
+
+        if ($jadwal) {
+            $data = $jadwal->mapWithKeys(function($item){
+                return [$item->field_primary => $item->field_name. ' - '. $item->jadwal_tanggal];
+            });
+        }
+
+        return $data;
+    }
+
+    public static function getUser()
+    {
+        $data = [];
+        $query = User::where('role', RoleType::User)->get();
+
+        if ($query) {
+            $data = $query->mapWithKeys(function($item){
+                return [$item->field_primary => $item->field_name];
+            });
         }
 
         return $data;

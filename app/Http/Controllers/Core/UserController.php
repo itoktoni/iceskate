@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Core;
 
+use App\Dao\Models\Category;
 use App\Facades\Model\RoleModel;
 use App\Facades\Model\UserModel;
 use App\Http\Requests\Core\LoginRequest;
@@ -26,8 +27,10 @@ class UserController extends MasterController
     protected function beforeForm()
     {
         $roles = RoleModel::getOptions();
+        $category = Category::getOptions();
 
         self::$share = [
+            'category' => $category,
             'roles' => $roles,
         ];
     }
@@ -49,7 +52,6 @@ class UserController extends MasterController
     public function getTable()
     {
         $data = $this->getData();
-
         return moduleView(modulePathTable('user', true), [
             'data' => $data,
             'fields' => $this->model::getModel()->getShowField(),

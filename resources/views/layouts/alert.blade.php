@@ -1,15 +1,5 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-<script>
-    var toastr = new window.Notyf({
-        duration: 5000,
-        dismissible: true,
-        position: {
-            x: 'right',
-            y: 'top',
-        },
-    });
-</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@flasher/flasher@2.2.0/dist/flasher.min.css">
+
 @if ($errors->any())
 <script type="text/javascript">
     @foreach($errors->all() as $error)
@@ -20,14 +10,14 @@
                 $error = formatAttribute($string->before($required)).$required ?? $error;
             }
         @endphp
-        toastr.error('{{ $error }}');
+        flasher.error('{{ $error }}');
     @endforeach
 </script>
 @endif
 
 @if(session()->has('success') && !request()->ajax())
 <script type="text/javascript">
-    toastr.success("{{ session()->get('success') }}");
+    flasher.error('{{ $error }}');
 </script>
 @php
 session()->forget('success');
@@ -36,12 +26,7 @@ session()->forget('success');
 
 @if(session()->has('error') && !request()->ajax())
 <script type="text/javascript">
-    // cuteToast({
-    //     type: "error",
-    //     message: "{{ session()->get('error') }}",
-    //     timer: 5000
-    // });
-    toastr.error("{{ session()->get('error') }}");
+       flasher.error('{{ $error }}');
 </script>
 @php
 session()->forget('error');

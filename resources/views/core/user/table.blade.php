@@ -43,6 +43,7 @@
                                         <td data-label="Username">{{ $table->field_username }}</td>
                                         <td data-label="Role">{{ $table->field_role_name }}</td>
                                         <td data-label="Phone">{{ $table->field_phone }}</td>
+                                        <td data-label="Category">{{ $table->category_nama ?? '' }}</td>
                                     </tr>
                                 @empty
                                 @endforelse

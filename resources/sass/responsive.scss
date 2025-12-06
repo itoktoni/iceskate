@@ -500,6 +500,24 @@
 		min-width: 35%;
 		text-align: right;
 	}
+
+	.table td {
+
+        &.text-center{
+            text-align: left !important;
+
+			.form-group{
+				.form-control{
+					text-align: right;
+				}
+			}
+        }
+
+		&::before{
+			min-width: 30% !important;
+		}
+
+    }
 }
 
 @media (max-width: 414px) {

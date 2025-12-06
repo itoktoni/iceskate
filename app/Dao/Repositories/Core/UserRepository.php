@@ -9,6 +9,7 @@ trait UserRepository
         $query = $this->model
             ->select($this->model->getSelectedField())
             ->leftJoinRelationship('has_role')
+            ->leftJoinRelationship('has_category')
             ->active()
             ->filter();
 

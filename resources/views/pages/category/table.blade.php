@@ -24,11 +24,7 @@
                                     <th class="text-center column-action">{{ __('Action') }}</th>
                                     @foreach ($fields as $value)
                                         <th {{ Template::extractColumn($value) }}>
-                                            @if ($value->sort)
-                                                lang($value->code, __($value->name))
-                                            @else
-                                                {{ __($value->name) }}
-                                            @endif
+                                            {{ __($value->name) }}
                                         </th>
                                     @endforeach
                                 </tr>
@@ -44,8 +40,8 @@
                                             <x-crud :model="$table" />
                                         </td>
 
-										<td >{{ $table->category_id }}</td>
-										<td >{{ $table->category_name }}</td>
+										<td >{{ $table->field_primary }}</td>
+										<td >{{ $table->field_name }}</td>
 
                                     </tr>
                                 @empty

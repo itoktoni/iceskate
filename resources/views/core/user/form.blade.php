@@ -8,7 +8,8 @@
                     <x-form-input col="6" name="username" />
                     <x-form-input col="6" name="phone" />
                     <x-form-input col="6" name="email" />
-                    <x-form-select col="6" class="search" name="role" :options="$roles" />
+                    <x-form-select col="3" class="search" name="role" :options="$roles" />
+                    <x-form-select col="3" name="category" :options="$category" />
                     <x-form-input col="6" name="password" type="password" />
                 @endbind
 

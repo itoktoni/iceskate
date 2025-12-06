@@ -2,6 +2,8 @@
 
 namespace App\Charts;
 
+use App\Dao\Models\Core\User;
+use App\Dao\Models\Race;
 use ArielMejiaDev\LarapexCharts\LarapexChart;
 
 class Dashboard
@@ -15,13 +17,32 @@ class Dashboard
 
     public function build()
     {
-        return $this->chart->barChart()
-            ->setTitle('San Francisco vs Boston.')
-            ->setSubtitle('Wins during season 2021.')
+        $user = Race::where('race_user_id', 5)->get();
+
+        $data = $asian = [];
+        foreach ($user as $item) {
+            $asian[] = 47.37;
+            $data[] = $item->race_waktu;
+            $tanggal[] = $item->race_tanggal;
+        }
+
+        $chart = $this->chart->lineChart()
+            ->setTitle('Performance Bimo')
+            ->setSubtitle('Bimo vs Asian Open 2025')
+            ->setDataset([
+                [
+                    'name' => 'Bimo',
+                    'data' => $data
+                ],
+                [
+                    'name' => 'Asian Open 2025',
+                    'data' => $asian
+                ]
+            ])
+            ->setXAxis($tanggal)
             ->setGrid()
-            ->addData('San Francisco', [6, 9, 3, 4, 10, 8])
-            ->addData('Boston', [7, 3, 8, 2, 6, 4])
-            ->addData('Wales', [7, 3, 8, 2, 6, 4])
-            ->setXAxis(['January', 'February', 'March', 'April', 'May', 'June']);
+            ;
+
+         return $chart;
     }
 }

@@ -66,7 +66,12 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
+
                 <div class="card-body">
+                    <x-form-select col="6" name="user" label="User" :options="$user" />
+                </div>
+
+                 <div class="card-body">
                     {!! $chart->container() !!}
                 </div>
             </div>

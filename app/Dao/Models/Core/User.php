@@ -5,10 +5,12 @@ namespace App\Dao\Models\Core;
 use App\Dao\Builder\DataBuilder;
 use App\Dao\Entities\Core\DefaultEntity;
 use App\Dao\Entities\Core\UserEntity;
+use App\Dao\Models\Category;
 use App\Dao\Repositories\Core\CrudRepository;
 use App\Dao\Traits\ActiveTrait;
 use App\Dao\Traits\DataTableTrait;
 use App\Dao\Traits\OptionTrait;
+use App\Facades\Model\CategoryModel;
 use App\Facades\Model\RoleModel;
 use App\Facades\Model\UserModel;
 use App\Notifications\VerifyUserQueue;
@@ -53,6 +55,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
         'level',
         'vendor',
         'active',
+        'category',
         'email_verified_at',
     ];
 
@@ -104,6 +107,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
             DataBuilder::build(RoleModel::field_name())->name('Role'),
             DataBuilder::build(UserModel::field_email())->show(false)->name('Email'),
             DataBuilder::build(UserModel::field_phone())->name('Phone'),
+            DataBuilder::build(Category::field_name())->name('Category'),
             DataBuilder::build(UserModel::field_active())->name('Active')->show(false),
         ];
     }
@@ -111,6 +115,11 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     public function has_role()
     {
         return $this->hasOne(RoleModel::getModel(), RoleModel::field_key(), UserModel::field_role());
+    }
+
+    public function has_category()
+    {
+        return $this->hasOne(CategoryModel::getModel(), CategoryModel::field_key(), UserModel::field_category());
     }
 
     public function roleNameSortable($query, $direction)
@@ -125,6 +134,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     {
         $query = $this
             ->select($this->getSelectedField())
+            ->leftJoinRelationship('has_category')
             ->leftJoinRelationship('has_role')
             ->active()
             ->filter();

@@ -52,6 +52,8 @@
 
     @stack('footer')
 
+    @include('layouts.alert')
+
     @livewireScriptConfig
 
 </body>

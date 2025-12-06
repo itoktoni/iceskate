@@ -39,7 +39,10 @@
                                         <td class="col-md-2 text-center column-action">
                                             <x-crud :model="$table" />
                                         </td>
-                                        {{tableBody}}
+
+										<td >{{ $table->jarak_id }}</td>
+										<td >{{ $table->jarak_nama }}</td>
+
                                     </tr>
                                 @empty
                                 @endforelse

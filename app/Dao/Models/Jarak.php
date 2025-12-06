@@ -4,34 +4,33 @@ namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
 
+
 /**
- * Class Category
+ * Class Jarak
  *
- * @property $category_id
- * @property $category_name
- * @property $category_user_id
- * @property User $user
+ * @property $jarak_id
+ * @property $jarak_nama
  *
+ * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class Category extends SystemModel
+
+class Jarak extends SystemModel
 {
     protected $perPage = 20;
-
-    protected $table = 'category';
-
-    protected $primaryKey = 'category_id';
+    protected $table = 'jarak';
+    protected $primaryKey = 'jarak_id';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ['category_id', 'category_nama'];
+    protected $fillable = ['jarak_id', 'jarak_nama'];
 
     public static function field_name()
     {
-        return 'category_nama';
+        return 'jarak_nama';
     }
 
     public function getFieldNameAttribute()
