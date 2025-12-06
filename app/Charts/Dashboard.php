@@ -26,20 +26,25 @@ class Dashboard
             $tanggal[] = $item->race_tanggal;
         }
 
+        // Reverse the data arrays to show smaller values at top
+        $reversedData = array_reverse($data);
+        $reversedAsian = array_reverse($asian);
+        $reversedTanggal = array_reverse($tanggal);
+
         $chart = $this->chart->lineChart()
             ->setTitle('Performance Bimo')
             ->setSubtitle('Bimo vs Asian Open 2025')
             ->setDataset([
                 [
                     'name' => 'Bimo',
-                    'data' => $data
+                    'data' => $reversedData
                 ],
                 [
                     'name' => 'Asian Open 2025',
-                    'data' => $asian
+                    'data' => $reversedAsian
                 ]
             ])
-            ->setXAxis($tanggal)
+            ->setXAxis($reversedTanggal)
             ->setGrid()
             ;
 
