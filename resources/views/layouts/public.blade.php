@@ -32,9 +32,9 @@
                             <!-- logo begin -->
                             <div id="logo">
                                 <a href="index.html">
-                                    <img class="logo-main" src="{{ asset('frontend/images/logo.png') }}" alt="" >
-                                    <img class="logo-scroll" src="{{ asset('frontend/images/logo.png') }}" alt="" >
-                                    <img class="logo-mobile" src="{{ asset('frontend/images/logo.png') }}" alt="" >
+                                    <img class="logo-main" src="{{ $logo_url }}" alt="" >
+                                    <img class="logo-scroll" src="{{ $logo_url }}" alt="" >
+                                    <img class="logo-mobile" src="{{ $logo_url }}" alt="" >
                                 </a>
                             </div>
                             <!-- logo close -->
