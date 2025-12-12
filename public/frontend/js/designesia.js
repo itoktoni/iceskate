@@ -285,6 +285,7 @@
         jQuery(".owl-2-cols-center").owlCarousel({
            center:true,
            loop:true,
+           responsiveClass:true,
            margin:30,
            nav:false,
            dots:false,
@@ -304,7 +305,7 @@
         jQuery(".owl-3-cols").owlCarousel({
            center:false,
            loop:true,
-           margin:0,
+           margin:30,
            nav:false,
            dots:false,
            responsive:{

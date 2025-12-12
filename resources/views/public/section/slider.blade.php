@@ -19,31 +19,28 @@
         </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <div id="services-carousel" class="owl-2-cols-center owl-carousel owl-theme">
+                <div id="services-carousel" class="owl-3-cols owl-carousel owl-theme">
 
                     @foreach ($data->item as $item)
                         <div class="item">
                             <div class="relative bg-color text-light rounded-1 overflow-hidden">
                                 <div class="row g-0">
-                                    <div class="col-5 d-flex flex-column justify-content-between p-40">
+
+                                    <div class="col-12">
+                                        <img src="{{ $item->image->guid ?? '' }}" alt="{{ $item->title ?? '' }}"
+                                            class="h-100 w-100 object-cover">
+                                    </div>
+
+                                    <div class="col-5 d-flex flex-column justify-content-between p-40 h-100">
                                         <div>
                                             <h3 class="fw-bold mb-2">{{ $item->title ?? '' }}</h3>
                                             {!! nl2br($item->description) ?? '' !!}
                                         </div>
-                                        <div>
-                                            <a href="{{ $item->link['url'] ?? '' }}"
-                                                class="id-color text-uppercase fw-semibold small text-decoration-none">
-                                                {{ $item->link['title'] ?? '' }}
-                                            </a>
-                                        </div>
                                     </div>
-                                    <div class="col-7 angled-wrapper">
-                                        <img src="{{ $item->image->guid ?? '' }}" alt="{{ $item->title ?? '' }}"
-                                            class="h-100 w-100 object-cover">
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
