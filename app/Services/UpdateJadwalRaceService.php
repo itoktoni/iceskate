@@ -12,12 +12,14 @@ class UpdateJadwalRaceService
         $check = $repository->updateRepository($data->all(), $code);
 
         if ($check['status']) {
+            // foreach ($data->code as $key => $value) {
+            //     Race::find($value['id'])->update([
+            //         'race_waktu' => $value['score'],
+            //         'race_jarak' => $data->jarak_id
+            //     ]);
+            // }
 
-            foreach ($data->code as $key => $value) {
-                Race::find($value['id'])->update([
-                    'race_waktu' => $value['score']
-                ]);
-            }
+            Race::insert($data->race);
 
             if (request()->wantsJson()) {
                 return response()->json($check)->getData();

@@ -43,13 +43,13 @@
                                             </x-crud>
                                         </td>
 
-										<td class="column-action">{{ $table->payment_id }}</td>
+										<td class="column-action">{{ $table->payment_code }}</td>
 										<td >{{ $table->name }}</td>
 										<td >{{ $table->jadwal_nama.' - '.$table->jadwal_tanggal }}</td>
 										<td class="column-action text-center">
-                                            <button class="btn btn-{{ empty($table->payment) ? 'warning' : 'success' }}">
+                                            <span class="btn btn-{{ empty($table->payment) ? 'warning' : 'success' }}">
                                                 {{ empty($table->payment) ? 'Pending' : 'Paid' }}
-                                            </button>
+                                            </span>
                                         </td>
 										<td >{{ $table->code }}</td>
 

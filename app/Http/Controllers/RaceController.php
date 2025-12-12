@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Dao\Models\Category;
 use App\Dao\Models\Core\User;
+use App\Dao\Models\Jarak;
 use App\Http\Controllers\Core\MasterController;
 use App\Http\Function\CreateFunction;
 use App\Http\Function\UpdateFunction;
@@ -25,10 +26,12 @@ class RaceController extends MasterController
     {
         $user = Query::getUser();
         $jadwal = Query::getJadwal();
+        $jarak = Jarak::getOptions();
 
         self::$share = [
             'user' => $user,
             'jadwal' => $jadwal,
+            'jarak' => $jarak,
         ];
     }
 

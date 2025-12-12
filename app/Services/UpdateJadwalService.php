@@ -14,8 +14,8 @@ class UpdateJadwalService
 
             $check['data']->has_absen()->sync($data->code);
 
-            Race::where('race_jadwal_id', $code)->delete();
-            Race::insert($data->race);
+            // Race::where('race_jadwal_id', $code)->delete();
+            // Race::insert($data->race);
 
             if (request()->wantsJson()) {
                 return response()->json($check)->getData();

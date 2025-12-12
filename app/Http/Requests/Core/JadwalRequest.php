@@ -13,6 +13,7 @@ class JadwalRequest extends FormRequest
     {
         return [
             'jadwal_category_id' => 'required',
+            'jarak_id' => 'required',
             'jadwal_tanggal' => 'required',
         ];
     }
@@ -20,12 +21,15 @@ class JadwalRequest extends FormRequest
     public function prepareForValidation()
     {
         $data = [];
-        foreach (request('code', []) as $key) {
+        foreach (request('code', []) as $key => $value) {
 
             $data[$key] = [
                 'race_jadwal_id' => $this->jadwal_id,
+                'race_jarak_id' => $this->jarak_id,
                 'race_tanggal' => $this->jadwal_tanggal,
                 'race_user_id' => $key,
+                'race_waktu' => $value['score'],
+                'race_notes' => $value['notes'],
             ];
         }
 

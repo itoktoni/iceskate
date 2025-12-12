@@ -21,7 +21,7 @@
                                     <th width="9" class="center">
                                         <input class="btn-check-d" type="checkbox">
                                     </th>
-                                    <th class="text-center column-action">{{ __('Action') }}</th>
+                                    <th class="text-center col-md-2">{{ __('Action') }}</th>
                                     @foreach ($fields as $value)
                                         <th {{ Template::extractColumn($value) }}>
                                             {{ __($value->name) }}
@@ -39,9 +39,9 @@
                                             <input type="checkbox" class="checkbox" name="code[]"
                                                 value="{{ $table->field_primary }}">
                                         </td>
-                                        <td class="col-md-2 text-center column-action">
+                                        <td class=" text-center">
                                             <x-crud :model="$table">
-                                                <x-button module="getRace" key="{{ $table->field_primary }}" color="success" label="Race"/>
+                                                <x-button module="getRace" key="{{ $table->field_primary }}" color="success" label="Performance"/>
                                             </x-crud>
                                         </td>
 

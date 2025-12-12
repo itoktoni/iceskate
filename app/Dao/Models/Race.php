@@ -5,6 +5,7 @@ namespace App\Dao\Models;
 use App\Dao\Models\Core\SystemModel;
 use App\Facades\Model\CategoryModel;
 use App\Facades\Model\JadwalModel;
+use App\Facades\Model\JarakModel;
 use App\Facades\Model\UserModel;
 
 /**
@@ -32,7 +33,7 @@ class Race extends SystemModel
      *
      * @var array<int, string>
      */
-    protected $fillable = ['race_id', 'race_jadwal_id', 'race_user_id', 'race_notes', 'race_tanggal', 'race_waktu'];
+    protected $fillable = ['race_id', 'race_jadwal_id', 'race_jarak_id', 'race_user_id', 'race_notes', 'race_tanggal', 'race_waktu'];
 
     public static function field_name()
     {
@@ -49,6 +50,11 @@ class Race extends SystemModel
         return $this->hasOne(JadwalModel::getModel(), JadwalModel::field_primary(), 'race_jadwal_id');
     }
 
+    public function has_jarak()
+    {
+        return $this->hasOne(JarakModel::getModel(), JarakModel::field_primary(), 'race_jarak_id');
+    }
+
     public function has_user()
     {
         return $this->hasOne(UserModel::getModel(), UserModel::field_primary(), 'race_user_id');
@@ -56,8 +62,9 @@ class Race extends SystemModel
 
     public function dataRepository($selected = [], $relation = [])
     {
-        $query = $this->select($this->getTable().'.*', 'name', JadwalModel::getTableName().'.*')
+        $query = $this->select($this->getTable().'.*', 'name', JadwalModel::getTableName().'.*', JarakModel::getTableName().'.*')
             ->leftJoinRelationship('has_jadwal')
+            ->leftJoinRelationship('has_jarak')
             ->leftJoinRelationship('has_user');
 
         $query = $query

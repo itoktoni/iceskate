@@ -39,6 +39,9 @@
                                         </td>
                                         <td class="col-md-2 text-center column-action">
                                             <x-crud :model="$table" :action="['delete']">
+                                                @if ($table->pinjam_qty != 0)
+                                                     <x-button module="getUpdate" key="{{ $table->field_primary }}" color="primary" icon="pencil-square" />
+                                                @endif
                                             </x-crud>
                                         </td>
 

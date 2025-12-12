@@ -19,6 +19,13 @@ class Cms
         return $url;
     }
 
+    public static function website_name()
+    {
+        $data = Option::get('website_name') ?? null;
+        return $data;
+    }
+
+
     public static function website_address()
     {
         $data = Option::get('website_address') ?? null;

@@ -27,6 +27,8 @@
                                             {{ __($value->name) }}
                                         </th>
                                     @endforeach
+                                    <th>Australia</th>
+                                    <th>Asian</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,6 +44,8 @@
 
 										<td >{{ $table->jarak_id }}</td>
 										<td >{{ $table->jarak_nama }}</td>
+										<td >{{ $table->jarak_australia }}</td>
+										<td >{{ $table->jarak_asian }}</td>
 
                                     </tr>
                                 @empty

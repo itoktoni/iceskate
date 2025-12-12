@@ -31,8 +31,7 @@ class AbsenController extends MasterController
 
     public function getUpdate($code)
     {
-        $model = $this->get($code);
-
+        $model = Payment::where('payment_code', strval($code))->first();
         Absen::where('jadwal_id', $model->jadwal_id)->where('id', $model->id)->update([
             'payment' => 1,
             'code' => date('Ymd').strtoupper(unic(5))

@@ -1,4 +1,4 @@
-<section class="text-light relative" data-bgimage="url({{ $data->background->guid ?? null }}) center">
+<section class="text-light relative" style="min-height: 60em" data-bgimage="url({{ $data->background->guid ?? null }}) center">
      <div class="container relative z-2">
          <div class="row g-4">
              <div class="col-xl-6 col-lg-6">

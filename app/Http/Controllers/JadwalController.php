@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Dao\Enums\JadwalType;
 use App\Dao\Models\Category;
 use App\Dao\Models\Core\User;
+use App\Dao\Models\Jarak;
 use App\Dao\Models\Race;
 use App\Http\Controllers\Core\MasterController;
 use App\Http\Function\CreateFunction;
@@ -27,11 +28,14 @@ class JadwalController extends MasterController
         $user = Query::getUser();
         $jadwal = JadwalType::getOptions();
         $category = Category::getOptions();
+        $jarak = Jarak::getOptions();
 
         self::$share = [
             'user' => $user,
+            'jarak' => $jarak,
             'category' => $category,
             'jadwal' => $jadwal,
+            'absen' => collect([]),
         ];
     }
 
@@ -56,7 +60,7 @@ class JadwalController extends MasterController
         ]));
     }
 
-    public function postUpdate($code, JadwalRequest $request, UpdateJadwalService $service)
+    public function postUpdate($code, GeneralRequest $request, UpdateJadwalService $service)
     {
         $data = $service->update($this->model, $request, $code);
 
@@ -68,8 +72,14 @@ class JadwalController extends MasterController
         $this->beforeForm();
 
         $model = $this->get($code, ['has_absen']);
-        $user = Race::addSelect('race.*', 'id', 'name')->leftJoinRelationship('has_user')->where('race_jadwal_id', $model->field_primary)->get();
-        $absen = $model->has_absen ?? false;
+        $user = User::where('category', $model->jadwal_category_id)->get();
+
+        // $user = Race::addSelect('race.*', 'id', 'name', 'jarak.*')
+        //     ->leftJoinRelationship('has_user')
+        //     ->leftJoinRelationship('has_jarak')
+        //     ->where('race_jadwal_id', $model->field_primary)
+        //     ->get();
+        $absen = $model->has_absen ?? [];
 
         return moduleView(modulePathForm('race'), $this->share([
             'model' => $this->get($code),
@@ -78,7 +88,7 @@ class JadwalController extends MasterController
         ]));
     }
 
-    public function postRace($code, GeneralRequest $request, UpdateJadwalRaceService $service)
+    public function postRace($code, JadwalRequest $request, UpdateJadwalRaceService $service)
     {
         $data = $service->update($this->model, $request, $code);
 

@@ -21,14 +21,20 @@ class Payment extends SystemModel
 {
     protected $perPage = 20;
     protected $table = 'payment';
-    protected $primaryKey = 'payment_id';
+    protected $primaryKey = 'payment_code';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected $casts = [
+        'payment_code' => 'string',
+    ];
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ['payment_id', 'jadwal_id', 'id', 'jadwal_tanggal','jadwal_nama','name','payment', 'code'];
+    protected $fillable = ['payment_code', 'jadwal_id', 'id', 'jadwal_tanggal','jadwal_nama','name','payment', 'code'];
 
     public static function field_name()
     {

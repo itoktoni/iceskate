@@ -23,6 +23,7 @@
                                     </th>
                                     <th class="text-center column-action">{{ __('Action') }}</th>
                                     <th>User</th>
+                                    <th>Jarak</th>
                                     <th>Tanggal</th>
                                     <th>Jadwal</th>
                                     <th>Waktu</th>
@@ -41,6 +42,7 @@
                                         </td>
 
 										<td >{{ $table->name }}</td>
+										<td >{{ $table->jarak_nama }}</td>
 										<td >{{ $table->race_tanggal }}</td>
 										<td >{{ $table->jadwal_nama ?? 'TEST RACE' }}</td>
 										<td >{{ $table->race_waktu }}</td>
