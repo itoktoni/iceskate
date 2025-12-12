@@ -5,6 +5,8 @@
                  <div class="spacer-double"></div>
                  <h1 class="wow fadeInUp" data-wow-delay=".0s"> {!! nl2br($data->title) ?? '' !!}</h1>
                  <p class="me-lg-5 mb-4 wow fadeInUp" data-wow-delay=".2s">{!! nl2br($data->description) ?? '' !!}</p>
+                 @if (!empty($data->link['title']))
+
                  <div class="d-flex align-items-center wow fadeInUp" data-wow-delay=".9s">
                      <a class="btn-main fx-slide me-4 wow fadeInUp" data-wow-delay=".4s" href="{{ $data->link['url'] ?? '' }}">
                         <span>{{ $data->link['title'] ?? '' }}</span>
@@ -16,6 +18,9 @@
                          <div class="ms-3 fw-bold">{{ $data->video['title'] ?? '' }}</div>
                      </a>
                  </div>
+
+                 @endif
+
              </div>
          </div>
      </div>

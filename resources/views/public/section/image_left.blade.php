@@ -21,11 +21,15 @@
 
                     <p class="wow fadeIn" data-wow-delay=".4s">{!! nl2br($data->description) ?? '' !!}</p>
 
+                    @if (!empty($data->link['title']))
+
                     <a class="btn-main fx-slide mb10 mb-3 wow fadeIn" href="{{ $data->link['url'] ?? '' }}">
                         <span>
                             {{ $data->link['title'] ?? '' }}
                         </span>
                     </a>
+
+                    @endif
                 </div>
             </div>
 
