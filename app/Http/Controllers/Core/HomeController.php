@@ -54,7 +54,7 @@ class HomeController extends Controller
         $user = Query::getUser();
 
         return view('core.home.dashboard', [
-            'chart' => $chart->build(),
+            'chart' => $chart->build(request()),
             'user' => $user
         ]);
     }

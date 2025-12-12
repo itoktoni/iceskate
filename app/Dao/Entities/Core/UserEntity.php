@@ -51,6 +51,16 @@ trait UserEntity
         return $this->{self::field_username()};
     }
 
+    public static function field_member()
+    {
+        return 'member';
+    }
+
+    public function getFieldemberAttribute()
+    {
+        return $this->{self::field_member()};
+    }
+
     /**
      * Method field_level
      *

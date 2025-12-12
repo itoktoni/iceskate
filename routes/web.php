@@ -41,6 +41,8 @@ Route::post('profile', 'App\Http\Controllers\Core\UserController@updateProfile')
 Auth::routes(['verify' => true]);
 
 Route::get('/', [PublicController::class, 'index'])->name('public');
+Route::get('/{slug}', [PublicController::class, 'page'])->name('public');
+Route::get('/blog/{slug}', [PublicController::class, 'blog'])->name('public');
 Route::post('/checkout', [PublicController::class, 'checkout'])->middleware('auth')->name('checkout');
 
 try {

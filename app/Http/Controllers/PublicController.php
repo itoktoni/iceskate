@@ -2,17 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Menu;
+use App\Models\Page;
+use Plugins\Cms;
 
 class PublicController extends Controller
 {
+    public function share($data)
+    {
+        $menu = Menu::slug('top')->first();
+
+        $default = [
+            'logo_url' => Cms::logo_url(),
+            'website_address' => Cms::website_address(),
+            'website_email' => Cms::website_email(),
+            'website_description' => Cms::website_description(),
+            'website_phone' => Cms::website_phone(),
+            'menu' => $menu,
+        ];
+
+        return array_merge($default, $data);
+    }
+
     public function index()
     {
-        if(env('APP_AUTH', true))
-        {
-            return redirect()->to('/login');
-        }
+       $homepage = Page::slug('homepage')->first();
+       $template = $homepage->acf->template;
 
-        return view('homepage');
+        return view('public.homepage', $this->share([
+            'template' => $template
+        ]));
+    }
+
+     public function page($slug)
+    {
+       $page = Page::slug($slug)->first();
+       $template = $page->acf->template;
+
+        return view('public.homepage', $this->share([
+            'page' => $page,
+            'template' => $template
+        ]));
+    }
+
+    public function blog($slug)
+    {
+       $page = Page::slug($slug)->first();
+       $template = $page->acf->template;
+
+        return view('public.blog', $this->share([
+            'template' => $template
+        ]));
     }
 }

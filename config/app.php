@@ -13,6 +13,7 @@ use GeoSot\EnvEditor\ServiceProvider;
 use Ibex\CrudGenerator\CrudServiceProvider;
 use Illuminate\Support\Str;
 use MBarlow\Megaphone\MegaphoneServiceProvider;
+use Plugins\Cms;
 use Plugins\Query;
 use Plugins\Template;
 use Plugins\Views;
@@ -264,6 +265,7 @@ return [
         'Str' => Str::class,
         'EnvEditor' => EnvEditor::class,
         'ModelGroup' => SystemGroup::class,
+        'Cms' => Cms::class,
     ],
 
 ];

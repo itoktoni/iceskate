@@ -4,38 +4,44 @@ namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
 
+
 /**
- * Class absen
+ * Class Absen
  *
- * @property $absen_id
- * @property $absen_name
- * @property $absen_user_id
- * @property User $user
+ * @property $jadwal_id
+ * @property $id
+ * @property $payment
+ * @property $code
  *
+ * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
+
 class Absen extends SystemModel
 {
     protected $perPage = 20;
-
     protected $table = 'absen';
-
-    protected $primaryKey = 'absen_id';
+    protected $primaryKey = 'jadwal_id';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ['absen_id', 'absen_nama'];
+    protected $fillable = ['jadwal_id', 'id', 'payment', 'code'];
 
-    public static function field_name()
-    {
-        return 'absen_nama';
-    }
 
-    public function getFieldNameAttribute()
+    public function dataRepository($selected = [], $relation = [])
     {
-        return $this->{$this->field_name()};
+        $query = $this->select($this->getTable().'.*');
+
+        if($selected)
+        {
+            $query = $query->addSelect($selected);
+        }
+
+        $query = env('PAGINATION_SIMPLE') ? $query->simplePaginate(env('PAGINATION_NUMBER')) : $query->paginate(env('PAGINATION_NUMBER'));
+
+        return $query;
     }
 }

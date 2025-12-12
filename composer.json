@@ -24,7 +24,8 @@
         "mehradsadeghi/laravel-filter-querystring": "^1.1",
         "opcodesio/log-viewer": "^3.1",
         "php-flasher/flasher-notyf-laravel": "*",
-        "spatie/simple-excel": "^3.6",
+        "spatie/simple-excel": "^3.7",
+        "tbruckmaier/corcel-acf": "^1.12",
         "wildside/userstamps": "^2.2"
     },
     "require-dev": {

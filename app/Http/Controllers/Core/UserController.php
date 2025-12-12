@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Core;
 
+use App\Dao\Enums\Core\MemberType;
 use App\Dao\Models\Category;
 use App\Facades\Model\RoleModel;
 use App\Facades\Model\UserModel;
@@ -28,8 +29,10 @@ class UserController extends MasterController
     {
         $roles = RoleModel::getOptions();
         $category = Category::getOptions();
+        $member = MemberType::getOptions();
 
         self::$share = [
+            'member' => $member,
             'category' => $category,
             'roles' => $roles,
         ];

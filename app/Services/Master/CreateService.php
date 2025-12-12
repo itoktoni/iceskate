@@ -2,6 +2,7 @@
 
 namespace App\Services\Master;
 
+use App\Dao\Models\Pinjam;
 use Plugins\Alert;
 
 class CreateService

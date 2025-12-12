@@ -56,6 +56,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
         'vendor',
         'active',
         'category',
+        'member',
         'email_verified_at',
     ];
 
@@ -107,6 +108,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
             DataBuilder::build(RoleModel::field_name())->name('Role'),
             DataBuilder::build(UserModel::field_email())->show(false)->name('Email'),
             DataBuilder::build(UserModel::field_phone())->name('Phone'),
+            DataBuilder::build(UserModel::field_member())->name('Member'),
             DataBuilder::build(Category::field_name())->name('Category'),
             DataBuilder::build(UserModel::field_active())->name('Active')->show(false),
         ];

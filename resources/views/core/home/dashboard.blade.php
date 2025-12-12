@@ -67,7 +67,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <x-form-select col="6" class="user" name="user" label="User" :options="$user" />
+                    <x-form-select col="6" id="user" name="user" label="User" :options="$user" />
                 </div>
                 <div class="card-body">
                     <canvas id="dashboardChart" width="400" height="200"></canvas>
@@ -81,24 +81,36 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
-            const userSelect = document.getElementById('user');
-            if (userSelect) {
-                userSelect.addEventListener('change', function() {
-                    const selectedValue = this.value;
-                    const currentUrl = new URL(window.location);
-
-                    if (selectedValue) {
-                        currentUrl.searchParams.set('user', selectedValue);
-                    } else {
-                        currentUrl.searchParams.delete('user');
+            // Handle user selection and add query string
+            function handleUserSelection() {
+                const userSelect = document.getElementById('user');
+                if (userSelect) {
+                    // Set current selected value if exists in URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const selectedUser = urlParams.get('user');
+                    if (selectedUser) {
+                        userSelect.value = selectedUser;
                     }
 
-                    window.location.href = currentUrl.toString();
-                });
+                    userSelect.addEventListener('change', function() {
+                        const selectedValue = this.value;
+                        const currentUrl = new URL(window.location);
+
+                        if (selectedValue && selectedValue !== '') {
+                            currentUrl.searchParams.set('user', selectedValue);
+                        } else {
+                            currentUrl.searchParams.delete('user');
+                        }
+
+                        window.location.href = currentUrl.toString();
+                    });
+                }
             }
 
+            // Initialize user selection handler
+            handleUserSelection();
 
+            // Initialize Chart.js
             const ctx = document.getElementById('dashboardChart').getContext('2d');
 
             // Chart data from PHP
@@ -115,7 +127,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Performance Bimo'
+                            text: 'Performance Atlet'
                         },
                         subtitle: {
                             display: false,

@@ -24,7 +24,6 @@ class JadwalRequest extends FormRequest
 
             $data[$key] = [
                 'race_jadwal_id' => $this->jadwal_id,
-                'race_category_id' => $this->jadwal_category_id,
                 'race_tanggal' => $this->jadwal_tanggal,
                 'race_user_id' => $key,
             ];

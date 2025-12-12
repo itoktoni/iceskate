@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Dao\Enums\Core\RoleType;
 use App\Dao\Enums\JadwalType;
 use App\Dao\Models\Category;
 use App\Dao\Models\Core\User;
+use App\Dao\Models\Race;
 use App\Http\Controllers\Core\MasterController;
 use App\Http\Function\CreateFunction;
 use App\Http\Function\UpdateFunction;
 use App\Services\Master\SingleService;
 use App\Facades\Model\JadwalModel;
-use App\Facades\Model\UserModel;
 use App\Http\Requests\Core\GeneralRequest;
 use App\Http\Requests\Core\JadwalRequest;
-use App\Services\Core\UpdateJadwalService;
+use App\Services\UpdateJadwalRaceService;
+use App\Services\UpdateJadwalService;
 use Plugins\Query;
 use Plugins\Response;
 
@@ -57,6 +57,28 @@ class JadwalController extends MasterController
     }
 
     public function postUpdate($code, JadwalRequest $request, UpdateJadwalService $service)
+    {
+        $data = $service->update($this->model, $request, $code);
+
+        return Response::redirectBack($data);
+    }
+
+    public function getRace($code)
+    {
+        $this->beforeForm();
+
+        $model = $this->get($code, ['has_absen']);
+        $user = Race::addSelect('race.*', 'id', 'name')->leftJoinRelationship('has_user')->where('race_jadwal_id', $model->field_primary)->get();
+        $absen = $model->has_absen ?? false;
+
+        return moduleView(modulePathForm('race'), $this->share([
+            'model' => $this->get($code),
+            'user' => $user,
+            'absen' => $absen,
+        ]));
+    }
+
+    public function postRace($code, GeneralRequest $request, UpdateJadwalRaceService $service)
     {
         $data = $service->update($this->model, $request, $code);
 

@@ -42,7 +42,7 @@
                                         </td>
 
 										<td data-label="Nama">{{ $table->field_name }}</td>
-										<td data-label="Nama" class="text-center">{{ empty($selected) ? 'Absen' : 'Hadir' }}</td>
+										<td data-label="Kehadiran" class="text-center">{{ empty($selected) ? 'Absen' : 'Hadir' }}</td>
                                     </tr>
                                 @empty
                                 @endforelse
