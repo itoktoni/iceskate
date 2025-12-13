@@ -1,17 +1,3 @@
-<section class="text-light relative" data-bgimage="url('{{ $data->image->guid ?? null }}') top">
-    <div class="container relative z-2">
-        <div class="row g-4">
-            <div class="col-lg-12 text-center">
-                <div class="spacer-double"></div>
-                <h1 class="mb-0">{{ $page->title ?? '' }}</h1>
-                <div class="spacer-double"></div>
-            </div>
-        </div>
-    </div>
-    <div class="sw-overlay op-8"></div>
-    <div class="gradient-edge-bottom"></div>
-</section>
-
 <section>
     <div class="container">
 
@@ -19,7 +5,13 @@
         $categories = [];
         @endphp
         @foreach ($data->item as $item)
-            @foreach ($item->title as $title)
+            @php
+                $itemCategories = $item->title ?? ['general'];
+                if (!is_array($itemCategories)) {
+                    $itemCategories = [$itemCategories];
+                }
+            @endphp
+            @foreach ($itemCategories as $title)
 
             @php
                 $categories[$title] = $title;
@@ -31,14 +23,14 @@
         <!-- Gallery Filter Tabs -->
         <div class="text-center mb-5">
             <div class="gallery-filters">
-                 <button type="button" class="gallery-filter-btn active" data-filter="all">
+                 <button type="button" class="gallery-filter-btn active" data-filter="all" onclick="testFilter('all')">
                     All Photos
                 </button>
 
                 @foreach ($categories as $category)
 
-                <button type="button" class="gallery-filter-btn" data-filter="{{ $category }}">
-                    {{ $category }}
+                <button type="button" class="gallery-filter-btn" data-filter="{{ $category }}" onclick="testFilter('{{ $category }}')">
+                    {{ ucfirst($category) }}
                 </button>
 
                 @endforeach
@@ -51,16 +43,16 @@
 
             @php
                 $itemCategories = $item->title ?? ['general'];
+                if (!is_array($itemCategories)) {
+                    $itemCategories = [$itemCategories];
+                }
+                $category = $itemCategories[0] ?? 'general';
             @endphp
 
-            <div class="gallery-item"
-                 @foreach($itemCategories as $cat)
-                 data-category-{{ $loop->index }}="{{ $cat }}"
-                 @endforeach
-                 data-categories="{{ implode(',', $itemCategories) }}">
-                <a class="lg-item" data-src="{{ $item->image->guid ?? '' }}">
+            <div class="gallery-item" data-category="{{ $category }}">
+                <a class="lg-item" href="{{ $item->image->guid ?? '' }}" onclick="openCustomLightbox({{ $index }}, event)" data-title="Gallery Image {{ $index + 1 }}">
                     <img src="{{ $item->image->guid ?? '' }}" alt="Gallery Image {{ $index + 1 }}" />
-                    <div class="category-badge">{{ $itemCategories[0] ?? 'general' }}</div>
+                    <div class="category-badge">{{ ucfirst($category) }}</div>
                 </a>
             </div>
 
@@ -69,157 +61,210 @@
 
     </div>
 
-    <!-- PhotoSwipe CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/photoswipe@5.4.4/dist/photoswipe.css">
-    <!-- Simple CSS for PhotoSwipe thumbnails -->
+    <!-- Custom Lightbox HTML -->
+    <div id="customLightbox" class="custom-lightbox">
+        <div class="custom-lightbox-content">
+            <span class="custom-lightbox-close" onclick="closeCustomLightbox()">&times;</span>
+            <img id="customLightboxImage" class="custom-lightbox-image" src="" alt="" />
+            <div class="custom-lightbox-nav">
+                <button onclick="previousImage()">&larr;</button>
+                <button onclick="nextImage()">&rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Lightbox CSS -->
     <style>
-        .pswp__thumbnail {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            margin: 4px;
-            border-radius: 4px;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
+        /* Custom Lightbox Styles */
+        .custom-lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
         }
 
-        .pswp__thumbnail:hover,
-        .pswp__thumbnail--active {
-            opacity: 1;
+        .custom-lightbox.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .custom-lightbox-image {
+            width: 100%;
+            height: auto;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .custom-lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .custom-lightbox-close:hover {
+            opacity: 0.7;
+        }
+
+        .custom-lightbox-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .custom-lightbox-nav button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .custom-lightbox-nav button:hover {
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+        }
+    </style>
+
+    <!-- Simple CSS for gallery styling -->
+    <style>
+        .lightbox-overlay {
+            background-color: rgba(0, 0, 0, 0.8) !important;
+        }
+
+        .lightbox-image {
+            max-width: 90vw !important;
+            max-height: 90vh !important;
         }
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gallery filter functionality
+        // Custom Lightbox Functions
+        let currentImageIndex = 0;
+        let galleryImages = [];
+
+        function openCustomLightbox(index, event) {
+            event.preventDefault();
+
+            // Get all gallery images
+            const imageElements = document.querySelectorAll('.lg-item');
+            galleryImages = Array.from(imageElements).map(a => a.href);
+
+            currentImageIndex = index;
+            showImage(currentImageIndex);
+
+            document.getElementById('customLightbox').classList.add('active');
+        }
+
+        function closeCustomLightbox() {
+            document.getElementById('customLightbox').classList.remove('active');
+        }
+
+        function showImage(index) {
+            if (galleryImages.length === 0) return;
+
+            // Ensure index is within bounds
+            if (index < 0) index = galleryImages.length - 1;
+            if (index >= galleryImages.length) index = 0;
+
+            currentImageIndex = index;
+
+            const imageElement = document.getElementById('customLightboxImage');
+            imageElement.src = galleryImages[currentImageIndex];
+
+            // Get title from the link
+            const linkElement = document.querySelectorAll('.lg-item')[currentImageIndex];
+            if (linkElement) {
+                imageElement.alt = linkElement.getAttribute('data-title') || 'Gallery Image';
+            }
+        }
+
+        function nextImage() {
+            showImage(currentImageIndex + 1);
+        }
+
+        function previousImage() {
+            showImage(currentImageIndex - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const lightbox = document.getElementById('customLightbox');
+            if (lightbox.classList.contains('active')) {
+                if (e.key === 'Escape') {
+                    closeCustomLightbox();
+                } else if (e.key === 'ArrowRight') {
+                    nextImage();
+                } else if (e.key === 'ArrowLeft') {
+                    previousImage();
+                }
+            }
+        });
+
+        // Click outside to close
+        document.getElementById('customLightbox').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCustomLightbox();
+            }
+        });
+
+        // Simple test function
+        function testFilter(filter) {
             const filterButtons = document.querySelectorAll('.gallery-filter-btn');
             const galleryItems = document.querySelectorAll('.gallery-item');
 
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const filter = this.getAttribute('data-filter');
-
-                    // Update active button
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // Filter gallery items
-                    galleryItems.forEach(item => {
-                        const categories = item.getAttribute('data-categories');
-                        const categoryList = categories ? categories.split(',') : [];
-
-                        if (filter === 'all' || categoryList.includes(filter)) {
-                            item.style.display = 'block';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                });
+            // Remove active class from all buttons
+            filterButtons.forEach(function(btn) {
+                btn.classList.remove('active');
             });
 
-            // Initialize PhotoSwipe
-            const lightbox = new PhotoSwipeLightbox({
-                gallery: '#bootstrap-image-gallery',
-                children: '.lg-item',
-                showHideAnimationType: 'zoom',
+            // Add active class to clicked button
+            event.target.classList.add('active');
 
-                wheelToZoom: true,
-                pinchToClose: true,
-                close: true,
-                arrowPrev: true,
-                arrowNext: true,
-                zoom: true,
+            // Filter gallery items
+            galleryItems.forEach(function(item) {
+                const category = item.getAttribute('data-category');
 
-                // Loop images
-                loop: true,
+                if (filter === 'all' || category === filter) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
 
-                // Spacing between slides
-                spacing: 0.1,
+        // Run when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const galleryItems = document.querySelectorAll('.gallery-item');
 
-                // Background opacity
-                bgOpacity: 0.9,
-
-                // Close on escape
-                escKey: true,
-
-                // Arrow keys to navigate
-                arrowKeys: true,
-
-                // Allow touch move
-                allowTouchMove: true,
-
-                // Double click to zoom
-                doubleTapAction: 'zoom',
-
-                // Initial zoom level
-                initialZoomLevel: 'fit',
-
-                // Secondary zoom level
-                secondaryZoomLevel: 2,
-
-                // Max zoom level
-                maxZoomLevel: 3,
-
-                // Min zoom level
-                minZoomLevel: 'fit',
-
-                // Keyboard controls
-                keyboardControl: true,
-
-                // Mouse wheel zoom
-                mouseWheel: true,
-
-                // Close when clicked outside
-                closeOnBackdropClick: true,
-
-                // Image options
-                imageClickAction: 'zoom',
-                bgClickAction: 'close',
-
-                // Preload images
-                preload: [1, 1],
-
-                // Error message
-                errorMsg: 'Failed to load image.',
-
-                // Mobile options
-                mobileLayoutBreakpoint: 480,
-
-                // Focus management
-                returnFocus: true,
-
-                // A11y options
-                ariaLabel: 'Image gallery',
-
-                // Animation options
-                showAnimationDuration: 333,
-                hideAnimationDuration: 333,
-
-                // Zoom animation duration
-                zoomAnimationDuration: 333,
-
-                // Initial slide index
-                index: 0,
-
-                // Focus trap
-                focus: true,
-
-                // Trap focus within gallery
-                trapFocus: true,
-
-                // History API
-                history: false,
-
-                // Gallery ID for URL hash
-                galleryUID: 'gallery'
+            // Show all items initially
+            galleryItems.forEach(function(item) {
+                item.style.display = 'block';
             });
 
-            // Initialize the lightbox
-            lightbox.init();
+            // Lightbox2 will auto-detect images with data-lightbox attribute
+            // No manual initialization needed to avoid conflicts
 
             // Handle image load errors
-            document.querySelectorAll('.lg-item img').forEach(img => {
+            document.querySelectorAll('.lg-item img').forEach(function(img) {
                 img.addEventListener('error', function() {
                     this.style.display = 'none';
                     const parent = this.closest('.gallery-item');
