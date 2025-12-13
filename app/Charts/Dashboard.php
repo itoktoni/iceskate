@@ -27,6 +27,10 @@ class Dashboard
         $data = $asian = [];
         $tanggal = [];
 
+        $asian[] = 47.37;
+        $melbourne[] = 45.34;
+        $average[] = 44.35;
+
         foreach ($user as $tgl => $item) {
             $tanggal[] = $tgl;
 

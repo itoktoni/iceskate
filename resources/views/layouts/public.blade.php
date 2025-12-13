@@ -31,7 +31,7 @@
                         <div class="de-flex-col">
                             <!-- logo begin -->
                             <div id="logo">
-                                <a href="index.html">
+                                <a href="{{ url('/') }}">
                                     <img class="logo-main" src="{{ $logo_url }}" alt="" >
                                     <img class="logo-scroll" src="{{ $logo_url }}" alt="" >
                                     <img class="logo-mobile" src="{{ $logo_url }}" alt="" >
@@ -76,6 +76,20 @@
                                     @else
                                         <li>Menu items not found or empty.</li>
                                     @endif
+
+                                    @auth
+                                      <li>
+                                         <a class="menu-item" href="{{ route('signout') }}">
+                                            Logout
+                                        </a>
+                                      </li>
+                                      @else
+                                       <li>
+                                         <a class="menu-item" href="{{ route('login') }}">
+                                            Member
+                                        </a>
+                                      </li>
+                                    @endauth
                                 </ul>
                             </div>
                         </div>

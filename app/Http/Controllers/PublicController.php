@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Dao\Enums\Core\RoleType;
+use App\Dao\Models\Jadwal;
+use App\Dao\Models\Race;
 use App\Models\Menu;
 use App\Models\Page;
 use Plugins\Cms;
@@ -11,6 +14,17 @@ class PublicController extends Controller
     public function share($data)
     {
         $menu = Menu::slug('top')->first();
+        $jadwal = Jadwal::leftJoinRelationship('has_category')->get();
+        $performance = Race::select('*')
+            ->leftJoinRelationship('has_jarak')
+            ->leftJoinRelationship('has_user');
+
+        if(auth()->check() && auth()->user()->role == RoleType::User)
+        {
+            $performance = $performance->where('race_user_id', auth()->user()->id);
+        }
+
+        $performance = $performance->get();
 
         $default = [
             'logo_url' => Cms::logo_url(),
@@ -18,7 +32,9 @@ class PublicController extends Controller
             'website_email' => Cms::website_email(),
             'website_description' => Cms::website_description(),
             'website_phone' => Cms::website_phone(),
+            'performance' => $performance,
             'menu' => $menu,
+            'jadwal' => $jadwal,
         ];
 
         return array_merge($default, $data);
@@ -45,7 +61,7 @@ class PublicController extends Controller
         ]));
     }
 
-    public function gallery()
+    public function userprofile()
     {
        $page = Page::slug('gallery')->first();
        $template = $page->acf->template;

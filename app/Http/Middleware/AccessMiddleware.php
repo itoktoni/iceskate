@@ -130,6 +130,11 @@ class AccessMiddleware
             return redirect()->route('login');
         }
 
+        if((auth()->user()->level <= 1) || empty(auth()->user()->level))
+        {
+            return redirect()->route('public');
+        }
+
         $route = request()->route() ?? false;
         $action = $route->getAction();
         $action_code = $action['as'] ?? 'home';

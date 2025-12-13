@@ -20,6 +20,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as AuthMustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use MBarlow\Megaphone\HasMegaphone;
 use Mehradsadeghi\FilterQueryString\FilterQueryString as FilterQueryString;
@@ -160,5 +161,17 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifyUserQueue);
+    }
+
+    public static function boot()
+    {
+        parent::saving(function ($model) {
+
+            if(request()->has('password'))
+            {
+                $model->password = Hash::make(request()->get('password'));
+            }
+        });
+        parent::boot();
     }
 }

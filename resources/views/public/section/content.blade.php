@@ -3,7 +3,7 @@
         <div class="row g-4">
             <div class="col-lg-12 text-center">
                 <div class="spacer-double"></div>
-                <h1 class="mb-0">{{ $page->title ?? '' }}</h1>
+                <h1 class="mb-0">{{ $page->title ?? $data->title }}</h1>
                 <div class="spacer-double"></div>
             </div>
         </div>
