@@ -43,7 +43,7 @@ Auth::routes(['verify' => true]);
 Route::get('/', [PublicController::class, 'index'])->name('public');
 Route::get('/{slug}', [PublicController::class, 'page'])->name('public');
 Route::get('/blog/{slug}', [PublicController::class, 'blog'])->name('public');
-Route::post('/checkout', [PublicController::class, 'checkout'])->middleware('auth')->name('checkout');
+Route::get('/gallery', [PublicController::class, 'gallery'])->name('public');
 
 try {
     $routes = Query::groups();

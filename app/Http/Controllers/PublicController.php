@@ -34,9 +34,20 @@ class PublicController extends Controller
         ]));
     }
 
-     public function page($slug)
+    public function page($slug)
     {
        $page = Page::slug($slug)->first();
+       $template = $page->acf->template;
+
+        return view('public.homepage', $this->share([
+            'page' => $page,
+            'template' => $template
+        ]));
+    }
+
+    public function gallery()
+    {
+       $page = Page::slug('gallery')->first();
        $template = $page->acf->template;
 
         return view('public.homepage', $this->share([
