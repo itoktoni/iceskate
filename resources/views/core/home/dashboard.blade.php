@@ -6,26 +6,17 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h2 class="font-weight-bold mb-2">3.605</h2>
-                            <div id="detail">Click Here</div>
+                            <h2 class="font-weight-bold mb-2">
+                                @if(isset($user))
+                                    {{ count($user) }}
+                                @else
+                                    0
+                                @endif
+                            </h2>
+                            <div>Total Members</div>
                         </div>
                         <div>
-                            <span class="dashboard-pie-1" style="display: none;">2/5</span><svg class="peity" height="60" width="60"><path d="M 30.000000000000004 0 A 30 30 0 0 1 47.633557568774194 54.270509831248425 L 30 30" data-value="2" fill="rgba(21, 101, 192, 0.3)"></path><path d="M 47.633557568774194 54.270509831248425 A 30 30 0 1 1 29.999999999999993 0 L 30 30" data-value="3" fill="rgb(21, 101, 192)"></path></svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="font-weight-bold mb-2">3.137</h2>
-                            <div>View Through</div>
-                        </div>
-                        <div>
-                            <span class="dashboard-pie-2" style="display: none;">4/5</span><svg class="peity" height="60" width="60"><path d="M 30.000000000000004 0 A 30 30 0 1 1 1.4683045111453907 20.729490168751582 L 30 30" data-value="4" fill="rgba(0, 200, 81, 0.3)"></path><path d="M 1.4683045111453907 20.729490168751582 A 30 30 0 0 1 29.999999999999993 0 L 30 30" data-value="1" fill="rgb(0, 200, 81)"></path></svg>
+                            <i class="fas fa-users fa-2x text-primary"></i>
                         </div>
                     </div>
                 </div>
@@ -36,11 +27,17 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h2 class="font-weight-bold mb-2">8.765</h2>
-                            <div id="detail">Conversions</div>
+                            <h2 class="font-weight-bold mb-2">
+                                @if(isset($performance))
+                                    {{ $performance->count() }}
+                                @else
+                                    0
+                                @endif
+                            </h2>
+                            <div>Total Performance</div>
                         </div>
                         <div>
-                            <span class="dashboard-pie-3" style="display: none;">1/5</span><svg class="peity" height="60" width="60"><path d="M 30.000000000000004 0 A 30 30 0 0 1 58.53169548885461 20.72949016875158 L 30 30" data-value="1" fill="rgba(255, 187, 51, 0.3)"></path><path d="M 58.53169548885461 20.72949016875158 A 30 30 0 1 1 29.999999999999993 0 L 30 30" data-value="4" fill="rgb(255, 187, 51)"></path></svg>
+                            <i class="fas fa-chart-line fa-2x text-success"></i>
                         </div>
                     </div>
                 </div>
@@ -51,11 +48,38 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h2 class="font-weight-bold mb-2">68%</h2>
-                            <div id="reader">Retention</div>
+                            <h2 class="font-weight-bold mb-2">
+                                @if(isset($payment))
+                                    Rp {{ number_format($payment->sum('amount') ?? 0, 0, ',', '.') }}
+                                @else
+                                    Rp 0
+                                @endif
+                            </h2>
+                            <div>Total Payment</div>
                         </div>
                         <div>
-                            <span class="dashboard-pie-4" style="display: none;">2/5</span><svg class="peity" height="60" width="60"><path d="M 30.000000000000004 0 A 30 30 0 0 1 47.633557568774194 54.270509831248425 L 30 30" data-value="2" fill="rgba(51, 181, 229, 0.3)"></path><path d="M 47.633557568774194 54.270509831248425 A 30 30 0 1 1 29.999999999999993 0 L 30 30" data-value="3" fill="rgb(51, 181, 229)"></path></svg>
+                            <i class="fas fa-money-bill-wave fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="font-weight-bold mb-2">
+                                @if(isset($jadwal))
+                                    {{ $jadwal->count() }}
+                                @else
+                                    0
+                                @endif
+                            </h2>
+                            <div>Total Jadwal</div>
+                        </div>
+                        <div>
+                            <i class="fas fa-calendar-alt fa-2x text-info"></i>
                         </div>
                     </div>
                 </div>
@@ -66,87 +90,600 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-body">
-                    <x-form-select col="6" id="user" name="user" label="User" :options="$user" />
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-0">Performance by Distance</h4>
+                        <small class="text-muted">Select a specific user or choose "All Users" to view all performance data</small>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div class="form-group mb-0">
+                            <select id="user" name="user" class="form-control" style="min-width: 150px;">
+                                <option value="">All Users</option>
+                                    @foreach($user as $userId => $userName)
+                                        <option value="{{ $userId }}">{{ $userName }}</option>
+                                    @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <canvas id="dashboardChart" width="400" height="200"></canvas>
+                    @if(isset($performance) && $performance->count() > 0)
+                        @php
+                            // Group performance data by distance (jarak) like PublicController
+                            $groupedPerformance = $performance->groupBy('jarak_nama');
+                        @endphp
+
+                        @foreach($groupedPerformance as $distance => $records)
+                        <div class="row mb-5">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">{{ $distance }} Performance Chart</h5>
+                                        <small class="text-muted">{{ $records->count() }} records</small>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
+                                            <canvas id="dashboardChart-{{ Str::slug($distance) }}"></canvas>
+                                        </div>
+                                        <div class="row mt-3 text-center">
+                                            <div class="col-4">
+                                                <small class="text-muted">Total Records</small>
+                                                <div class="h6" id="total-{{ Str::slug($distance) }}">{{ $records->count() }}</div>
+                                            </div>
+                                            <div class="col-4">
+                                                <small class="text-muted">Average Time</small>
+                                                <div class="h6" id="avg-{{ Str::slug($distance) }}">{{ number_format($records->avg('race_waktu'), 2) }}s</div>
+                                            </div>
+                                            <div class="col-4">
+                                                <small class="text-muted">Best Time</small>
+                                                <div class="h6" id="best-{{ Str::slug($distance) }}">{{ number_format($records->min('race_waktu'), 2) }}s</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    @else
+                        <div class="text-center py-5">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Performance Data Available</h5>
+                            <p class="text-muted">Performance charts will appear here when data is available.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 
+
     @push('footer')
 
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Chart.js and plugins -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
     <script>
+        let charts = {};
+        let performanceData = {};
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle user selection and add query string
-            function handleUserSelection() {
-                const userSelect = document.getElementById('user');
-                if (userSelect) {
-                    // Set current selected value if exists in URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const selectedUser = urlParams.get('user');
-                    if (selectedUser) {
-                        userSelect.value = selectedUser;
+            // Initialize all components
+            initializeCharts();
+            handleUserSelection();
+            initializePeityCharts();
+        });
+
+        function initializePeityCharts() {
+            // Initialize the existing peity charts with better styling
+            if (typeof $.fn.peity !== 'undefined') {
+                $('.peity').each(function() {
+                    const $this = $(this);
+                    const type = $this.data('type') || 'pie';
+                    $this.peity(type, {
+                        radius: 30,
+                        innerRadius: 20,
+                        fill: ['#3f51b5', '#f44336', '#ff9800', '#4caf50', '#2196f3', '#9c27b0']
+                    });
+                });
+            }
+        }
+
+        function handleUserSelection() {
+            const userSelect = document.getElementById('user');
+            if (userSelect) {
+                // Set current selected value if exists in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const selectedUser = urlParams.get('user');
+                if (selectedUser) {
+                    userSelect.value = selectedUser;
+                } else {
+                    // Default to "All Users" if no user parameter in URL
+                    userSelect.value = '';
+                }
+
+                userSelect.addEventListener('change', function() {
+                    const selectedValue = this.value;
+
+                    // Update URL without reloading page
+                    const currentUrl = new URL(window.location);
+                    if (selectedValue && selectedValue !== '') {
+                        currentUrl.searchParams.set('user', selectedValue);
+                    } else {
+                        currentUrl.searchParams.delete('user');
                     }
+                    window.history.replaceState({}, '', currentUrl);
 
-                    userSelect.addEventListener('change', function() {
-                        const selectedValue = this.value;
-                        const currentUrl = new URL(window.location);
+                    // Update charts and statistics dynamically
+                    updateChartsForUser(selectedValue);
+                    updateStatistics(selectedValue);
+                });
+            }
+        }
 
-                        if (selectedValue && selectedValue !== '') {
-                            currentUrl.searchParams.set('user', selectedValue);
-                        } else {
-                            currentUrl.searchParams.delete('user');
-                        }
+        function initializeCharts() {
+            try {
+                // Performance data from PHP grouped by distance
+                performanceData = @json($performance->groupBy('jarak_nama') ?? []);
 
-                        window.location.href = currentUrl.toString();
+                // Create charts for each distance group (using line charts)
+                Object.keys(performanceData).forEach(distance => {
+                    createChartForDistance(distance);
+                });
+
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
+        }
+
+        function createChartForDistance(distance, chartType = 'line') {
+            const canvasId = `dashboardChart-${distance.toLowerCase().replace(/\s+/g, '-')}`;
+            const ctx = document.getElementById(canvasId);
+
+            if (!ctx) return;
+
+            // Destroy existing chart
+            if (charts[distance]) {
+                charts[distance].destroy();
+            }
+
+            const records = performanceData[distance] || [];
+
+            // Group records by user for multi-user display
+            const userGroups = {};
+            records.forEach(record => {
+                const userId = record.race_user_id;
+                const userName = record.name || 'User ' + userId;
+                if (!userGroups[userName]) {
+                    userGroups[userName] = [];
+                }
+                userGroups[userName].push(record);
+            });
+
+            // Prepare datasets
+            const datasets = [];
+            const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14'];
+            let colorIndex = 0;
+
+            Object.keys(userGroups).forEach(userName => {
+                const userRecords = userGroups[userName];
+                const userTimes = userRecords.map(record => parseFloat(record.race_waktu));
+                const dates = userRecords.map(record => record.race_tanggal);
+
+                datasets.push({
+                    label: userName,
+                    data: userTimes,
+                    borderColor: colors[colorIndex % colors.length],
+                    backgroundColor: colors[colorIndex % colors.length] + '20',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: colors[colorIndex % colors.length],
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                });
+
+                colorIndex++;
+            });
+
+            // Add target lines if available
+            if (records.length > 0) {
+                const labels = records.map(record => record.race_tanggal);
+                const asianTarget = records.map(record => parseFloat(record.jarak_asian || 0));
+                const australiaTarget = records.map(record => parseFloat(record.jarak_australia || 0));
+
+                if (asianTarget.some(val => val > 0)) {
+                    datasets.push({
+                        label: 'Asian Target',
+                        data: asianTarget,
+                        borderColor: '#17a2b8',
+                        backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.1
+                    });
+                }
+
+                if (australiaTarget.some(val => val > 0)) {
+                    datasets.push({
+                        label: 'Australia Target',
+                        data: australiaTarget,
+                        borderColor: '#6c757d',
+                        backgroundColor: 'rgba(108, 117, 125, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [10, 5],
+                        fill: false,
+                        tension: 0.1
                     });
                 }
             }
 
-            // Initialize user selection handler
-            handleUserSelection();
-
-            // Initialize Chart.js
-            const ctx = document.getElementById('dashboardChart').getContext('2d');
-
-            // Chart data from PHP
-            const chartData = @json($chart ?? []);
-
-            new Chart(ctx, {
+            const config = {
                 type: 'line',
                 data: {
-                    labels: chartData.labels || [],
-                    datasets: chartData.datasets || []
+                    labels: records.map(record => record.race_tanggal),
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
                     plugins: {
                         title: {
-                            display: true,
-                            text: 'Performance Atlet'
+                            display: false
                         },
-                        subtitle: {
-                            display: false,
-                            text: 'Bimo vs Asian Open 2025'
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#007bff',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            displayColors: true,
+                            callbacks: {
+                                title: function(context) {
+                                    return 'Date: ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + ' seconds';
+                                }
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: false,
-                            reverse: true // This inverts the Y-axis - smaller numbers at top
+                            reverse: true,
+                            title: {
+                                display: true,
+                                text: 'Time (seconds)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
                         },
                         x: {
-                            beginAtZero: false
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
                         }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
                     }
                 }
+            };
+
+            charts[distance] = new Chart(ctx, config);
+        }
+
+        function updateChartsForUser(userId) {
+            console.log('Filtering charts for user:', userId);
+
+            // Filter data based on selected user
+            Object.keys(charts).forEach(distance => {
+                const records = performanceData[distance] || [];
+
+                let filteredRecords = records;
+                if (userId && userId !== '') {
+                    filteredRecords = records.filter(record => record.race_user_id == userId);
+                }
+
+                // Recreate chart with filtered data
+                createChartForDistance(distance, filteredRecords);
             });
+        }
+
+        function updateStatistics(userId) {
+            // Update statistics for each distance
+            Object.keys(performanceData).forEach(distance => {
+                const records = performanceData[distance] || [];
+
+                let filteredRecords = records;
+                if (userId && userId !== '') {
+                    filteredRecords = records.filter(record => record.race_user_id == userId);
+                }
+
+                // Update DOM elements
+                const totalElement = document.getElementById(`total-${distance.toLowerCase().replace(/\s+/g, '-')}`);
+                const avgElement = document.getElementById(`avg-${distance.toLowerCase().replace(/\s+/g, '-')}`);
+                const bestElement = document.getElementById(`best-${distance.toLowerCase().replace(/\s+/g, '-')}`);
+
+                if (totalElement) totalElement.textContent = filteredRecords.length;
+                if (avgElement && filteredRecords.length > 0) {
+                    const avg = filteredRecords.reduce((sum, r) => sum + parseFloat(r.race_waktu), 0) / filteredRecords.length;
+                    avgElement.textContent = avg.toFixed(2) + 's';
+                }
+                if (bestElement && filteredRecords.length > 0) {
+                    const best = Math.min(...filteredRecords.map(r => parseFloat(r.race_waktu)));
+                    bestElement.textContent = best.toFixed(2) + 's';
+                }
+            });
+        }
+
+        function createChartForDistance(distance, records = null) {
+            const canvasId = `dashboardChart-${distance.toLowerCase().replace(/\s+/g, '-')}`;
+            const ctx = document.getElementById(canvasId);
+
+            if (!ctx) return;
+
+            // Destroy existing chart
+            if (charts[distance]) {
+                charts[distance].destroy();
+            }
+
+            const data = records || performanceData[distance] || [];
+
+            // If no data for this user/distance combination
+            if (data.length === 0) {
+                // Clear the canvas and show no data message
+                const parent = ctx.parentElement;
+                parent.innerHTML = '<div class="text-center py-5"><p class="text-muted">No data available for selected user</p></div>';
+                return;
+            }
+
+            // Restore the canvas if it was cleared
+            if (ctx.closest('.text-center')) {
+                const chartContainer = ctx.closest('.chart-container');
+                chartContainer.innerHTML = `<canvas id="dashboardChart-${distance.toLowerCase().replace(/\s+/g, '-')}"></canvas>`;
+            }
+
+            // Re-get the canvas after restoration
+            const newCtx = document.getElementById(canvasId).getContext('2d');
+
+            // Group records by user for multi-user display
+            const userGroups = {};
+            data.forEach(record => {
+                const userId = record.race_user_id;
+                const userName = record.name || 'User ' + userId;
+                if (!userGroups[userName]) {
+                    userGroups[userName] = [];
+                }
+                userGroups[userName].push(record);
+            });
+
+            // Prepare datasets
+            const datasets = [];
+            const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14'];
+            let colorIndex = 0;
+
+            Object.keys(userGroups).forEach(userName => {
+                const userRecords = userGroups[userName];
+                const userTimes = userRecords.map(record => parseFloat(record.race_waktu));
+                const dates = userRecords.map(record => record.race_tanggal);
+
+                datasets.push({
+                    label: userName,
+                    data: userTimes,
+                    borderColor: colors[colorIndex % colors.length],
+                    backgroundColor: colors[colorIndex % colors.length] + '20',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: colors[colorIndex % colors.length],
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                });
+
+                colorIndex++;
+            });
+
+            // Add target lines if available
+            if (data.length > 0) {
+                const labels = data.map(record => record.race_tanggal);
+                const asianTarget = data.map(record => parseFloat(record.jarak_asian || 0));
+                const australiaTarget = data.map(record => parseFloat(record.jarak_australia || 0));
+
+                if (asianTarget.some(val => val > 0)) {
+                    datasets.push({
+                        label: 'Asian Target',
+                        data: asianTarget,
+                        borderColor: '#17a2b8',
+                        backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.1
+                    });
+                }
+
+                if (australiaTarget.some(val => val > 0)) {
+                    datasets.push({
+                        label: 'Australia Target',
+                        data: australiaTarget,
+                        borderColor: '#6c757d',
+                        backgroundColor: 'rgba(108, 117, 125, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [10, 5],
+                        fill: false,
+                        tension: 0.1
+                    });
+                }
+            }
+
+            const config = {
+                type: 'line',
+                data: {
+                    labels: data.map(record => record.race_tanggal),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        title: {
+                            display: false
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#007bff',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            displayColors: true,
+                            callbacks: {
+                                title: function(context) {
+                                    return 'Date: ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + ' seconds';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            reverse: true,
+                            title: {
+                                display: true,
+                                text: 'Time (seconds)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            };
+
+            charts[distance] = new Chart(newCtx, config);
+        }
+
+        // Resize charts on window resize
+        window.addEventListener('resize', function() {
+            Object.values(charts).forEach(chart => chart.resize());
         });
     </script>
+
+    <style>
+        .chart-container {
+            min-height: 400px;
+        }
+
+        .btn-group .btn.active {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                min-height: 300px;
+            }
+
+            .btn-group {
+                margin-top: 10px;
+            }
+        }
+    </style>
     @endpush
 
 </x-layout>

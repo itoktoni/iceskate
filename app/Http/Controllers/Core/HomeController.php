@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Core;
 
 use App\Charts\Dashboard;
+use App\Dao\Enums\Core\RoleType;
+use App\Dao\Models\Race;
 use App\Dao\Traits\RedirectAuth;
 use App\Http\Controllers\Controller;
 use Plugins\Query;
@@ -53,9 +55,21 @@ class HomeController extends Controller
 
         $user = Query::getUser();
 
+        $performance = Race::select('*')
+            ->leftJoinRelationship('has_jarak')
+            ->leftJoinRelationship('has_user');
+
+        if(auth()->check() && auth()->user()->role == RoleType::User)
+        {
+            $performance = $performance->where('race_user_id', auth()->user()->id);
+        }
+
+        $performance = $performance->get();
+
         return view('core.home.dashboard', [
             'chart' => $chart->build(request()),
-            'user' => $user
+            'user' => $user,
+            'performance' => $performance,
         ]);
     }
 
