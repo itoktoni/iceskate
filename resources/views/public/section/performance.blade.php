@@ -1,3 +1,4 @@
+@if(!empty($data->image->guid))
 <section class="text-light relative" data-bgimage="url('{{ $data->image->guid ?? null }}') top">
     <div class="container relative z-2">
         <div class="row g-4">
@@ -11,6 +12,7 @@
     <div class="sw-overlay op-8"></div>
     <div class="gradient-edge-bottom"></div>
 </section>
+@endif
 
 <section>
     <div class="container mb-5">

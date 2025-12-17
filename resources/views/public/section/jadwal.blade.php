@@ -1,11 +1,31 @@
+@if(!empty($data->image->guid))
+<section class="text-light relative" data-bgimage="url('{{ $data->image->guid ?? null }}') top">
+    <div class="container relative z-2">
+        <div class="row g-4">
+            <div class="col-lg-12 text-center">
+                <div class="spacer-double"></div>
+                <h1 class="mb-0">{{ $page->title ?? $data->title }}</h1>
+                 {!! nl2br($data->content) ?? '' !!}
+
+                <div class="spacer-double"></div>
+            </div>
+        </div>
+    </div>
+    <div class="sw-overlay op-8"></div>
+    <div class="gradient-edge-bottom"></div>
+</section>
+@endif
+
 <section>
     <div class="container">
+        @if(empty($data->image->guid))
         <div class="row">
             <div class="col-lg-12 text-center mb-5">
                 <h1 class="mb-0">{{ $data->title ?? 'Jadwal' }}</h1>
                  {!! nl2br($data->content) ?? '' !!}
             </div>
         </div>
+        @endif
 
         <!-- Calendar Container -->
         <div class="row">
