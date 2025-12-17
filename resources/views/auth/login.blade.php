@@ -7,7 +7,7 @@
 
     <h2 class="logo">
         <img class="logo"
-        src="{{ env('APP_LOGO') ? url('storage/' . env('APP_LOGO')) : url('assets/media/image/logo.png') }}">
+        src="{{ Cms::logo_url() }}">
     </h2>
 
     <h3>Login Form</h3>

@@ -29,6 +29,12 @@ class Payment extends SystemModel
         'payment_code' => 'string',
     ];
 
+    protected $filters = [
+        'filter',
+        'id',
+        'jadwal_id',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *

@@ -3,7 +3,7 @@
 		<td></td>
 		<td colspan="8">
 			<h3>
-				<b>Report Data Pembayaran</b>
+				<b>Report Data Performance</b>
 			</h3>
 		</td>
 		<td rowspan="3">
@@ -14,7 +14,7 @@
 		<td></td>
 		<td colspan="10">
 			<h3>
-				laporan data pembayaran berdasarkan tanggal
+				laporan data Performance berdasarkan tanggal
 			</h3>
 		</td>
 	</tr>
@@ -34,43 +34,28 @@
 		<thead>
 			<tr>
 				<th width="1">No. </th>
-				<th>CODE PEMBAYARAN</th>
-				<th>JADWAL</th>
 				<th>TANGGAL</th>
 				<th>NAMA USER</th>
-				<th>JUMLAH</th>
-				<th>STATUS</th>
-				<th>TANGGAL APPROVE</th>
+				<th>JADWAL</th>
+				<th>WAKTU</th>
+				<th>CATATAN</th>
 			</tr>
 		</thead>
 		<tbody>
-			@php
-			$total_pembayaran = 0;
-			@endphp
 
 			@forelse($data as $table)
 			<tr>
 				<td>{{ $loop->iteration }}</td>
-				<td>{{ $table->code }}</td>
-				<td>{{ $table->jadwal_nama }}</td>
-				<td>{{ $table->jadwal_tanggal }}</td>
+				<td>{{ formatDate($table->race_tanggal) }}</td>
 				<td>{{ $table->name ?? 'User tidak ditemukan' }}</td>
-				<td>Rp {{ number_format($table->amount ?? 0, 0, ',', '.') }}</td>
-				<td>
-					@if($table->payment == 1)
-						<span class="badge bg-success">PAID</span>
-					@else
-						<span class="badge bg-danger">UNPAID</span>
-					@endif
-				</td>
-				<td>{{ formatDate($table->tanggal) }}</td>
+				<td>{{ $table->jadwal_nama }}</td>
+				<td>{{ number_format($table->race_waktu, 2) }}</td>
+				<td>{{ $table->race_notes }}</td>
 			</tr>
-			@php
-			$total_pembayaran += $table->amount ?? 0;
-			@endphp
+
 			@empty
 			<tr>
-				<td colspan="7" class="text-center">Tidak ada data pembayaran</td>
+				<td colspan="7" class="text-center">Tidak ada data peformance</td>
 			</tr>
 			@endforelse
 

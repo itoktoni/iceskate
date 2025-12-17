@@ -3,7 +3,7 @@
 namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
-
+use App\Facades\Model\PinjamModel;
 
 /**
  * Class Asset
@@ -37,6 +37,11 @@ class Asset extends SystemModel
     public function getFieldNameAttribute()
     {
         return $this->{$this->field_name()};
+    }
+
+    public function has_pinjam()
+    {
+        return $this->hasMany(PinjamModel::getModel(), 'pinjam_asset_id', Asset::field_primary());
     }
 
 }

@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Dao\Models\Payment;
+use App\Dao\Models\Asset;
+use App\Dao\Models\Jarak;
+use App\Dao\Models\Race;
 use App\Http\Controllers\Core\ReportController;
 use Illuminate\Http\Request;
 use Plugins\Query;
 
-class ReportPembayaranController extends ReportController
+class ReportAssetController extends ReportController
 {
     public $data;
 
-    public function __construct(Payment $model)
+    public function __construct(Race $model)
     {
         $this->model = $model::getModel();
     }
@@ -19,28 +21,17 @@ class ReportPembayaranController extends ReportController
     protected function beforeForm()
     {
         $user = Query::getUser();
-        $jadwal = Query::getJadwal();
+        $asset = Asset::getOptions();
 
         self::$share = [
             'user' => $user,
-            'jadwal' => $jadwal,
+            'asset' => $asset,
         ];
     }
 
     public function getData()
     {
-        $query = Payment::query()->filter();
-
-        if($start = request()->get('start_date'))
-        {
-            $query = $query->whereDate('jadwal_tanggal','>=', $start);
-        }
-
-        if($start = request()->get('end_date'))
-        {
-            $query = $query->whereDate('jadwal_tanggal', '<=',$start);
-        }
-
+        $query = Asset::with('has_pinjam', 'has_pinjam.has_user');
 
         // Join with user data to get payment information
         return $query->get();

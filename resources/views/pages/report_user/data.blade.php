@@ -3,7 +3,7 @@
 		<td></td>
 		<td colspan="6">
 			<h3>
-				<b>Report Data User</b>
+				<b>Report Data Member</b>
 			</h3>
 		</td>
 		<td rowspan="3">
@@ -14,7 +14,7 @@
 		<td></td>
 		<td colspan="10">
 			<h3>
-				laporan data user berdasarkan tanggal register
+				laporan data Member berdasarkan tanggal register
 			</h3>
 		</td>
 	</tr>
@@ -35,10 +35,12 @@
 			<tr>
 				<th width="1">No. </th>
 				<th>ID USER</th>
-				<th>NAMA USER</th>
+				<th>CATEGORY</th>
+				<th>NAMA MEMBER</th>
+				<th>STATUS</th>
 				<th>USERNAME</th>
 				<th>EMAIL</th>
-				<th>TANGGAL</th>
+				<th>TANGGAL JOIN</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -50,7 +52,9 @@
 			<tr>
 				<td>{{ $loop->iteration }}</td>
 				<td>{{ $table->field_primary }}</td>
+				<td>{{ $table->category_nama }}</td>
 				<td>{{ $table->field_name }}</td>
+				<td>{{ $table->member ?? 'TRIAL' }}</td>
 				<td>{{ $table->field_username }}</td>
 				<td>{{ $table->field_email }}</td>
 				<td>{{ formatDate($table->created_at) }}</td>
@@ -64,7 +68,7 @@
 
 <table class="footer">
 	<tr>
-		<td colspan="2" class="print-date">{{ env('APP_LOCATION') }}, {{ date('d F Y') }}</td>
+		<td colspan="2" class="print-date">{{ date('d F Y') }}</td>
 	</tr>
 	<tr>
 		<td colspan="2" class="print-person">{{ auth()->user()->name ?? '' }}</td>

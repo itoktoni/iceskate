@@ -70,7 +70,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     protected $filters = [
         'filter',
         'name',
-        'system_role_name',
+        'id',
     ];
 
     protected $hidden = [
@@ -115,16 +115,6 @@ class User extends Authenticatable implements AuthMustVerifyEmail
         ];
     }
 
-    public function has_role()
-    {
-        return $this->hasOne(RoleModel::getModel(), RoleModel::field_key(), UserModel::field_role());
-    }
-
-    public function has_category()
-    {
-        return $this->hasOne(CategoryModel::getModel(), CategoryModel::field_key(), UserModel::field_category());
-    }
-
     public function roleNameSortable($query, $direction)
     {
         $query = $this->queryFilter($query);
@@ -161,6 +151,16 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifyUserQueue);
+    }
+
+    public function has_role()
+    {
+        return $this->hasOne(RoleModel::getModel(), RoleModel::field_key(), UserModel::field_role());
+    }
+
+    public function has_category()
+    {
+        return $this->hasOne(CategoryModel::getModel(), CategoryModel::field_key(), UserModel::field_category());
     }
 
     public static function boot()

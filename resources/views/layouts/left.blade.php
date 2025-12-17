@@ -53,7 +53,7 @@
 	<div class="navigation-header">
 		<div id="navigation-logo">
 			<a href="{{ url('/') }}">
-				<img class="logo" src="{{ logoUrl() }}" alt="logo">
+				<img class="logo" style="width: 90%;margin-left:10px" src="{{ Cms::logo_url() }}" alt="logo">
 			</a>
 		</div>
 	</div>

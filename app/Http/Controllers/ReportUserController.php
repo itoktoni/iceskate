@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Dao\Enums\Core\RoleType;
+use App\Dao\Models\Core\User;
 use App\Facades\Model\UserModel;
 use App\Http\Controllers\Core\ReportController;
 use App\Jobs\JobExportCsvUser;
@@ -18,9 +20,23 @@ class ReportUserController extends ReportController
 
     public function getData()
     {
-        $query = $this->model->dataRepository();
+        $query = User::select('*')
+            ->leftJoinRelationship('has_category')
+            ->leftJoinRelationship('has_role')
+            ->where('role', RoleType::User)
+            ->filter();
 
-        return $query;
+        if($start = request()->get('start_date'))
+        {
+            $query = $query->whereDate('created_at','>=', $start);
+        }
+
+        if($start = request()->get('end_date'))
+        {
+            $query = $query->whereDate('created_at', '<=',$start);
+        }
+
+        return $query->get();
     }
 
     public function getPrint(Request $request)
