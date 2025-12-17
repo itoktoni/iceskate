@@ -187,7 +187,7 @@
     }
 
     .calendar-header {
-        background: #007bff;
+        background: #36b5f5;
         color: white;
         padding: 20px;
         display: flex;
@@ -257,7 +257,7 @@
     }
 
     .calendar-day.today {
-        background: #007bff;
+        background: #36b5f5;
         color: white;
         font-weight: bold;
     }
@@ -280,7 +280,7 @@
     }
 
     .schedule-item {
-        border-left: 4px solid #007bff;
+        border-left: 4px solid #36b5f5;
         padding: 15px;
         margin-bottom: 15px;
         background: #f8f9fa;
@@ -289,7 +289,7 @@
 
     .schedule-title {
         margin: 0 0 5px 0;
-        color: #007bff;
+        color: #36b5f5;
     }
 
     .schedule-time {
