@@ -9,9 +9,12 @@
                 <x-filter toggle="Filter" :fields="$fields" />
             </x-form>
 
-            <x-form method="POST" action="{{ moduleRoute('getTable') }}">
+            <x-form method="POST" :upload="true" action="{{ moduleRoute('getTable') }}">
 
-                <x-action />
+                <x-action>
+                    <input type="file" name="file" accept=".xls,.xlsx" class="btn btn-primary btn-sm pb-2">
+                    <x-button type="submit" label="Upload" class="btn-dark" name="upload" />
+                </x-action>
 
                 <div class="container-fluid" id="table">
                     <div class="table-responsive">
@@ -27,7 +30,6 @@
                                             {{ __($value->name) }}
                                         </th>
                                     @endforeach
-                                    <th>Category</th>
                                     <th>Tanggal</th>
                                     <th>Keterangan</th>
                                 </tr>
@@ -47,7 +49,6 @@
 
 										<td >{{ $table->jadwal_id }}</td>
 										<td >{{ $table->jadwal_nama }}</td>
-										<td >{{ $table->category_nama }}</td>
 										<td >{{ $table->jadwal_tanggal }}</td>
 										<td >{{ $table->jadwal_keterangan }}</td>
 

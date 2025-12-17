@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Dao\Models\Category;
 use App\Dao\Models\Core\User;
 use App\Dao\Models\Jarak;
+use App\Dao\Models\Race;
 use App\Http\Controllers\Core\MasterController;
 use App\Http\Function\CreateFunction;
 use App\Http\Function\UpdateFunction;
 use App\Services\Master\SingleService;
 use App\Facades\Model\RaceModel;
+use Plugins\Alert;
 use Plugins\Query;
+use Plugins\Response;
+use Spatie\SimpleExcel\SimpleExcelReader;
+
 
 class RaceController extends MasterController
 {
@@ -46,6 +51,75 @@ class RaceController extends MasterController
             'model' => $this->get($code),
             'absen' => $absen,
         ]));
+    }
+
+    public function postTable()
+    {
+        if (request()->exists('delete')) {
+            if (empty(request()->get('code'))) {
+                Alert::error('Pilih data yang akan di hapus');
+                return redirect()->back();
+            }
+
+            $code = array_unique(request()->get('code'));
+            $data = self::$service->delete($this->model, $code);
+        }
+
+        if (request()->has('file')) {
+            $file = request()->file('file');
+
+            if (!empty($file)) {
+
+                set_time_limit(0);
+                ini_set('max_execution_time', 0);
+
+                $extension = $file->extension();
+                $name = time() . '.' . $extension;
+
+                $file->storeAs('/public/files/race/', $name);
+                $category = [];
+
+                $rows = SimpleExcelReader::create(storage_path('app/public/files/race/' . $name))
+                    ->noHeaderRow()
+                    ->getRows()
+                    ->each(function (array $row) use ($category) {
+                        if ($row[0] != "User ID") {
+
+                            $nama = $row[0] ?? null;
+                            $jarak = $row[1] ?? null;
+                            $tanggal = ($row[2])->format('Y-m-d') ?? $row[2] ?? null;
+                            $waktu = $row[3] ?? null;
+                            $keterangan = $row[4] ?? null;
+
+                            $this->insert[] = [
+                                'race_user_id' => $nama,
+                                'race_jarak_id' => $jarak,
+                                'race_tanggal' => $tanggal,
+                                'race_waktu' => $waktu,
+                                'race_notes' => $keterangan,
+                            ];
+
+                        }
+                    });
+
+                    // dd($this->insert);
+
+                if(!empty($this->insert))
+                {
+                    try {
+
+                        Race::insert($this->insert);
+                        Alert::create('Data berhasil di upload');
+
+                    } catch (\Throwable $th) {
+                        Alert::error($th->getMessage());
+                    }
+                }
+            }
+
+        }
+
+        return Response::redirectBack();
     }
 
 }

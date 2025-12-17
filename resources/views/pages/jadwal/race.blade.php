@@ -10,11 +10,10 @@
             <div class="row">
                 @bind($model)
 
-                <x-form-select col="3" name="jadwal_category_id" label="Category" :options="$category" />
-                <x-form-select col="3" required name="jarak_id" label="Jarak" :options="$jarak" />
-                <x-form-input col="3" type="date" value="{{ $model->jadwal_tanggal ?? date('Y-m-d') }}" name="jadwal_tanggal" />
-                <x-form-select col="3" name="jadwal_nama" label="Type" :options="$jadwal" />
-                <x-form-textarea col="12" name="jadwal_keterangan" />
+                <x-form-select col="2" required name="jarak_id" label="Jarak" :options="$jarak" />
+                <x-form-input col="2" type="date" value="{{ $model->jadwal_tanggal ?? date('Y-m-d') }}" name="jadwal_tanggal" />
+                <x-form-select col="2" name="jadwal_nama" label="Type" :options="$jadwal" />
+                <x-form-textarea col="6" name="jadwal_keterangan" />
 
                 @if ($model)
 

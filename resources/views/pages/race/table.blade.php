@@ -9,9 +9,12 @@
                 <x-filter toggle="Filter" :fields="$fields" />
             </x-form>
 
-            <x-form method="POST" action="{{ moduleRoute('getTable') }}">
+            <x-form method="POST" :upload="true" action="{{ moduleRoute('getTable') }}">
 
-                <x-action />
+                <x-action>
+                    <input type="file" name="file" accept=".xls,.xlsx" class="btn btn-primary btn-sm pb-2">
+                    <x-button type="submit" label="Upload" class="btn-dark" name="upload" />
+                </x-action>
 
                 <div class="container-fluid" id="table">
                     <div class="table-responsive">
