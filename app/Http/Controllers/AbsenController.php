@@ -34,7 +34,8 @@ class AbsenController extends MasterController
         $model = Payment::where('payment_code', strval($code))->first();
         Absen::where('jadwal_id', $model->jadwal_id)->where('id', $model->id)->update([
             'payment' => 1,
-            'code' => date('Ymd').strtoupper(unic(5))
+            'code' => date('Ymd').strtoupper(unic(5)),
+            'payment_date' => date('Y-m-d')
         ]);
 
         return redirect()->back();
@@ -48,6 +49,7 @@ class AbsenController extends MasterController
 
         Absen::where('jadwal_id', $model->jadwal_id)->where('id', $model->id)->update([
             'payment' => null,
+            'payment_date' => null,
             'code' => null
         ]);
 
