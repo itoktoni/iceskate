@@ -171,7 +171,6 @@
             padding: 20px;
             background: rgba(0,0,0,0.7);
             margin-top: 15px;
-            border-radius: 8px;
             font-size: 16px;
             line-height: 1.5;
             max-width: 80vw;
