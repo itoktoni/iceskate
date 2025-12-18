@@ -405,7 +405,6 @@
             background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 4px 12px;
-            border-radius: 4px;
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
