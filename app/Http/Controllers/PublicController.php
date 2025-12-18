@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Dao\Enums\Core\RoleType;
+use App\Dao\Models\Core\User;
 use App\Dao\Models\Jadwal;
 use App\Dao\Models\Race;
 use App\Models\Menu;
@@ -15,6 +16,7 @@ class PublicController extends Controller
     {
         $menu = Menu::slug('top')->first();
         $jadwal = Jadwal::leftJoinRelationship('has_category')->get();
+        $user = User::with('has_category')->find(auth()->user()->id);
         $performance = Race::select('*')
             ->leftJoinRelationship('has_jarak')
             ->leftJoinRelationship('has_user');
@@ -35,6 +37,7 @@ class PublicController extends Controller
             'performance' => $performance,
             'menu' => $menu,
             'jadwal' => $jadwal,
+            'user' => $user,
         ];
 
         return array_merge($default, $data);

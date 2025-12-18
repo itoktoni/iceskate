@@ -57,6 +57,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
         'vendor',
         'active',
         'category',
+        'address',
         'member',
         'email_verified_at',
     ];
@@ -126,7 +127,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     public function dataRepository()
     {
         $query = $this
-            ->select($this->getSelectedField())
+            ->select('*')
             ->leftJoinRelationship('has_category')
             ->leftJoinRelationship('has_role')
             ->active()

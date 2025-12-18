@@ -1,17 +1,17 @@
-@if(!empty($data->image->guid))
-<section class="text-light relative" data-bgimage="url('{{ $data->image->guid ?? null }}') top">
-    <div class="container relative z-2">
-        <div class="row g-4">
-            <div class="col-lg-12 text-center">
-                <div class="spacer-double"></div>
-                <h1 class="mb-0">{{ $page->title ?? $data->title }}</h1>
-                <div class="spacer-double"></div>
+@if (!empty($data->image->guid))
+    <section class="text-light relative" data-bgimage="url('{{ $data->image->guid ?? null }}') top">
+        <div class="container relative z-2">
+            <div class="row g-4">
+                <div class="col-lg-12 text-center">
+                    <div class="spacer-double"></div>
+                    <h1 class="mb-0">{{ $page->title ?? $data->title }}</h1>
+                    <div class="spacer-double"></div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="sw-overlay op-8"></div>
-    <div class="gradient-edge-bottom"></div>
-</section>
+        <div class="sw-overlay op-8"></div>
+        <div class="gradient-edge-bottom"></div>
+    </section>
 @endif
 
 <section>
@@ -19,47 +19,100 @@
 
         <!-- User Selection and Performance Charts -->
         <div class="row mb-4">
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <label for="userSelect" class="form-label">Select User</label>
-                        <select class="form-select" id="userSelect" onchange="filterPerformanceData()">
-                            <option value="all">All Users</option>
-                            @if(isset($performance) && $performance->count() > 0)
-                                @php
-                                    $uniqueUsers = $performance->unique('race_user_id')->values();
-                                @endphp
-                                @foreach($uniqueUsers as $userRecord)
-                                    <option value="{{ $userRecord->race_user_id }}">
-                                        {{ $userRecord->name ?? 'User ' . $userRecord->race_user_id }}
-                                    </option>
-                                @endforeach
-                            @endif
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Performance Summary</h5>
-                        <div id="performanceSummary">
-                            <p class="text-muted">Select a user to view performance summary</p>
+
+            @if (auth()->user()->role == 'admin')
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <label for="userSelect" class="form-label">Select User</label>
+                            <select class="form-select" id="userSelect" onchange="filterPerformanceData()">
+                                <option value="all">All Users</option>
+                                @if (isset($performance) && $performance->count() > 0)
+                                    @php
+                                        $uniqueUsers = $performance->unique('race_user_id')->values();
+                                    @endphp
+                                    @foreach ($uniqueUsers as $userRecord)
+                                        <option value="{{ $userRecord->race_user_id }}">
+                                            {{ $userRecord->name ?? 'User ' . $userRecord->race_user_id }}
+                                        </option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Performance Summary</h5>
+                            <div id="performanceSummary">
+                                <p class="text-muted">Select a user to view performance summary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @else
+                {{-- disini user --}}
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>{{ auth()->user()->name ?? '' }}</h5>
+                            <div id="">
+                                <h6>Personal Information</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted">Category</small>
+                                        <div class="h5">{{ $user->has_category->field_name ?? '' }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Age</small>
+                                        <div class="h5">{{ \Carbon\Carbon::parse($user->birthday)->age }} Th</div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <small class="text-muted">Phone</small>
+                                        <div class="h5">{{ auth()->user()->phone ?? '' }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Join Date</small>
+                                        <div class="h5">{{ formatDate(auth()->user()->created_at) ?? '' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Performance Summary</h5>
+                            <div id="performanceSummary">
+                                <p class="text-muted">Select a user to view performance summary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            @endif
+
+
         </div>
 
         <div class="row">
             <div class="col-lg-12">
-                @if(isset($performance) && $performance->count() > 0)
+                @if (isset($performance) && $performance->count() > 0)
                     @php
                         // Group performance data by distance
                         $groupedPerformance = $performance->groupBy('jarak_nama');
                     @endphp
 
-                    @foreach($groupedPerformance as $distance => $records)
+                    @foreach ($groupedPerformance as $distance => $records)
                         <div class="row mb-5">
                             <div class="col-lg-12">
                                 <div class="card">
@@ -68,7 +121,8 @@
                                         <small class="text-muted">{{ $records->count() }} records</small>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="chart-{{ Str::slug($distance) }}" width="400" height="200"></canvas>
+                                        <canvas id="chart-{{ Str::slug($distance) }}" width="400"
+                                            height="200"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -83,7 +137,7 @@
         </div>
 
         <!-- Performance Statistics -->
-        @if(isset($performance) && $performance->count() > 0)
+        @if (isset($performance) && $performance->count() > 0)
             <div class="row mt-5 mb-5">
                 <div class="col-lg-12">
                     <div class="card">
@@ -103,7 +157,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($performance as $record)
+                                        @foreach ($performance as $record)
                                             <tr data-user-id="{{ $record->race_user_id }}">
                                                 <td>{{ $record->name ?? 'User ' . $record->race_user_id }}</td>
                                                 <td>{{ $record->jarak_nama }}</td>
@@ -235,7 +289,10 @@
 
             dataTable = $('#performanceTable').DataTable({
                 "pageLength": 10,
-                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
                 "paging": true,
                 "searching": true,
                 "ordering": true,
@@ -507,7 +564,8 @@
                 // Filter data for selected user
                 let filteredRecords = groupedData[distance];
                 if (selectedUser !== 'all') {
-                    filteredRecords = groupedData[distance].filter(record => record.race_user_id == selectedUser);
+                    filteredRecords = groupedData[distance].filter(record => record.race_user_id ==
+                        selectedUser);
                 }
 
                 if (filteredRecords.length > 0) {
@@ -542,7 +600,8 @@
         const startRecord = (currentPage - 1) * recordsPerPage + 1;
         const endRecord = Math.min(currentPage * recordsPerPage, totalRecords);
 
-        document.getElementById('paginationInfo').textContent = `Showing ${startRecord} to ${endRecord} of ${totalRecords} entries`;
+        document.getElementById('paginationInfo').textContent =
+            `Showing ${startRecord} to ${endRecord} of ${totalRecords} entries`;
 
         // Update pagination buttons
         document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
@@ -610,7 +669,7 @@
 <style>
     .card {
         border: none;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
         margin-bottom: 20px;
     }

@@ -41,6 +41,7 @@ Route::post('profile', 'App\Http\Controllers\Core\UserController@updateProfile')
 Auth::routes(['verify' => true]);
 
 Route::get('/', [PublicController::class, 'index'])->name('public');
+Route::get('/performance', [PublicController::class, 'performance'])->name('performance');
 Route::get('/userprofile', [PublicController::class, 'userprofile'])->name('userprofile');
 Route::get('/{slug}', [PublicController::class, 'page'])->name('page');
 Route::get('/blog/{slug}', [PublicController::class, 'blog'])->name('blog');

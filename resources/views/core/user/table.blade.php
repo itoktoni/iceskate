@@ -27,6 +27,7 @@
                                              {{ __($value->name) }}
                                         </th>
                                     @endforeach
+                                    <th>Birthday</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,6 +46,7 @@
                                         <td data-label="Phone">{{ $table->field_phone }}</td>
                                         <td data-label="Membership">{{ $table->member ?? '' }}</td>
                                         <td data-label="Category">{{ $table->category_nama ?? '' }}</td>
+                                        <td data-label="Birthday">{{ $table->birthday ? formatDate($table->birthday) : '' }}</td>
                                     </tr>
                                 @empty
                                 @endforelse

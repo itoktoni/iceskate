@@ -3,7 +3,7 @@
 
 <head>
     <title>HTML</title>
-    <link rel="icon" href="{{ asset('frontend/images/icon.webp') }}" type="image/gif" sizes="16x16">
+    <link rel="icon" href="{{ asset('frontend/images/favicon.png') }}" type="image/png" sizes="16x16">
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" >
     <meta content="{{ $website_description }}" name="description" >
