@@ -36,7 +36,7 @@
 				<th width="1">No. </th>
 				<th>TANGGAL</th>
 				<th>NAMA USER</th>
-				<th>JADWAL</th>
+				<th>JARAK</th>
 				<th>WAKTU</th>
 				<th>CATATAN</th>
 			</tr>
@@ -48,7 +48,7 @@
 				<td>{{ $loop->iteration }}</td>
 				<td>{{ formatDate($table->race_tanggal) }}</td>
 				<td>{{ $table->name ?? 'User tidak ditemukan' }}</td>
-				<td>{{ $table->jadwal_nama }}</td>
+				<td>{{ $table->jarak_nama }}</td>
 				<td>{{ number_format($table->race_waktu, 2) }}</td>
 				<td>{{ $table->race_notes }}</td>
 			</tr>
