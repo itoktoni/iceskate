@@ -70,6 +70,7 @@
                 <a class="lg-item" href="{{ $item->image->guid ?? '' }}" onclick="openCustomLightbox({{ $index }}, event)" data-title="Gallery Image {{ $index + 1 }}">
                     <img src="{{ $item->image->guid ?? '' }}" alt="Gallery Image {{ $index + 1 }}" />
                     <div class="category-badge">{{ ucfirst($category) }}</div>
+                    <input type="hidden" name="description" value="{{ $item->description }}">
                 </a>
             </div>
 
@@ -83,6 +84,7 @@
         <div class="custom-lightbox-content">
             <span class="custom-lightbox-close" onclick="closeCustomLightbox()">&times;</span>
             <img id="customLightboxImage" class="custom-lightbox-image" src="" alt="" />
+            <div id="customLightboxDescription" class="custom-lightbox-description"></div>
             <div class="custom-lightbox-nav">
                 <button onclick="previousImage()">&larr;</button>
                 <button onclick="nextImage()">&rarr;</button>
@@ -159,6 +161,33 @@
             background: rgba(255,255,255,0.2);
             border-radius: 5px;
         }
+
+        .custom-lightbox-description {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.7);
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            line-height: 1.5;
+            max-width: 80vw;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .custom-lightbox-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .custom-lightbox-image {
+            margin-bottom: 0;
+        }
     </style>
 
     <!-- Simple CSS for gallery styling -->
@@ -181,9 +210,13 @@
         function openCustomLightbox(index, event) {
             event.preventDefault();
 
-            // Get all gallery images
+            // Get all gallery images and their descriptions
             const imageElements = document.querySelectorAll('.lg-item');
-            galleryImages = Array.from(imageElements).map(a => a.href);
+            galleryImages = Array.from(imageElements).map(a => ({
+                href: a.href,
+                title: a.getAttribute('data-title') || 'Gallery Image',
+                description: a.querySelector('input[name="description"]')?.value || ''
+            }));
 
             currentImageIndex = index;
             showImage(currentImageIndex);
@@ -204,14 +237,17 @@
 
             currentImageIndex = index;
 
+            const currentImageData = galleryImages[currentImageIndex];
             const imageElement = document.getElementById('customLightboxImage');
-            imageElement.src = galleryImages[currentImageIndex];
+            const descriptionElement = document.getElementById('customLightboxDescription');
 
-            // Get title from the link
-            const linkElement = document.querySelectorAll('.lg-item')[currentImageIndex];
-            if (linkElement) {
-                imageElement.alt = linkElement.getAttribute('data-title') || 'Gallery Image';
-            }
+            // Set image source and alt text
+            imageElement.src = currentImageData.href;
+            imageElement.alt = currentImageData.title;
+
+            // Set description text
+            descriptionElement.textContent = currentImageData.description;
+            descriptionElement.style.display = currentImageData.description ? 'block' : 'none';
         }
 
         function nextImage() {

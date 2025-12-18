@@ -60,7 +60,6 @@
                         <div class="card-body">
                             <h5>{{ auth()->user()->name ?? '' }}</h5>
                             <div id="">
-                                <h6>Personal Information</h6>
                                 <div class="row">
                                     <div class="col-6">
                                         <small class="text-muted">Category</small>
@@ -741,6 +740,12 @@
         background-color: #fff;
         border-color: #dee2e6;
     }
+
+    @if(auth()->user()->role == 'user')
+    #performanceSummary h6{
+        display: none;
+    }
+    @endif
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
