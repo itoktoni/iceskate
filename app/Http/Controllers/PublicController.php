@@ -16,15 +16,21 @@ class PublicController extends Controller
     {
         $menu = Menu::slug('top')->first();
         $jadwal = Jadwal::leftJoinRelationship('has_category')->get();
-        $user = User::with('has_category')->find(auth()->user()->id);
+
+        $user = null;
+        if(auth()->check())
+        {
+            $user = User::with('has_category')->find(auth()->user()->id);
+        }
+
         $performance = Race::select('*')
             ->leftJoinRelationship('has_jarak')
             ->leftJoinRelationship('has_user');
 
-        if(auth()->check() && auth()->user()->role == RoleType::User)
-        {
-            $performance = $performance->where('race_user_id', auth()->user()->id);
-        }
+            if(auth()->check() && auth()->user()->role == RoleType::User)
+            {
+                $performance = $performance->where('race_user_id', auth()->user()->id);
+            }
 
         $performance = $performance->get();
 
@@ -52,6 +58,23 @@ class PublicController extends Controller
             'template' => $template
         ]));
     }
+
+    public function performance()
+    {
+        if(!auth()->check())
+        {
+            return redirect('/');
+        }
+
+       $page = Page::slug('performance')->first();
+       $template = $page->acf->template;
+
+        return view('public.homepage', $this->share([
+            'page' => $page,
+            'template' => $template
+        ]));
+    }
+
 
     public function page($slug)
     {

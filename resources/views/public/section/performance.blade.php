@@ -86,8 +86,6 @@
                     </div>
                 </div>
 
-
-
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-body">
@@ -138,7 +136,7 @@
 
         <!-- Performance Statistics -->
         @if (isset($performance) && $performance->count() > 0)
-            <div class="row mt-5 mb-5">
+            <div class="row mb-5">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header">
@@ -175,11 +173,13 @@
                 </div>
             </div>
 
-            <br>
-
         @endif
     </div>
+
+
 </section>
+
+<div class="spacer" style="clear:both;padding-top:15rem;margin-top:20rem"></div>
 
 <!-- Chart.js for Performance Charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -393,6 +393,8 @@
             const labels = records.map(record => record.race_tanggal);
             const asianTarget = records.map(record => parseFloat(record.jarak_asian));
             const australiaTarget = records.map(record => parseFloat(record.jarak_australia));
+            const asianTrophy = records.map(record => parseFloat(record.jarak_asian_trophy));
+            const asianOpen = records.map(record => parseFloat(record.jarak_asian_open));
 
             datasets.push({
                 label: 'Asian Target',
@@ -404,6 +406,29 @@
                 fill: false,
                 tension: 0.1
             });
+
+            datasets.push({
+                label: 'Asian Trophy',
+                data: asianTrophy,
+                borderColor: '#20c997',
+                backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                borderWidth: 2,
+                borderDash: [15, 5],
+                fill: false,
+                tension: 0.1
+            });
+
+             datasets.push({
+                label: 'Asian Open',
+                data: asianOpen,
+                borderColor: '#045bf0',
+                backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                borderWidth: 2,
+                borderDash: [15, 5],
+                fill: false,
+                tension: 0.1
+            });
+
 
             datasets.push({
                 label: 'Australia Target',

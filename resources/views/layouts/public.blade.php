@@ -78,6 +78,11 @@
                                     @endif
 
                                     @auth
+                                     <li>
+                                         <a class="menu-item" href="{{ route('performance') }}">
+                                            Performance
+                                        </a>
+                                      </li>
                                       <li>
                                          <a class="menu-item" href="{{ route('signout') }}">
                                             Logout
