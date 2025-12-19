@@ -127,7 +127,7 @@
             <div class="row ">
                  <div class="col-lg-2 col-sm-6">
                     <div class="widget">
-                        <img src="{{ $logo_url }}" style="width: 100%" alt="" >
+                        <img src="{{ $logo_url }}" style="width: 100%;margin-top:0rem" alt="" >
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-6">
