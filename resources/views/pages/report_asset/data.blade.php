@@ -6,9 +6,6 @@
 				<b>Report Data Asset</b>
 			</h3>
 		</td>
-		<td rowspan="3">
-			<x-logo/>
-		</td>
 	</tr>
 
 </table>
