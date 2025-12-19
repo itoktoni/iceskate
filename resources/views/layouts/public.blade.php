@@ -131,8 +131,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-6">
-                    <p>{!! nl2br($website_description) ?? '' !!}</p>
-
+                   {!! nl2br($website_description) ?? '' !!}
                 </div>
 
                 <div class="col-lg-4 col-sm-6 order-lg-2 order-sm-1">
