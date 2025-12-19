@@ -19,6 +19,7 @@
 
         <!-- User Selection and Performance Charts -->
         <div class="row mb-4">
+            @auth
 
             @if (auth()->user()->role == 'admin')
 
@@ -98,6 +99,7 @@
 
             @endif
 
+            @endauth
 
         </div>
 
@@ -741,11 +743,13 @@
         border-color: #dee2e6;
     }
 
+    @auth
     @if(auth()->user()->role == 'user')
     #performanceSummary h6{
         display: none;
     }
     @endif
+    @endauth
 
     /* Responsive adjustments */
     @media (max-width: 768px) {

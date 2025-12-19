@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>HTML</title>
+    <title>{{ env('APP_NAME') }}</title>
     <link rel="icon" href="{{ asset('frontend/images/favicon.png') }}" type="image/png" sizes="16x16">
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" >

@@ -1,4 +1,4 @@
-<section class="text-light relative" style="min-height: 60em"
+<section id="hero" class="text-light relative" style="min-height: 60em"
     data-bgimage="url('{{ $data->background->guid ?? null }}') center">
     <div class="container relative z-2">
         <div class="row g-4">
@@ -29,21 +29,6 @@
 </section>
 
 <style>
-    /* Hero selalu setinggi layar */
-    .bgcustom {
-        position: relative;
-        min-height: 100vh;
-        /* fallback untuk browser lama */
-        min-height: 100dvh;
-        /* tinggi dinamis di browser modern */
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        display: flex;
-        align-items: center;
-        /* konten vertikal center */
-    }
-
     /* Gradasi bawah (opsional, menyesuaikan kode sebelumnya) */
     .gradient-edge-bottom {
         position: absolute;
@@ -63,7 +48,7 @@
 
 <script>
     function setHeroHeight() {
-        var hero = document.querySelector('.bgcustom');
+        var hero = document.querySelector('#hero');
         if (!hero) return;
         hero.style.minHeight = window.innerHeight + 'px';
     }
