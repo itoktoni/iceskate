@@ -34,6 +34,7 @@ class SystemRole extends SystemModel
 
     protected $casts = [
         'system_role_code' => 'string',
+        'system_role_level' => 'integer',
     ];
 
     public static function field_name()

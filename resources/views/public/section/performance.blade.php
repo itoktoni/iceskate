@@ -21,40 +21,7 @@
         <div class="row mb-4">
             @auth
 
-            @if (auth()->user()->role == 'admin')
-
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <label for="userSelect" class="form-label">Select User</label>
-                            <select class="form-select" id="userSelect" onchange="filterPerformanceData()">
-                                <option value="all">All Users</option>
-                                @if (isset($performance) && $performance->count() > 0)
-                                    @php
-                                        $uniqueUsers = $performance->unique('race_user_id')->values();
-                                    @endphp
-                                    @foreach ($uniqueUsers as $userRecord)
-                                        <option value="{{ $userRecord->race_user_id }}">
-                                            {{ $userRecord->name ?? 'User ' . $userRecord->race_user_id }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5>Performance Summary</h5>
-                            <div id="performanceSummary">
-                                <p class="text-muted">Select a user to view performance summary</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @else
-                {{-- disini user --}}
+            @if (auth()->user()->role == 'user')
 
                 <div class="col-lg-6">
                     <div class="card">
@@ -82,6 +49,40 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Performance Summary</h5>
+                            <div id="performanceSummary">
+                                <p class="text-muted">Select a user to view performance summary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            @else
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <label for="userSelect" class="form-label">Select User</label>
+                            <select class="form-select" id="userSelect" onchange="filterPerformanceData()">
+                                <option value="all">All Users</option>
+                                @if (isset($performance) && $performance->count() > 0)
+                                    @php
+                                        $uniqueUsers = $performance->unique('race_user_id')->values();
+                                    @endphp
+                                    @foreach ($uniqueUsers as $userRecord)
+                                        <option value="{{ $userRecord->race_user_id }}">
+                                            {{ $userRecord->name ?? 'User ' . $userRecord->race_user_id }}
+                                        </option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                     </div>
                 </div>
