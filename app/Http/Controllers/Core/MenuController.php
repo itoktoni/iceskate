@@ -52,7 +52,6 @@ class MenuController extends MasterController
 
     public function postUpdate($code, MenuRequest $request, UpdateMenuService $service)
     {
-        dd($request->all());
         $data = $service->update($this->model, $request, $code);
         if($data['status'])
         {

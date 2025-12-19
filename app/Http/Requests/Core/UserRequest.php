@@ -17,4 +17,11 @@ class UserRequest extends FormRequest
             'email' => 'required|email',
         ];
     }
+
+    public function prepareForValidation()
+    {
+        $this->merge([
+            'active' => 1
+        ]);
+    }
 }
