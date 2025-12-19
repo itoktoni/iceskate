@@ -153,6 +153,7 @@
                                             <th>Date</th>
                                             <th>Time (seconds)</th>
                                             <th>Notes</th>
+                                            <th style="display: none;">User ID</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -163,6 +164,7 @@
                                                 <td>{{ $record->race_tanggal }}</td>
                                                 <td>{{ number_format($record->race_waktu, 2) }}</td>
                                                 <td>{{ $record->race_notes ?? '-' }}</td>
+                                                <td style="display: none;">{{ $record->race_user_id }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -496,11 +498,11 @@
         const selectedUser = document.getElementById('userSelect').value;
 
         if (useDataTables && dataTable) {
-            // Filter DataTable rows
+            // Filter using the hidden User ID column (column index 5)
             if (selectedUser === 'all') {
-                dataTable.column(0).search('').draw();
+                dataTable.column(5).search('').draw();
             } else {
-                dataTable.column(0).search('User ' + selectedUser).draw();
+                dataTable.column(5).search('^' + selectedUser + '$', true, false).draw();
             }
         } else {
             // Simple table filtering
