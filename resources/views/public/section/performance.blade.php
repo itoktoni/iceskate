@@ -35,7 +35,15 @@
                                     </div>
                                     <div class="col-6">
                                         <small class="text-muted">Age</small>
-                                        <div class="h5">{{ \Carbon\Carbon::parse($user->birthday)->age }} Th</div>
+                                        <div class="h5">
+                                            @php
+                                                $birthday = \Carbon\Carbon::parse($user->birthday);
+                                                $now = \Carbon\Carbon::now();
+                                                $ageInYears = $birthday->diffInYears($now);
+                                                $ageInMonths = $birthday->diffInMonths($now) % 12;
+                                                echo $ageInYears . ' Y ' . $ageInMonths . ' m';
+                                            @endphp
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mt-2">
