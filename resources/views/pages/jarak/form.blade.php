@@ -10,6 +10,8 @@
                 <x-form-input col="6" name="jarak_nama" />
                 <x-form-input col="6" name="jarak_australia" />
                 <x-form-input col="6" name="jarak_asian" />
+                <x-form-input col="6" name="jarak_asian_trophy" label="Asian Thropy"/>
+                <x-form-input col="6" name="jarak_asian_open" label="Asian Open"/>
 
                 @endbind
             </div>

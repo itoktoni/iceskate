@@ -41,7 +41,7 @@
                                                 $now = \Carbon\Carbon::now();
                                                 $ageInYears = $birthday->age;
                                                 $ageInMonths = $birthday->diffInMonths($now) % 12;
-                                                echo $ageInYears . ' Th ' . $ageInMonths . ' m';
+                                                echo $ageInYears . ' Years ' . $ageInMonths . ' Month';
                                             @endphp
                                         </div>
                                     </div>
