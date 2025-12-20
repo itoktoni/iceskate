@@ -26,7 +26,7 @@ class Jarak extends SystemModel
      *
      * @var array<int, string>
      */
-    protected $fillable = ['jarak_id', 'jarak_nama', 'jarak_australia', 'jarak_asian', 'jarak_asian_open', 'jarak_asian_thropy'];
+    protected $fillable = ['jarak_id', 'jarak_nama', 'jarak_australia', 'jarak_asian', 'jarak_asian_open', 'jarak_asian_tropy'];
 
     public static function field_name()
     {
