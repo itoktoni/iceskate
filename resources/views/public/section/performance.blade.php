@@ -409,7 +409,7 @@
             const asianOpen = records.map(record => parseFloat(record.jarak_asian_open));
 
             datasets.push({
-                label: 'Asian Target',
+                label: 'ISU Qualifying',
                 data: asianTarget,
                 borderColor: '#17a2b8',
                 backgroundColor: 'rgba(23, 162, 184, 0.1)',
@@ -420,7 +420,7 @@
             });
 
             datasets.push({
-                label: 'Asian Trophy',
+                label: 'Sea Trophy',
                 data: asianTrophy,
                 borderColor: '#20c997',
                 backgroundColor: 'rgba(32, 201, 151, 0.1)',
@@ -443,7 +443,7 @@
 
 
             datasets.push({
-                label: 'Australia Target',
+                label: 'Melbourne Open',
                 data: australiaTarget,
                 borderColor: '#6c757d',
                 backgroundColor: 'rgba(108, 117, 125, 0.1)',

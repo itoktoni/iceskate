@@ -8,9 +8,9 @@
 
                 <x-form-input col="6" label="Code" name="jarak_id" />
                 <x-form-input col="6" name="jarak_nama" />
-                <x-form-input col="6" name="jarak_australia" />
-                <x-form-input col="6" name="jarak_asian" />
-                <x-form-input col="6" name="jarak_asian_trophy" label="Asian Thropy"/>
+                <x-form-input col="6" name="jarak_australia" label="Melbourne Open"/>
+                <x-form-input col="6" name="jarak_asian" label="ISU Qualifying"/>
+                <x-form-input col="6" name="jarak_asian_trophy" label="Sea Thropy"/>
                 <x-form-input col="6" name="jarak_asian_open" label="Asian Open"/>
 
                 @endbind
