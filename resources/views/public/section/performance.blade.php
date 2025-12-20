@@ -39,9 +39,9 @@
                                             @php
                                                 $birthday = \Carbon\Carbon::parse($user->birthday);
                                                 $now = \Carbon\Carbon::now();
-                                                $ageInYears = $birthday->diffInYears($now);
+                                                $ageInYears = $birthday->age;
                                                 $ageInMonths = $birthday->diffInMonths($now) % 12;
-                                                echo $ageInYears . ' Y ' . $ageInMonths . ' m';
+                                                echo $ageInYears . ' Th ' . $ageInMonths . ' m';
                                             @endphp
                                         </div>
                                     </div>
