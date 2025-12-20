@@ -47,6 +47,7 @@
 										<td >{{ $table->jarak_id }}</td>
 										<td >{{ $table->jarak_nama }}</td>
 										<td >{{ $table->jarak_australia }}</td>
+										<td >{{ $table->jarak_asian}}</td>
 										<td >{{ $table->jarak_asian_thropy }}</td>
 										<td >{{ $table->jarak_asian_open }}</td>
 
