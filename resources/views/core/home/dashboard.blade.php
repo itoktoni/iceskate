@@ -1,5 +1,7 @@
 <x-layout>
 
+    <!-- User Information Section -->
+
     <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="card">
@@ -179,7 +181,7 @@
 
         function initializePeityCharts() {
             // Initialize the existing peity charts with better styling
-            if (typeof $.fn.peity !== 'undefined') {
+            if (typeof $ !== 'undefined' && typeof $.fn.peity !== 'undefined') {
                 $('.peity').each(function() {
                     const $this = $(this);
                     const type = $this.data('type') || 'pie';
@@ -296,10 +298,12 @@
                 const labels = records.map(record => record.race_tanggal);
                 const asianTarget = records.map(record => parseFloat(record.jarak_asian || 0));
                 const australiaTarget = records.map(record => parseFloat(record.jarak_australia || 0));
+                const asianTrophy = records.map(record => parseFloat(record.jarak_asian_trophy || 0));
+                const asianOpen = records.map(record => parseFloat(record.jarak_asian_open || 0));
 
                 if (asianTarget.some(val => val > 0)) {
                     datasets.push({
-                        label: 'Asian Target',
+                        label: 'ISU Qualifying',
                         data: asianTarget,
                         borderColor: '#17a2b8',
                         backgroundColor: 'rgba(23, 162, 184, 0.1)',
@@ -310,9 +314,35 @@
                     });
                 }
 
+                if (asianTrophy.some(val => val > 0)) {
+                    datasets.push({
+                        label: 'Sea Trophy',
+                        data: asianTrophy,
+                        borderColor: '#20c997',
+                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [15, 5],
+                        fill: false,
+                        tension: 0.1
+                    });
+                }
+
+                if (asianOpen.some(val => val > 0)) {
+                    datasets.push({
+                        label: 'Asian Open',
+                        data: asianOpen,
+                        borderColor: '#045bf0',
+                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [15, 5],
+                        fill: false,
+                        tension: 0.1
+                    });
+                }
+
                 if (australiaTarget.some(val => val > 0)) {
                     datasets.push({
-                        label: 'Australia Target',
+                        label: 'Melbourne Open',
                         data: australiaTarget,
                         borderColor: '#6c757d',
                         backgroundColor: 'rgba(108, 117, 125, 0.1)',
@@ -528,10 +558,12 @@
                 const labels = data.map(record => record.race_tanggal);
                 const asianTarget = data.map(record => parseFloat(record.jarak_asian || 0));
                 const australiaTarget = data.map(record => parseFloat(record.jarak_australia || 0));
+                const asianTrophy = data.map(record => parseFloat(record.jarak_asian_trophy || 0));
+                const asianOpen = data.map(record => parseFloat(record.jarak_asian_open || 0));
 
                 if (asianTarget.some(val => val > 0)) {
                     datasets.push({
-                        label: 'Asian Target',
+                        label: 'ISU Qualifying',
                         data: asianTarget,
                         borderColor: '#17a2b8',
                         backgroundColor: 'rgba(23, 162, 184, 0.1)',
@@ -542,9 +574,35 @@
                     });
                 }
 
+                if (asianTrophy.some(val => val > 0)) {
+                    datasets.push({
+                        label: 'Sea Trophy',
+                        data: asianTrophy,
+                        borderColor: '#20c997',
+                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [15, 5],
+                        fill: false,
+                        tension: 0.1
+                    });
+                }
+
+                if (asianOpen.some(val => val > 0)) {
+                    datasets.push({
+                        label: 'Asian Open',
+                        data: asianOpen,
+                        borderColor: '#045bf0',
+                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [15, 5],
+                        fill: false,
+                        tension: 0.1
+                    });
+                }
+
                 if (australiaTarget.some(val => val > 0)) {
                     datasets.push({
-                        label: 'Australia Target',
+                        label: 'Melbourne Open',
                         data: australiaTarget,
                         borderColor: '#6c757d',
                         backgroundColor: 'rgba(108, 117, 125, 0.1)',
