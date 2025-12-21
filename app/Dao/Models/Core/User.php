@@ -80,6 +80,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'birthday' => 'date',
     ];
 
     public $timestamps = true;

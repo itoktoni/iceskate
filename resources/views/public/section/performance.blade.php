@@ -26,7 +26,19 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-body">
-                            <h5>{{ auth()->user()->name ?? '' }}</h5>
+                           <div class="row">
+                                    <div class="col-6">
+                                         <a style="text-align: left;" href="{{ route('userprofile') }}">
+                                        <h3>{{ auth()->user()->name ?? '' }}</h3>
+                                         </a>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <a style="text-align: right;" href="{{ route('userprofile') }}">
+                                            <h5 style="color:#007bff">Change Profile</h5>
+                                        </a>
+                                    </div>
+                            </div>
                             <div id="">
                                 <div class="row">
                                     <div class="col-6">
@@ -64,7 +76,7 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-body">
-                            <h5>Performance Summary</h5>
+                            <h3>Performance Summary</h3>
                             <div id="performanceSummary">
                                 <p class="text-muted">Select a user to view performance summary</p>
                             </div>
@@ -98,7 +110,7 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-body">
-                            <h5>Performance Summary</h5>
+                            <h3>Performance Summary</h3>
                             <div id="performanceSummary">
                                 <p class="text-muted">Select a user to view performance summary</p>
                             </div>

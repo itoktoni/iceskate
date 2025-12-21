@@ -8,6 +8,7 @@ use App\Dao\Models\Jadwal;
 use App\Dao\Models\Race;
 use App\Models\Menu;
 use App\Models\Page;
+use Illuminate\Support\Facades\Hash;
 use Plugins\Cms;
 
 class PublicController extends Controller
@@ -89,13 +90,72 @@ class PublicController extends Controller
 
     public function userprofile()
     {
-       $page = Page::slug('gallery')->first();
-       $template = $page->acf->template;
+        if(!auth()->check())
+        {
+            return redirect('/');
+        }
 
-        return view('public.homepage', $this->share([
+       $page = Page::slug('performance')->first();
+       $template = $page->acf->template->first();
+
+        return view('public.userprofile', $this->share([
             'page' => $page,
-            'template' => $template
+            'data' => $template
         ]));
+    }
+
+    public function updateProfile()
+    {
+        if(!auth()->check())
+        {
+            return redirect('/');
+        }
+
+        $user = auth()->user();
+
+        // Validate the input
+        $validatedData = request()->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'birthday' => 'nullable|date',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
+            'current_password' => 'nullable|string',
+            'new_password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        try {
+            // Update basic profile information
+            $user->update([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'birthday' => $validatedData['birthday'] ?? null,
+                'phone' => $validatedData['phone'] ?? null,
+                'address' => $validatedData['address'] ?? null,
+            ]);
+
+            // Handle password change if provided
+            if (!empty($validatedData['current_password']) && !empty($validatedData['new_password'])) {
+                // Verify current password
+                if (!Hash::check($validatedData['current_password'], $user->password)) {
+                    return redirect()->back()
+                        ->withErrors(['current_password' => 'Current password is incorrect'])
+                        ->withInput();
+                }
+
+                // Update password
+                $user->update([
+                    'password' => Hash::make($validatedData['new_password'])
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Profile updated successfully!');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to update profile. Please try again.')
+                ->withInput();
+        }
     }
 
     public function blog($slug)
