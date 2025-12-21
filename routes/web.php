@@ -41,6 +41,7 @@ Route::post('profile', 'App\Http\Controllers\Core\UserController@updateProfile')
 Auth::routes(['verify' => true]);
 
 Route::get('/', [PublicController::class, 'index'])->name('public');
+Route::get('/register', [PublicController::class, 'index'])->name('public');
 Route::get('/performance', [PublicController::class, 'performance'])->name('performance');
 Route::get('/userprofile', [PublicController::class, 'userprofile'])->name('userprofile')->middleware('auth');
 Route::put('/userprofile/update', [PublicController::class, 'updateProfile'])->name('userprofileupdate')->middleware('auth');
