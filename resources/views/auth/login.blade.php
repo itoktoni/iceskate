@@ -31,7 +31,7 @@
 
     <div class="form-row form-button">
         <div class="form-wrapper">
-            <a class="button black" href="{{ url('/') }}">Homepage</a>
+            <a class="button black" href="{{ url('/') }}">Home Page</a>
         </div>
 
         <div class="form-wrapper">
