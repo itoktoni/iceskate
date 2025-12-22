@@ -20,24 +20,24 @@ use PHPUnit\TextUI\XmlConfiguration\Group;
 |
  */
 
-Route::post('login', [UserController::class, 'postLoginApi'])->name('postLoginApi');
+// Route::post('login', [UserController::class, 'postLoginApi'])->name('postLoginApi');
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('profile', [UserController::class, 'getProfile']);
-    Route::post('profile', 'App\Http\Controllers\Core\UserController@updateProfile');
-    Route::post('register', [UserController::class, 'postCreate'])->name('register');
+// Route::middleware(['auth:sanctum'])->group(function () {
+//     Route::get('profile', [UserController::class, 'getProfile']);
+//     Route::post('profile', 'App\Http\Controllers\Core\UserController@updateProfile');
+//     Route::post('register', [UserController::class, 'postCreate'])->name('register');
 
-    Route::auto('api-user', UserController::class);
-    Route::get('roles', function(){
-        $data = RoleType::getApi();
-        return $data;
-    });
+//     Route::auto('api-user', UserController::class);
+//     Route::get('roles', function(){
+//         $data = RoleType::getApi();
+//         return $data;
+//     });
 
-    Route::get('level', function(){
-        $data = LevelType::getApi();
-        return $data;
-    });
+//     Route::get('level', function(){
+//         $data = LevelType::getApi();
+//         return $data;
+//     });
 
-});
+// });
 
-Route::get('groups', [GroupsController::class, 'getData']);
+// Route::get('groups', [GroupsController::class, 'getData']);
