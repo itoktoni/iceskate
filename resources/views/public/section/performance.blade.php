@@ -43,7 +43,7 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <small class="text-muted">Category</small>
-                                        <div class="h5">{{ $user->has_category->field_name ?? '' }}</div>
+                                        <div class="h5">{{ $user->has_category ? $user->has_category->field_name : '' }}</div>
                                     </div>
                                     <div class="col-6">
                                         <small class="text-muted">Age</small>
