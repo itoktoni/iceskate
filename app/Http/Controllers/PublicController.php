@@ -68,7 +68,17 @@ class PublicController extends Controller
         }
 
        $page = Page::slug('performance')->first();
-       $user = User::where('role', RoleType::User)->get();
+       $user = User::where('role', RoleType::User);
+
+       if(auth()->user()->role == RoleType::User)
+       {
+           $user = $user->where('id', auth()->user()->id)->first();
+       }
+       else
+       {
+           $user = $user->get();
+       }
+
        $template = $page->acf->template;
 
         return view('public.homepage', $this->share([
