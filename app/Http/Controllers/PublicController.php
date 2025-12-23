@@ -122,6 +122,7 @@ class PublicController extends Controller
             'birthday' => 'nullable|date',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'address_kk' => 'nullable|string|max:500',
             'current_password' => 'nullable|string',
             'new_password' => 'nullable|string|min:8|confirmed',
         ]);
@@ -134,6 +135,7 @@ class PublicController extends Controller
                 'birthday' => $validatedData['birthday'] ?? null,
                 'phone' => $validatedData['phone'] ?? null,
                 'address' => $validatedData['address'] ?? null,
+                'address_kk' => $validatedData['address_kk'] ?? null,
             ]);
 
             // Handle password change if provided

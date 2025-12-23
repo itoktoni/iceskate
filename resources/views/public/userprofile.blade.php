@@ -96,6 +96,15 @@
                             @enderror
                         </div>
 
+                        <div class="form-group mb-3">
+                            <label for="address_kk" class="form-label">Address In KK</label>
+                            <textarea class="form-control @error('address_kk') is-invalid @enderror"
+                                      id="address_kk" name="address_kk" rows="3">{{ old('address_kk', auth()->user()->address_kk) }}</textarea>
+                            @error('address_kk')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <hr class="my-4">
 
                         <h6 class="mb-3">Change Password</h6>

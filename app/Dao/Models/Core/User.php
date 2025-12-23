@@ -58,6 +58,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
         'active',
         'category',
         'address',
+        'address_kk',
         'member',
         'email_verified_at',
     ];
