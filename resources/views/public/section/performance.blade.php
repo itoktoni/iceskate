@@ -92,16 +92,11 @@
                             <label for="userSelect" class="form-label">Select User</label>
                             <select class="form-select" id="userSelect" onchange="filterPerformanceData()">
                                 <option value="all">All Users</option>
-                                @if (isset($performance) && $performance->count() > 0)
-                                    @php
-                                        $uniqueUsers = $performance->unique('race_user_id')->values();
-                                    @endphp
-                                    @foreach ($uniqueUsers as $userRecord)
-                                        <option value="{{ $userRecord->race_user_id }}">
-                                            {{ $userRecord->name ?? 'User ' . $userRecord->race_user_id }}
-                                        </option>
-                                    @endforeach
-                                @endif
+                                @foreach ($user as $userRecord)
+                                    <option value="{{ $userRecord->race_user_id }}">
+                                        {{ $userRecord->name ?? 'User ' . $userRecord->race_user_id }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
