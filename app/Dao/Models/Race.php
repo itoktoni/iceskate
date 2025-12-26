@@ -79,7 +79,7 @@ class Race extends SystemModel
 
     public static function field_name()
     {
-        return 'race_tanggal';
+        return 'race_notes';
     }
 
     public function getFieldNameAttribute()
