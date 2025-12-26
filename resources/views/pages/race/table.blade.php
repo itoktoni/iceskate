@@ -6,6 +6,19 @@
 
             <x-form method="GET" x-init="" x-target="table" role="search" aria-label="Contacts"
                 autocomplete="off" action="{{ moduleRoute('getTable') }}">
+
+                 <div class="container-fluid filter-container mb-2">
+                    <div class="row">
+
+                        <x-form-input type="date" col="3" label="Start Date" name="start_date" />
+                        <x-form-input type="date" col="3" label="End Date" name="end_date" />
+
+                        <x-form-select col="3" name="jarak_id" label="Jarak" :options="$jarak" />
+                        <x-form-select col="3" name="id" label="User" :options="$user" />
+
+                    </div>
+                </div>
+
                 <x-filter toggle="Filter" :fields="$fields" />
             </x-form>
 
@@ -25,6 +38,7 @@
                                         <input class="btn-check-d" type="checkbox">
                                     </th>
                                     <th class="text-center column-action">{{ __('Action') }}</th>
+                                    <th>ID</th>
                                     <th>User</th>
                                     <th>Jarak</th>
                                     <th>Tanggal</th>
@@ -44,6 +58,7 @@
                                             <x-crud :model="$table" />
                                         </td>
 
+										<td >{{ $table->id }}</td>
 										<td >{{ $table->name }}</td>
 										<td >{{ $table->jarak_nama }}</td>
 										<td >{{ $table->race_tanggal }}</td>

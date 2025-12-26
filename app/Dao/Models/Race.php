@@ -2,7 +2,9 @@
 
 namespace App\Dao\Models;
 
+use App\Dao\Builder\DataBuilder;
 use App\Dao\Models\Core\SystemModel;
+use App\Dao\Models\Core\User;
 use App\Facades\Model\CategoryModel;
 use App\Facades\Model\JadwalModel;
 use App\Facades\Model\JarakModel;
@@ -27,6 +29,46 @@ class Race extends SystemModel
     protected $perPage = 20;
     protected $table = 'race';
     protected $primaryKey = 'race_id';
+
+    protected $filters = [
+        'filter',
+        'id',
+        'name',
+        'race_id',
+        'jarak_id',
+        'jadwal_id',
+        'start_date',
+        'end_date',
+    ];
+
+    public function fieldDatatable(): array
+    {
+        return [
+            DataBuilder::build(User::field_name())->name('Nama User'),
+            DataBuilder::build('race_notes')->name('Keterangan')->sort(),
+        ];
+    }
+
+     public function start_date($query)
+    {
+        $date = request()->get('start_date');
+        if ($date) {
+            $query = $query->whereDate('race_tanggal', '>=', $date);
+        }
+
+        return $query;
+    }
+
+    public function end_date($query)
+    {
+        $date = request()->get('end_date');
+
+        if ($date) {
+            $query = $query->whereDate('race_tanggal', '<=', $date);
+        }
+
+        return $query;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -62,7 +104,13 @@ class Race extends SystemModel
 
     public function dataRepository($selected = [], $relation = [])
     {
-        $query = $this->select($this->getTable().'.*', 'name', JadwalModel::getTableName().'.*', JarakModel::getTableName().'.*')
+        $query = $this->select([
+            $this->getTable().'.*',
+            'id',
+            'name',
+            JadwalModel::getTableName().'.*',
+            JarakModel::getTableName().'.*'
+        ])
             ->leftJoinRelationship('has_jadwal')
             ->leftJoinRelationship('has_jarak')
             ->leftJoinRelationship('has_user');

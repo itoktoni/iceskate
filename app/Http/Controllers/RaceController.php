@@ -16,7 +16,6 @@ use Plugins\Query;
 use Plugins\Response;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
-
 class RaceController extends MasterController
 {
     use CreateFunction, UpdateFunction;
@@ -50,6 +49,18 @@ class RaceController extends MasterController
         return moduleView(modulePathForm(path: self::$is_core), $this->share([
             'model' => $this->get($code),
             'absen' => $absen,
+        ]));
+    }
+
+    public function getTable()
+    {
+        $this->beforeForm();
+
+        $data = $this->getData();
+
+        return moduleView(modulePathTable(core: self::$is_core), $this->share([
+            'data' => $data,
+            'fields' => $this->model::getModel()->getShowField(),
         ]));
     }
 
