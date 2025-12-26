@@ -254,6 +254,9 @@
 
             const records = performanceData[distance] || [];
 
+            // Get unique dates for x-axis labels
+            const uniqueDates = records.length > 0 ? [...new Set(records.map(record => record.race_tanggal))] : [];
+
             // Group records by user for multi-user display
             const userGroups = {};
             records.forEach(record => {
@@ -272,8 +275,11 @@
 
             Object.keys(userGroups).forEach(userName => {
                 const userRecords = userGroups[userName];
-                const userTimes = userRecords.map(record => parseFloat(record.race_waktu));
-                const dates = userRecords.map(record => record.race_tanggal);
+                // Create data array that matches uniqueDates, using null for dates without data
+                const userTimes = uniqueDates.map(date => {
+                    const recordForDate = userRecords.find(r => r.race_tanggal === date);
+                    return recordForDate ? parseFloat(recordForDate.race_waktu) : null;
+                });
 
                 datasets.push({
                     label: userName,
@@ -294,12 +300,13 @@
             });
 
             // Add target lines if available
+            const labels = uniqueDates;
             if (records.length > 0) {
-                const labels = records.map(record => record.race_tanggal);
-                const asianTarget = records.map(record => parseFloat(record.jarak_asian || 0));
-                const australiaTarget = records.map(record => parseFloat(record.jarak_australia || 0));
-                const asianTrophy = records.map(record => parseFloat(record.jarak_asian_trophy || 0));
-                const asianOpen = records.map(record => parseFloat(record.jarak_asian_open || 0));
+                // Create target arrays that match uniqueDates
+                const asianTarget = Array(uniqueDates.length).fill(parseFloat(records[0].jarak_asian || 0));
+                const australiaTarget = Array(uniqueDates.length).fill(parseFloat(records[0].jarak_australia || 0));
+                const asianTrophy = Array(uniqueDates.length).fill(parseFloat(records[0].jarak_asian_trophy || 0));
+                const asianOpen = Array(uniqueDates.length).fill(parseFloat(records[0].jarak_asian_open || 0));
 
                 if (asianTarget.some(val => val > 0)) {
                     datasets.push({
@@ -357,7 +364,7 @@
             const config = {
                 type: 'line',
                 data: {
-                    labels: records.map(record => record.race_tanggal),
+                    labels: labels,
                     datasets: datasets
                 },
                 options: {
@@ -484,221 +491,6 @@
             });
         }
 
-        function createChartForDistance(distance, records = null) {
-            const canvasId = `dashboardChart-${distance.toLowerCase().replace(/\s+/g, '-')}`;
-            const ctx = document.getElementById(canvasId);
-
-            if (!ctx) return;
-
-            // Destroy existing chart
-            if (charts[distance]) {
-                charts[distance].destroy();
-            }
-
-            const data = records || performanceData[distance] || [];
-
-            // If no data for this user/distance combination
-            if (data.length === 0) {
-                // Clear the canvas and show no data message
-                const parent = ctx.parentElement;
-                parent.innerHTML = '<div class="text-center py-5"><p class="text-muted">No data available for selected user</p></div>';
-                return;
-            }
-
-            // Restore the canvas if it was cleared
-            if (ctx.closest('.text-center')) {
-                const chartContainer = ctx.closest('.chart-container');
-                chartContainer.innerHTML = `<canvas id="dashboardChart-${distance.toLowerCase().replace(/\s+/g, '-')}"></canvas>`;
-            }
-
-            // Re-get the canvas after restoration
-            const newCtx = document.getElementById(canvasId).getContext('2d');
-
-            // Group records by user for multi-user display
-            const userGroups = {};
-            data.forEach(record => {
-                const userId = record.race_user_id;
-                const userName = record.name || 'User ' + userId;
-                if (!userGroups[userName]) {
-                    userGroups[userName] = [];
-                }
-                userGroups[userName].push(record);
-            });
-
-            // Prepare datasets
-            const datasets = [];
-            const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14'];
-            let colorIndex = 0;
-
-            Object.keys(userGroups).forEach(userName => {
-                const userRecords = userGroups[userName];
-                const userTimes = userRecords.map(record => parseFloat(record.race_waktu));
-                const dates = userRecords.map(record => record.race_tanggal);
-
-                datasets.push({
-                    label: userName,
-                    data: userTimes,
-                    borderColor: colors[colorIndex % colors.length],
-                    backgroundColor: colors[colorIndex % colors.length] + '20',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.4,
-                    pointBackgroundColor: colors[colorIndex % colors.length],
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                });
-
-                colorIndex++;
-            });
-
-            // Add target lines if available
-            if (data.length > 0) {
-                const labels = data.map(record => record.race_tanggal);
-                const asianTarget = data.map(record => parseFloat(record.jarak_asian || 0));
-                const australiaTarget = data.map(record => parseFloat(record.jarak_australia || 0));
-                const asianTrophy = data.map(record => parseFloat(record.jarak_asian_trophy || 0));
-                const asianOpen = data.map(record => parseFloat(record.jarak_asian_open || 0));
-
-                if (asianTarget.some(val => val > 0)) {
-                    datasets.push({
-                        label: 'ISU Qualifying',
-                        data: asianTarget,
-                        borderColor: '#17a2b8',
-                        backgroundColor: 'rgba(23, 162, 184, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        fill: false,
-                        tension: 0.1
-                    });
-                }
-
-                if (asianTrophy.some(val => val > 0)) {
-                    datasets.push({
-                        label: 'Sea Trophy',
-                        data: asianTrophy,
-                        borderColor: '#20c997',
-                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [15, 5],
-                        fill: false,
-                        tension: 0.1
-                    });
-                }
-
-                if (asianOpen.some(val => val > 0)) {
-                    datasets.push({
-                        label: 'Asian Open',
-                        data: asianOpen,
-                        borderColor: '#045bf0',
-                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [15, 5],
-                        fill: false,
-                        tension: 0.1
-                    });
-                }
-
-                if (australiaTarget.some(val => val > 0)) {
-                    datasets.push({
-                        label: 'Melbourne Open',
-                        data: australiaTarget,
-                        borderColor: '#6c757d',
-                        backgroundColor: 'rgba(108, 117, 125, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [10, 5],
-                        fill: false,
-                        tension: 0.1
-                    });
-                }
-            }
-
-            const config = {
-                type: 'line',
-                data: {
-                    labels: data.map(record => record.race_tanggal),
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    plugins: {
-                        title: {
-                            display: false
-                        },
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 15,
-                                font: {
-                                    size: 11
-                                }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: '#007bff',
-                            borderWidth: 1,
-                            cornerRadius: 6,
-                            displayColors: true,
-                            callbacks: {
-                                title: function(context) {
-                                    return 'Date: ' + context[0].label;
-                                },
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + ' seconds';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            reverse: true,
-                            title: {
-                                display: true,
-                                text: 'Time (seconds)',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Date',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        }
-                    },
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
-                    }
-                }
-            };
-
-            charts[distance] = new Chart(newCtx, config);
-        }
 
         // Resize charts on window resize
         window.addEventListener('resize', function() {

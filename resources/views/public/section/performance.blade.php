@@ -90,11 +90,11 @@
                     <div class="card">
                         <div class="card-body">
                             <label for="userSelect" class="form-label">Select User</label>
-                            <select class="form-select" id="userSelect" onchange="filterPerformanceData()">
+                            <select class="form-select" id="userSelect">
                                 <option value="all">All Users</option>
                                 @foreach ($user as $userRecord)
-                                    <option value="{{ $userRecord->race_user_id }}">
-                                        {{ $userRecord->name ?? 'User ' . $userRecord->race_user_id }}
+                                    <option value="{{ $userRecord->id }}">
+                                        {{ $userRecord->name ?? 'User ' . $userRecord->id }}
                                     </option>
                                 @endforeach
                             </select>
@@ -123,7 +123,7 @@
             <div class="col-lg-12">
                 @if (isset($performance) && $performance->count() > 0)
                     @php
-                        // Group performance data by distance
+                        // Group performance data by distance (jarak_nama) for charts
                         $groupedPerformance = $performance->groupBy('jarak_nama');
                     @endphp
 
@@ -274,7 +274,7 @@
         // Store original data
         window.originalPerformanceData = performanceData;
 
-        // Group data by distance
+        // Group data by distance (jarak_nama)
         const groupedData = {};
         performanceData.forEach(record => {
             const distance = record.jarak_nama;
@@ -317,6 +317,7 @@
                 "ordering": true,
                 "info": true,
                 "responsive": true,
+                "order": [[2, 'desc']], // Sort by date column (index 2 - race_tanggal) in descending order by default
                 "language": {
                     "search": "Search records:",
                     "lengthMenu": "Show _MENU_ records per page",
@@ -372,6 +373,9 @@
         // Sort records by date
         records.sort((a, b) => new Date(a.race_tanggal) - new Date(b.race_tanggal));
 
+        // Get all unique dates from all records
+        const uniqueDates = [...new Set(records.map(record => record.race_tanggal))].sort((a, b) => new Date(a) - new Date(b));
+
         // Group records by user for multi-user display
         const userGroups = {};
         records.forEach(record => {
@@ -388,15 +392,20 @@
         const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14'];
         let colorIndex = 0;
 
-        // Add user performance lines
+        // Add user performance lines - create data for each unique date
         Object.keys(userGroups).forEach(userName => {
             const userRecords = userGroups[userName];
-            const userTimes = userRecords.map(record => parseFloat(record.race_waktu));
-            const dates = userRecords.map(record => record.race_tanggal);
+            const userData = [];
+
+            // For each unique date, find the user's time or use null
+            uniqueDates.forEach(date => {
+                const recordForDate = userRecords.find(r => r.race_tanggal === date);
+                userData.push(recordForDate ? parseFloat(recordForDate.race_waktu) : null);
+            });
 
             datasets.push({
                 label: userName,
-                data: userTimes,
+                data: userData,
                 borderColor: colors[colorIndex % colors.length],
                 backgroundColor: colors[colorIndex % colors.length] + '20',
                 borderWidth: 2,
@@ -407,13 +416,14 @@
             colorIndex++;
         });
 
-        // Add target lines (only once per distance)
+        // Add target lines (only once per distance) - use unique dates
         if (records.length > 0) {
-            const labels = records.map(record => record.race_tanggal);
-            const asianTarget = records.map(record => parseFloat(record.jarak_asian));
-            const australiaTarget = records.map(record => parseFloat(record.jarak_australia));
-            const asianTrophy = records.map(record => parseFloat(record.jarak_asian_trophy));
-            const asianOpen = records.map(record => parseFloat(record.jarak_asian_open));
+            // Get target values from the first record (they should be the same for all records of same distance)
+            const firstRecord = records[0];
+            const asianTarget = Array(uniqueDates.length).fill(parseFloat(firstRecord.jarak_asian));
+            const australiaTarget = Array(uniqueDates.length).fill(parseFloat(firstRecord.jarak_australia));
+            const asianTrophy = Array(uniqueDates.length).fill(parseFloat(firstRecord.jarak_asian_trophy));
+            const asianOpen = Array(uniqueDates.length).fill(parseFloat(firstRecord.jarak_asian_open));
 
             datasets.push({
                 label: 'ISU Qualifying',
@@ -448,7 +458,6 @@
                 tension: 0.1
             });
 
-
             datasets.push({
                 label: 'Melbourne Open',
                 data: australiaTarget,
@@ -464,7 +473,7 @@
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: records.map(record => record.race_tanggal),
+                labels: uniqueDates,
                 datasets: datasets
             },
             options: {
@@ -513,7 +522,8 @@
     function filterPerformanceData() {
         const selectedUser = document.getElementById('userSelect').value;
 
-        if (useDataTables && dataTable) {
+        // Ensure we have the dataTable reference
+        if (typeof dataTable !== 'undefined' && dataTable) {
             // Filter using the hidden User ID column (column index 5)
             if (selectedUser === 'all') {
                 dataTable.column(5).search('').draw();
@@ -706,6 +716,13 @@
         loadDependencies(function(success) {
             useDataTables = success;
             initializeApp(useDataTables);
+
+            // Add event listener for user select dropdown
+            const userSelect = document.getElementById('userSelect');
+            if (userSelect) {
+                userSelect.addEventListener('change', filterPerformanceData);
+                console.log('User select event listener added');
+            }
         });
     });
 </script>
