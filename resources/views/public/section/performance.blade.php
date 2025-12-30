@@ -64,8 +64,8 @@
                                         <div class="h5">{{ auth()->user()->phone ?? '' }}</div>
                                     </div>
                                     <div class="col-6">
-                                        <small class="text-muted">Join Date</small>
-                                        <div class="h5">{{ formatDate(auth()->user()->created_at) ?? '' }}</div>
+                                        <small class="text-muted">ID User</small>
+                                        <div class="h5">{{ auth()->user()->id ?? '' }}</div>
                                     </div>
                                 </div>
                             </div>
