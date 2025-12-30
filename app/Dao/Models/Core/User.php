@@ -86,7 +86,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
 
     public $timestamps = true;
 
-    public $incrementing = true;
+    public $incrementing = false;
 
     public static function field_name()
     {
@@ -106,7 +106,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     public function fieldDatatable(): array
     {
         return [
-            DataBuilder::build(UserModel::field_key())->name('ID')->show(false),
+            DataBuilder::build(UserModel::field_key())->name('ID')->show(true),
             DataBuilder::build(UserModel::field_name())->name('Name')->sort(),
             DataBuilder::build(UserModel::field_username())->name('Username')->sort(),
             DataBuilder::build(RoleModel::field_name())->name('Role'),

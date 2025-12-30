@@ -48,6 +48,10 @@ class UserController extends MasterController
     public function postUpdate($code, UserRequest $request, UpdateService $service)
     {
         $data = $service->update($this->model, $request, $code);
+        if($data['status'])
+        {
+            return redirect()->to(moduleRoute('getTable'));
+        }
 
         return Response::redirectBack($data);
     }

@@ -40,6 +40,7 @@
                                         <td data-label="Actions" class="col-md-2 text-center column-action">
                                             <x-crud :model="$table" />
                                         </td>
+                                        <td data-label="Name">{{ $table->field_primary }}</td>
                                         <td data-label="Name">{{ $table->field_name }}</td>
                                         <td data-label="Username">{{ $table->field_username }}</td>
                                         <td data-label="Role">{{ $table->field_role_name }}</td>
