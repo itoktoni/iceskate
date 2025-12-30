@@ -64,7 +64,7 @@
                                         <div class="h5">{{ auth()->user()->phone ?? '' }}</div>
                                     </div>
                                     <div class="col-6">
-                                        <small class="text-muted">ID User</small>
+                                        <small class="text-muted">ID Member</small>
                                         <div class="h5">{{ auth()->user()->id ?? '' }}</div>
                                     </div>
                                 </div>
