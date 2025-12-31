@@ -119,7 +119,7 @@
 
         </div>
 
-        <div class="row">
+        <div id="chartsContainer" class="row" style="display: none;">
             <div class="col-lg-12">
                 @if (isset($performance) && $performance->count() > 0)
                     @php
@@ -371,10 +371,10 @@
 
     function createChartForDistance(distance, records, ctx, canvasId) {
         // Sort records by date
-        records.sort((a, b) => new Date(a.race_tanggal) - new Date(b.race_tanggal));
+        records.sort((a, b) => new Date(a.race_id) - new Date(b.race_id));
 
         // Get all unique dates from all records
-        const uniqueDates = [...new Set(records.map(record => record.race_tanggal))].sort((a, b) => new Date(a) - new Date(b));
+        const uniqueDates = [...new Set(records.map(record => record.race_id))].sort((a, b) => new Date(a) - new Date(b));
 
         // Group records by user for multi-user display
         const userGroups = {};
@@ -399,7 +399,7 @@
 
             // For each unique date, find the user's time or use null
             uniqueDates.forEach(date => {
-                const recordForDate = userRecords.find(r => r.race_tanggal === date);
+                const recordForDate = userRecords.find(r => r.race_id === date);
                 userData.push(recordForDate ? parseFloat(recordForDate.race_waktu) : null);
             });
 
@@ -503,7 +503,7 @@
                     x: {
                         title: {
                             display: true,
-                            text: 'Date'
+                            text: 'Point'
                         }
                     }
                 },
@@ -521,6 +521,28 @@
 
     function filterPerformanceData() {
         const selectedUser = document.getElementById('userSelect').value;
+        console.log('Filtering for user:', selectedUser);
+
+        // Update URL query string
+        const url = new URL(window.location);
+        if (selectedUser === 'all') {
+            url.searchParams.delete('user');
+            console.log('Removed user from URL');
+        } else {
+            url.searchParams.set('user', selectedUser);
+            console.log('Set user in URL to:', selectedUser);
+        }
+        window.history.replaceState({}, '', url);
+
+        // Toggle charts visibility
+        const chartsContainer = document.getElementById('chartsContainer');
+        if (selectedUser === 'all') {
+            chartsContainer.style.display = 'none';
+            console.log('Charts hidden');
+        } else {
+            chartsContainer.style.display = 'block';
+            console.log('Charts shown');
+        }
 
         // Ensure we have the dataTable reference
         if (typeof dataTable !== 'undefined' && dataTable) {
@@ -719,9 +741,33 @@
 
             // Add event listener for user select dropdown
             const userSelect = document.getElementById('userSelect');
+            console.log('userSelect element:', userSelect);
             if (userSelect) {
-                userSelect.addEventListener('change', filterPerformanceData);
+                userSelect.addEventListener('change', function() {
+                    console.log('User select changed to:', userSelect.value);
+                    filterPerformanceData();
+                });
                 console.log('User select event listener added');
+
+                // Check URL query string for initial user selection
+                const urlParams = new URLSearchParams(window.location.search);
+                const userParam = urlParams.get('user');
+                console.log('URL user param:', userParam);
+                if (userParam && userParam !== 'all') {
+                    userSelect.value = userParam;
+                    console.log('Setting initial user selection to:', userParam);
+                    // Trigger the filter function to update the view
+                    filterPerformanceData();
+                } else {
+                    // If no user param or 'all', ensure charts are hidden
+                    const chartsContainer = document.getElementById('chartsContainer');
+                    if (chartsContainer) {
+                        chartsContainer.style.display = 'none';
+                        console.log('Charts container hidden by default');
+                    }
+                }
+            } else {
+                console.log('userSelect element not found');
             }
         });
     });
@@ -801,3 +847,4 @@
         }
     }
 </style>
+

@@ -92,19 +92,21 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="mb-0">Performance by Distance</h4>
-                        <small class="text-muted">Select a specific user or choose "All Users" to view all performance data</small>
-                    </div>
-                    <div class="d-flex gap-3">
-                        <div class="form-group mb-0">
-                            <select id="user" name="user" class="form-control" style="min-width: 150px;">
-                                <option value="">All Users</option>
-                                    @foreach($user as $userId => $userName)
-                                        <option value="{{ $userId }}">{{ $userName }}</option>
-                                    @endforeach
-                            </select>
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h4 class="mb-0">Performance</h4>
+                            <small class="text-muted">Select a specific user</small>
+                        </div>
+                        <div class="col-7">
+                            <div class="form-group mb-0">
+                                <select id="userSelect" name="user" class="form-control selectuser" style="width: 100%;">
+                                    <option value="">All Users</option>
+                                        @foreach($user as $userId => $userName)
+                                            <option value="{{ $userId }}">{{ $userName }}</option>
+                                        @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -116,7 +118,7 @@
                         @endphp
 
                         @foreach($groupedPerformance as $distance => $records)
-                        <div class="row mb-5">
+                        <div class="row mb-5 chart-row" id="chart-row-{{ Str::slug($distance) }}" style="display: none;">
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header">
@@ -177,6 +179,18 @@
             initializeCharts();
             handleUserSelection();
             initializePeityCharts();
+
+            // Check URL query string for initial user selection and filter if needed
+            const urlParams = new URLSearchParams(window.location.search);
+            const userParam = urlParams.get('user');
+            console.log('URL user param:', userParam);
+            if (userParam && userParam !== '') {
+                updateChartsForUser(userParam);
+                updateStatistics(userParam);
+            } else {
+                hideAllCharts();
+            }
+
         });
 
         function initializePeityCharts() {
@@ -195,7 +209,7 @@
         }
 
         function handleUserSelection() {
-            const userSelect = document.getElementById('user');
+            const userSelect = document.getElementById('userSelect');
             if (userSelect) {
                 // Set current selected value if exists in URL
                 const urlParams = new URLSearchParams(window.location.search);
@@ -220,8 +234,13 @@
                     window.history.replaceState({}, '', currentUrl);
 
                     // Update charts and statistics dynamically
-                    updateChartsForUser(selectedValue);
-                    updateStatistics(selectedValue);
+                    if (selectedValue && selectedValue !== '') {
+                        updateChartsForUser(selectedValue);
+                        updateStatistics(selectedValue);
+                        showAllCharts();
+                    } else {
+                        hideAllCharts();
+                    }
                 });
             }
         }
@@ -241,7 +260,7 @@
             }
         }
 
-        function createChartForDistance(distance, chartType = 'line') {
+        function createChartForDistance(distance, filteredRecords = null) {
             const canvasId = `dashboardChart-${distance.toLowerCase().replace(/\s+/g, '-')}`;
             const ctx = document.getElementById(canvasId);
 
@@ -252,10 +271,10 @@
                 charts[distance].destroy();
             }
 
-            const records = performanceData[distance] || [];
+            const records = filteredRecords || performanceData[distance] || [];
 
-            // Get unique dates for x-axis labels
-            const uniqueDates = records.length > 0 ? [...new Set(records.map(record => record.race_tanggal))] : [];
+            // Get unique race_ids for x-axis labels
+            const uniqueRaceIds = records.length > 0 ? [...new Set(records.map(record => record.race_id))] : [];
 
             // Group records by user for multi-user display
             const userGroups = {};
@@ -275,10 +294,10 @@
 
             Object.keys(userGroups).forEach(userName => {
                 const userRecords = userGroups[userName];
-                // Create data array that matches uniqueDates, using null for dates without data
-                const userTimes = uniqueDates.map(date => {
-                    const recordForDate = userRecords.find(r => r.race_tanggal === date);
-                    return recordForDate ? parseFloat(recordForDate.race_waktu) : null;
+                // Create data array that matches uniqueRaceIds, using null for race IDs without data
+                const userTimes = uniqueRaceIds.map(raceId => {
+                    const recordForRaceId = userRecords.find(r => r.race_id === raceId);
+                    return recordForRaceId ? parseFloat(recordForRaceId.race_waktu) : null;
                 });
 
                 datasets.push({
@@ -300,13 +319,13 @@
             });
 
             // Add target lines if available
-            const labels = uniqueDates;
+            const labels = uniqueRaceIds;
             if (records.length > 0) {
-                // Create target arrays that match uniqueDates
-                const asianTarget = Array(uniqueDates.length).fill(parseFloat(records[0].jarak_asian || 0));
-                const australiaTarget = Array(uniqueDates.length).fill(parseFloat(records[0].jarak_australia || 0));
-                const asianTrophy = Array(uniqueDates.length).fill(parseFloat(records[0].jarak_asian_trophy || 0));
-                const asianOpen = Array(uniqueDates.length).fill(parseFloat(records[0].jarak_asian_open || 0));
+                // Create target arrays that match uniqueRaceIds
+                const asianTarget = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian || 0));
+                const australiaTarget = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_australia || 0));
+                const asianTrophy = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian_trophy || 0));
+                const asianOpen = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian_open || 0));
 
                 if (asianTarget.some(val => val > 0)) {
                     datasets.push({
@@ -399,7 +418,7 @@
                             displayColors: true,
                             callbacks: {
                                 title: function(context) {
-                                    return 'Date: ' + context[0].label;
+                                    return 'Race ID: ' + context[0].label;
                                 },
                                 label: function(context) {
                                     return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + ' seconds';
@@ -426,7 +445,7 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Date',
+                                text: 'Race ID',
                                 font: {
                                     size: 12,
                                     weight: 'bold'
@@ -483,10 +502,34 @@
                 if (avgElement && filteredRecords.length > 0) {
                     const avg = filteredRecords.reduce((sum, r) => sum + parseFloat(r.race_waktu), 0) / filteredRecords.length;
                     avgElement.textContent = avg.toFixed(2) + 's';
+                } else if (avgElement) {
+                    avgElement.textContent = '0.00s';
                 }
                 if (bestElement && filteredRecords.length > 0) {
                     const best = Math.min(...filteredRecords.map(r => parseFloat(r.race_waktu)));
                     bestElement.textContent = best.toFixed(2) + 's';
+                } else if (bestElement) {
+                    bestElement.textContent = '0.00s';
+                }
+            });
+        }
+
+        function hideAllCharts() {
+            Object.keys(performanceData).forEach(distance => {
+                const rowId = `chart-row-${distance.toLowerCase().replace(/\s+/g, '-')}`;
+                const row = document.getElementById(rowId);
+                if (row) {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function showAllCharts() {
+            Object.keys(performanceData).forEach(distance => {
+                const rowId = `chart-row-${distance.toLowerCase().replace(/\s+/g, '-')}`;
+                const row = document.getElementById(rowId);
+                if (row) {
+                    row.style.display = 'block';
                 }
             });
         }

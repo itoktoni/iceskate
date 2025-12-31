@@ -23,7 +23,6 @@ class PublicController extends Controller
         {
             $user = User::with('has_category')->find(auth()->user()->id);
         }
-
         $performance = Race::select('*')
             ->leftJoinRelationship('has_jarak')
             ->leftJoinRelationship('has_user');
