@@ -16,6 +16,7 @@
 		<thead>
 			<tr>
 				<th width="1">No. </th>
+				<th>ID ASSET</th>
 				<th>NAMA ASSET</th>
 				<th>KETERANGAN</th>
 				<th>QTY</th>
@@ -27,7 +28,8 @@
 			@forelse($data as $table)
 			<tr>
 				<td>{{ $loop->iteration }}</td>
-				<td>{{ $table->name ?? 'Asset tidak ditemukan' }}</td>
+				<td>{{ $table->field_primary ?? 'No ID' }}</td>
+				<td>{{ $table->field_name ?? 'Asset tidak ditemukan' }}</td>
 				<td>{{ $table->asset_keterangan }}</td>
 				<td class="text-center">{{ $table->asset_qty }}</td>
 				<td>
