@@ -78,7 +78,7 @@
                         <div class="card-body">
                             <h3>Performance Summary</h3>
                             <div id="performanceSummary">
-                                <p class="text-muted">Select a user to view performance summary</p>
+                                <p class="text-muted">Performance summary for current user</p>
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,7 @@
 
         </div>
 
-        <div id="chartsContainer" class="row" style="display: none;">
+        <div id="chartsContainer" class="row" style="@if(auth()->user()->role == 'user') display: block; @else display: none; @endif">
             <div class="col-lg-12">
                 @if (isset($performance) && $performance->count() > 0)
                     @php
@@ -291,7 +291,12 @@
         createAllCharts();
 
         // Initialize performance summary
+        @if(auth()->user()->role == 'user')
+        // For user role, show charts for current user by default
+        updatePerformanceSummary({{ auth()->user()->id }});
+        @else
         updatePerformanceSummary('all');
+        @endif
 
         if (useDataTables) {
             initializeDataTable();
@@ -364,7 +369,12 @@
                     window[canvasId + 'Chart'].destroy();
                 }
 
+                @if(auth()->user()->role == 'user')
+                // For user role, create charts with current user's data only
+                createChartForDistance(distance, groupedData[distance].filter(record => record.race_user_id == {{ auth()->user()->id }}), ctx, canvasId);
+                @else
                 createChartForDistance(distance, groupedData[distance], ctx, canvasId);
+                @endif
             }
         });
     }
@@ -847,4 +857,3 @@
         }
     }
 </style>
-
