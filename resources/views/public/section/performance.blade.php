@@ -513,7 +513,7 @@
                     x: {
                         title: {
                             display: true,
-                            text: 'Point'
+                            text: 'Milestone'
                         }
                     }
                 },
