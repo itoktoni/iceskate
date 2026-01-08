@@ -6,6 +6,7 @@
             <div class="row">
                 @bind($model)
 
+                <x-form-input col="2" name="asset_id" label="Asset ID" />
                 <x-form-input col="4" name="asset_nama" />
                 <x-form-input col="2" name="asset_qty" />
                 <x-form-textarea col="6" name="asset_keterangan" />
