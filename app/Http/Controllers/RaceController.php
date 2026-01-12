@@ -12,6 +12,7 @@ use App\Http\Function\UpdateFunction;
 use App\Services\Master\SingleService;
 use App\Facades\Model\RaceModel;
 use DateTime;
+use Hamcrest\Type\IsString;
 use Plugins\Alert;
 use Plugins\Query;
 use Plugins\Response;
@@ -101,7 +102,12 @@ class RaceController extends MasterController
 
                             $nama = $row[0] ?? null;
                             $jarak = $row[1] ?? null;
-                            $tanggal = ($row[2])->format('Y-m-d') ?? $row[2] ?? null;
+                            try {
+                                $tanggal = is_string($row[2]) ? $row[2] : ($row[2])->format('Y-m-d');
+                            } catch (\Throwable $th) {
+                                dd($th->getMessage());
+                                $tanggal = null;
+                            }
                             $waktu = $row[3] ?? null;
                             $keterangan = $row[4] ?? null;
 
