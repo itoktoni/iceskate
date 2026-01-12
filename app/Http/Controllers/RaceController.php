@@ -11,6 +11,7 @@ use App\Http\Function\CreateFunction;
 use App\Http\Function\UpdateFunction;
 use App\Services\Master\SingleService;
 use App\Facades\Model\RaceModel;
+use DateTime;
 use Plugins\Alert;
 use Plugins\Query;
 use Plugins\Response;
@@ -19,6 +20,8 @@ use Spatie\SimpleExcel\SimpleExcelReader;
 class RaceController extends MasterController
 {
     use CreateFunction, UpdateFunction;
+
+    public $insert  = [];
 
     public function __construct(RaceModel $model, SingleService $service)
     {
@@ -94,7 +97,7 @@ class RaceController extends MasterController
                     ->noHeaderRow()
                     ->getRows()
                     ->each(function (array $row) use ($category) {
-                        if ($row[0] != "User ID") {
+                        if ($row[0] != "User ID" || $row[0] != 'USER ID') {
 
                             $nama = $row[0] ?? null;
                             $jarak = $row[1] ?? null;
