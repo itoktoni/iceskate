@@ -69,15 +69,13 @@ class IuranController extends MasterController
 
                             $nama = $row[0] ?? null;
                             $tanggal = ($row[1])->format('Y-m-d') ?? null;
-                            $bulanan = $row[2] ?? null;
-                            $visit = $row[3] ?? null;
-                            $type = $row[4] ?? null;
+                            $harga = $row[2] ?? null;
+                            $type = $row[3] ?? null;
 
                             $this->insert[] = [
                                 'iuran_nama' => $nama,
                                 'iuran_tanggal' => $tanggal,
-                                'iuran_bulanan' => $bulanan,
-                                'iuran_visit' => $visit,
+                                'iuran_harga' => $harga,
                                 'iuran_type' => $type,
                             ];
 
