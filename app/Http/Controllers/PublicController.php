@@ -292,8 +292,8 @@ class PublicController extends Controller
                     "email",
                 ],
             ],
-            'success_redirect_url'             => config('app.url').'/payment',
-            'failure_redirect_url'             => config('app.url').'/payment',
+            'success_redirect_url'             => config('app.url').'payment',
+            'failure_redirect_url'             => config('app.url').'payment',
         ]);
 
         try {
