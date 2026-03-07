@@ -43,6 +43,7 @@ class Payment extends SystemModel
         'payment_code',
         'payment_url',
         'payment_tanggal',
+        'payment_done',
         'payment_id_user',
         'payment_value',
     ];

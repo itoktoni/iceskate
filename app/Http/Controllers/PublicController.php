@@ -10,7 +10,9 @@ use App\Dao\Models\Payment;
 use App\Dao\Models\Race;
 use App\Models\Menu;
 use App\Models\Page;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Plugins\Cms;
 use Xendit\Configuration;
 use Xendit\Invoice\CreateInvoiceRequest;
@@ -308,6 +310,52 @@ class PublicController extends Controller
         }
 
         return $url;
+    }
+
+    public function webhook(Request $request)
+    {
+        Log::info($request->all());
+        $status = $request->get('status');
+        $external_id = $request->get('external_id');
+        $method = $request->get('payment_method');
+
+        $allow = [
+            '52.89.130.89',
+            '52.41.247.32',
+            '52.11.161.195',
+            '18.142.75.249',
+            '18.142.89.214',
+            '18.142.84.176',
+            '52.221.140.31',
+            '18.139.168.99',
+            '18.142.72.148',
+            '54.188.50.182',
+            '54.245.87.198',
+            '44.239.222.129',
+        ];
+
+        $ip = $request->ip();
+        Log::info($ip);
+
+        if(!in_array($ip, $allow)){
+            Log::alert($ip);
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if($status == 'PAID')
+        {
+            $payment =  Payment::where('payment_id', $external_id)->first();
+
+            if(!empty($payment))
+            {
+                $payment->update([
+                    'payment_paid' => 1,
+                    'payment_date' => date('Y-m-d H:i:s'),
+                ]);
+            }
+        }
+
+        return response()->json($request->all());
     }
 
     public function updateProfile()

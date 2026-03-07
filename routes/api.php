@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Core\GroupsController;
 use App\Http\Controllers\Core\UserController;
 use App\Http\Controllers\Core\WebhookController;
+use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 use PHPUnit\TextUI\XmlConfiguration\Group;
 
@@ -41,3 +42,5 @@ use PHPUnit\TextUI\XmlConfiguration\Group;
 // });
 
 // Route::get('groups', [GroupsController::class, 'getData']);
+
+Route::post('/webhook/xendit', [PublicController::class, 'webhook'])->name('webhook');
