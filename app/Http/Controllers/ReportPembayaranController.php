@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Dao\Models\History;
+use App\Dao\Models\Iuran;
 use App\Dao\Models\Payment;
 use App\Http\Controllers\Core\ReportController;
 use Illuminate\Http\Request;
@@ -19,17 +21,28 @@ class ReportPembayaranController extends ReportController
     protected function beforeForm()
     {
         $user = Query::getUser();
-        $jadwal = Query::getJadwal();
+        $iuran = Iuran::getOptions();
 
         self::$share = [
             'user' => $user,
-            'jadwal' => $jadwal,
+            'iuran' => $iuran,
         ];
     }
 
     public function getData()
     {
-        $query = Payment::query()->filter();
+        $query = History::query()
+        ->addSelect('*');
+
+        if($user = request()->get('user_id'))
+        {
+            $query = $query->where('payment_id_user', $user);
+        }
+
+        if($iuran = request()->get('iuran_id'))
+        {
+            $query = $query->where('iuran_id', $iuran);
+        }
 
         if($start = request()->get('start_date'))
         {

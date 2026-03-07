@@ -32,7 +32,7 @@ class Jadwal extends SystemModel
      */
     protected $fillable = ['jadwal_id', 'jadwal_category_id', 'jadwal_nama', 'jadwal_tanggal', 'jadwal_keterangan'];
 
-     public static function field_name()
+    public static function field_name()
     {
         return 'jadwal_nama';
     }
@@ -56,6 +56,7 @@ class Jadwal extends SystemModel
     {
         $query = $this->select($this->getTable().'.*', 'category_nama')
             ->leftJoinRelationship('has_category')
+            ->orderBy($this->getTable().'.jadwal_tanggal', 'DESC')
             ->filter();
 
         $query = env('PAGINATION_SIMPLE') ? $query->simplePaginate(env('PAGINATION_NUMBER')) : $query->paginate(env('PAGINATION_NUMBER'));

@@ -4,6 +4,7 @@
         @if($isWired())
             wire:model{!! $wireModifier() !!}="{{ $name }}"
         @endif
+        rows="{{ $rows }}"
 
         name="{{ $name }}"
 
@@ -13,5 +14,4 @@
 
         {!! $attributes->merge(['class' => 'form-control ' . ($hasError($name) ? 'is-invalid' : '')]) !!}
     >@unless($isWired()){!! $value !!}@endunless</textarea>
-
 </div>

@@ -21,15 +21,12 @@
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th width="9" class="center">
+                                    <th width="9" style="width: 10px" class="center">
                                         <input class="btn-check-d" type="checkbox">
                                     </th>
-                                    <th class="text-center col-md-2">{{ __('Action') }}</th>
-                                    @foreach ($fields as $value)
-                                        <th {{ Template::extractColumn($value) }}>
-                                            {{ __($value->name) }}
-                                        </th>
-                                    @endforeach
+                                    <th class="text-center">{{ __('Action') }}</th>
+                                    <th>ID</th>
+                                    <th>Nama</th>
                                     <th>Tanggal</th>
                                     <th>Keterangan</th>
                                 </tr>
@@ -42,15 +39,17 @@
                                                 value="{{ $table->field_primary }}">
                                         </td>
                                         <td class=" text-center">
-                                            <x-crud :model="$table">
+                                            <x-crud :action="['delete']" :model="$table">
+                                                <a class="btn btn-primary copy-link" data-link="{{ route('kehadiran', ['id' => $table->field_primary]) }}" href="javascript:void(0)" onclick="copyLink(this)">Copy Link</a>
+                                                <x-button module="getUpdate" key="{{ $table->field_primary }}" color="secondary" label="Kehadiran"/>
                                                 <x-button module="getRace" key="{{ $table->field_primary }}" color="success" label="Performance"/>
                                             </x-crud>
                                         </td>
 
-										<td >{{ $table->jadwal_id }}</td>
-										<td >{{ $table->jadwal_nama }}</td>
-										<td >{{ $table->jadwal_tanggal }}</td>
-										<td >{{ $table->jadwal_keterangan }}</td>
+										<td style="width: 50px">{{ $table->jadwal_id }}</td>
+										<td style="width: 250px">{{ $table->jadwal_nama }}</td>
+										<td style="width: 120px">{{ $table->jadwal_tanggal }}</td>
+										<td>{{ $table->jadwal_keterangan }}</td>
 
                                     </tr>
                                 @empty
@@ -62,6 +61,69 @@
                 </div>
 
             </x-form>
+
+            <script>
+                function copyLink(button) {
+                    // Get the value of the 'data-link' attribute using the .dataset property
+                    const linkToCopy = button.dataset.link;
+
+                    // Try the Clipboard API first
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(linkToCopy)
+                            .then(() => {
+                                // Provide user feedback
+                                console.log('Link copied to clipboard:', linkToCopy);
+                                button.textContent = 'Copied!';
+                                setTimeout(() => {
+                                    button.textContent = 'Copy Link';
+                                }, 2000);
+                            })
+                            .catch(err => {
+                                // Fallback to legacy method
+                                fallbackCopyText(linkToCopy, button);
+                            });
+                    } else {
+                        // Fallback to legacy method
+                        fallbackCopyText(linkToCopy, button);
+                    }
+                }
+
+                function fallbackCopyText(text, button) {
+                    // Create a temporary textarea element
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+
+                    // Ensure the textarea is not visible but still in the DOM
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-9999px";
+                    textArea.style.top = "0";
+                    document.body.appendChild(textArea);
+
+                    // Focus and select the text
+                    textArea.focus();
+                    textArea.select();
+
+                    try {
+                        // Execute the copy command
+                        const successful = document.execCommand('copy');
+                        if (successful) {
+                            console.log('Link copied to clipboard (fallback):', text);
+                            button.textContent = 'Copied!';
+                            setTimeout(() => {
+                                button.textContent = 'Copy Link';
+                            }, 2000);
+                        } else {
+                            alert('Failed to copy the link. You can copy it manually.');
+                        }
+                    } catch (err) {
+                        console.error('Failed to copy link (fallback): ', err);
+                        alert('Failed to copy the link. You can copy it manually.');
+                    }
+
+                    // Clean up
+                    document.body.removeChild(textArea);
+                }
+            </script>
 
         </div>
 

@@ -333,7 +333,7 @@ function unic($length)
         $str .= $chars[$rand];
     }
 
-    return $str;
+    return strtoupper($str);
 }
 
 function getClass($class)

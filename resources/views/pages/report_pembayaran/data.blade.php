@@ -32,12 +32,11 @@
 			<tr>
 				<th width="1">No. </th>
 				<th>CODE PEMBAYARAN</th>
-				<th>JADWAL</th>
-				<th>TANGGAL</th>
+				<th>NAMA PEMBAYARAN</th>
+				<th>TANGGAL PEMBAYARAN</th>
 				<th>NAMA USER</th>
-				<th>JUMLAH</th>
 				<th>STATUS</th>
-				<th>TANGGAL APPROVE</th>
+				<th>JUMLAH</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -48,28 +47,38 @@
 			@forelse($data as $table)
 			<tr>
 				<td>{{ $loop->iteration }}</td>
-				<td>{{ $table->code }}</td>
-				<td>{{ $table->jadwal_nama }}</td>
-				<td>{{ $table->jadwal_tanggal }}</td>
+				<td>{{ $table->payment_code }}</td>
+				<td>{{ $table->iuran_nama }} -
+					@if($table->iuran_type == 'BULANAN')
+						{{ Carbon\Carbon::parse($table->iuran_tanggal)->translatedFormat('F Y') }}
+					@else
+						{{ Carbon\Carbon::parse($table->iuran_tanggal)->translatedFormat('d M Y') }}
+					@endif
+				</td>
+				<td>{{ $table->payment_tanggal }}</td>
 				<td>{{ $table->name ?? 'User tidak ditemukan' }}</td>
-				<td>Rp {{ number_format($table->amount ?? 0, 0, ',', '.') }}</td>
 				<td>
-					@if($table->payment == 1)
+					@if($table->payment_paid == 1)
 						<span class="badge bg-success">PAID</span>
 					@else
 						<span class="badge bg-danger">UNPAID</span>
 					@endif
 				</td>
-				<td>{{ formatDate($table->tanggal) }}</td>
+				<td class="text-right">{{ number_format($table->iuran_harga ?? 0, 0, ',', '.') }}</td>
 			</tr>
 			@php
-			$total_pembayaran += $table->amount ?? 0;
+			$total_pembayaran += $table->iuran_harga ?? 0;
 			@endphp
 			@empty
 			<tr>
 				<td colspan="7" class="text-center">Tidak ada data pembayaran</td>
 			</tr>
 			@endforelse
+
+			<tr>
+				<td colspan="6" class="text-right"><b>Total Pembayaran</b></td>
+				<td class="text-right"><b>{{ number_format($total_pembayaran, 0, ',', '.') }}</b></td>
+			</tr>
 
 		</tbody>
 	</table>

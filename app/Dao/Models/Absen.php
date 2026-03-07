@@ -3,7 +3,8 @@
 namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
-
+use App\Dao\Models\Core\User;
+use App\Facades\Model\UserModel;
 
 /**
  * Class Absen

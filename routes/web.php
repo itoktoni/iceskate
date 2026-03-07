@@ -42,11 +42,17 @@ Auth::routes(['verify' => true]);
 
 Route::get('/', [PublicController::class, 'index'])->name('public');
 Route::get('/register', [PublicController::class, 'index'])->name('register');
+Route::get('/payment', [PublicController::class, 'payment'])->name('payment')->middleware('auth');
+Route::post('/iuran', [PublicController::class, 'iuran'])->name('iuran')->middleware('auth');
+Route::get('/kehadiran', [PublicController::class, 'kehadiran'])->name('kehadiran')->middleware('auth');
+Route::get('/history', [PublicController::class, 'history'])->name('history')->middleware('auth');
+Route::get('/hadir/{id}', [PublicController::class, 'hadir'])->name('hadir')->middleware('auth');
 Route::get('/performance', [PublicController::class, 'performance'])->name('performance');
 Route::get('/userprofile', [PublicController::class, 'userprofile'])->name('userprofile')->middleware('auth');
 Route::put('/userprofile/update', [PublicController::class, 'updateProfile'])->name('userprofileupdate')->middleware('auth');
 Route::get('/{slug}', [PublicController::class, 'page'])->name('page');
 Route::get('/blog/{slug}', [PublicController::class, 'blog'])->name('blog');
+
 
 try {
     $routes = Query::groups();

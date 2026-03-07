@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Dao\Models\Category;
+use App\Dao\Models\Jadwal;
 use App\Dao\Models\Jarak;
 use App\Dao\Models\Race;
 use App\Http\Controllers\Core\ReportController;
 use Illuminate\Http\Request;
 
-class ReportRaceController extends ReportController
+class ReportKehadiranController extends ReportController
 {
     public $data;
 
@@ -30,35 +31,22 @@ class ReportRaceController extends ReportController
 
     public function getData()
     {
-        $query = Race::query()
+        $query = Jadwal::query()
             ->select('*')
-            ->leftJoinRelationship('has_jarak')
-            ->leftJoinRelationship('has_user')
-            ->leftJoinRelationship('has_jadwal');
+            ->leftJoinRelationship('has_absen');
 
         if($start = request()->get('start_date'))
         {
-            $query = $query->whereDate('race_tanggal','>=', $start);
+            $query = $query->whereDate('jadwal_tanggal','>=', $start);
         }
 
         if($start = request()->get('end_date'))
         {
-            $query = $query->whereDate('race_tanggal', '<=',$start);
+            $query = $query->whereDate('jadwal_tanggal', '<=',$start);
         }
-
-        if($category = request()->get('category'))
-        {
-            $query = $query->where('category', $category);
-        }
-
-        if($jarak = request()->get('jarak'))
-        {
-            $query = $query->where('race_jarak_id', $jarak);
-        }
-
 
         // Join with user data to get payment information
-        return $query->orderBy('race_tanggal', 'ASC')->get();
+        return $query->orderBy('jadwal_tanggal', 'ASC')->get();
     }
 
     public function getPrint(Request $request)

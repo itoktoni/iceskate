@@ -18,6 +18,12 @@
     <!-- color scheme -->
     <link id="colors" href="{{ asset('frontend/css/colors/scheme-01.css') }}" rel="stylesheet" type="text/css" >
 
+    <style>
+        header{
+            z-index: 1 !important;
+        }
+    </style>
+
 </head>
 
 <body class="light-scheme">
@@ -78,29 +84,39 @@
                                     @endif
 
                                     @auth
-                                     <li>
-                                         <a class="menu-item" href="{{ route('performance') }}">
+                                    <li>
+                                        <a class="menu-item" href="{{ route('payment') }}">
+                                            Iuran
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="menu-item" href="{{ route('kehadiran') }}">
+                                            Kehadiran
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="menu-item" href="{{ route('performance') }}">
                                             Performance
                                         </a>
-                                      </li>
-                                      <li>
+                                    </li>
+                                    <li>
                                          <a class="menu-item" href="{{ route('signout') }}">
                                             Logout
                                         </a>
-                                      </li>
+                                    </li>
                                       @else
-                                       <li>
+                                    <li>
                                          <a class="menu-item" href="{{ route('login') }}">
                                             Member
                                         </a>
-                                      </li>
+                                    </li>
                                     @endauth
                                 </ul>
                             </div>
                         </div>
 
                         <div class="de-flex-col">
-                            <a class="btn-main fx-slide w-100" href="tel:{{ $website_phone ?? null }}"><span>{{ $website_phone ?? null }}</span></a>
+                            <a class="btn-main fx-slide w-100" style="z-index: 1 !important" href="tel:{{ $website_phone ?? null }}"><span>{{ $website_phone ?? null }}</span></a>
 
                             <div class="menu_side_area">
                                 <span id="menu-btn"></span>
