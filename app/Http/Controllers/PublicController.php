@@ -344,13 +344,13 @@ class PublicController extends Controller
 
         if($status == 'PAID')
         {
-            $payment =  Payment::where('payment_id', $external_id)->first();
+            $payment =  Payment::find($external_id);
 
             if(!empty($payment))
             {
                 $payment->update([
                     'payment_paid' => 1,
-                    'payment_date' => date('Y-m-d H:i:s'),
+                    'payment_done' => date('Y-m-d H:i:s'),
                     'payment_method' => $method,
                 ]);
             }
