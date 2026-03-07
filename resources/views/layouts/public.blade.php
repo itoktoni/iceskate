@@ -178,6 +178,10 @@
     <div id="de-loader"></div>
     <!-- page preloader close -->
 
+    <a style="heigh:100px;position:fixed;right:1rem;bottom:1rem;z-index:99" target="_blank" href="https://wa.me/{{ $website_phone ?? null }}" class="wa">
+        <img style="height:70px" src="/wa.png" alt="">
+    </a>
+
     <!-- Javascript Files
     ================================================== -->
     <script src="{{ asset('frontend/js/vendors.js') }}"></script>
