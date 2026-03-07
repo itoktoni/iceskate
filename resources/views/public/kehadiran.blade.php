@@ -56,7 +56,7 @@
                                     <td class="text-center">
                                         {{ $loop->iteration }}
                                     </td>
-                                    <td>{{ $item->jadwal_tanggal }} - {{ $item->jadwal_keterangan }}</td>
+                                    <td>{{ $item->jadwal_tanggal }} -  {!! nl2br($item->jadwal_keterangan) !!}</td>
                                     <td style="width: 100px; text-align: center; vertical-align: middle;">
                                         @if($hadir > 0)
                                             <span style="">Hadir</span>

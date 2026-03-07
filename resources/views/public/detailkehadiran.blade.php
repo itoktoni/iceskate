@@ -42,7 +42,7 @@
                     <div class="row">
                         <div class="col-md-12">
 
-                             {{ $single->jadwal_keterangan }}
+                            {!! nl2br($single->jadwal_keterangan) !!}
 
                         </div>
                     </div>
