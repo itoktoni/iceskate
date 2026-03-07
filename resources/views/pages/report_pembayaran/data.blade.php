@@ -73,7 +73,7 @@
 			@endphp
 			@empty
 			<tr>
-				<td colspan="7" class="text-center">Tidak ada data pembayaran</td>
+				<td colspan="8" class="text-center">Tidak ada data pembayaran</td>
 			</tr>
 			@endforelse
 
