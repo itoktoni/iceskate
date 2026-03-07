@@ -351,6 +351,7 @@ class PublicController extends Controller
                 $payment->update([
                     'payment_paid' => 1,
                     'payment_date' => date('Y-m-d H:i:s'),
+                    'payment_method' => $method,
                 ]);
             }
         }
