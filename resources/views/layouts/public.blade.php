@@ -116,7 +116,9 @@
                         </div>
 
                         <div class="de-flex-col">
-                            <a class="btn-main fx-slide w-100" style="z-index: 1 !important" href="tel:{{ $website_phone ?? null }}"><span>{{ $website_phone ?? null }}</span></a>
+                            @guest
+                                <a class="btn-main fx-slide w-100" style="z-index: 1 !important" href="tel:{{ $website_phone ?? null }}"><span>{{ $website_phone ?? null }}</span></a>
+                            @endguest
 
                             <div class="menu_side_area">
                                 <span id="menu-btn"></span>
