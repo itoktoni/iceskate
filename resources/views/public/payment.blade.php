@@ -125,4 +125,29 @@
 
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('select-all');
+        const itemCheckboxes = document.querySelectorAll('input[name^="iuran["]');
+
+        // Handle select-all checkbox
+        selectAllCheckbox.addEventListener('change', function() {
+            itemCheckboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        });
+
+        // Handle individual checkboxes
+        itemCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+                const someChecked = Array.from(itemCheckboxes).some(cb => cb.checked);
+
+                selectAllCheckbox.checked = allChecked;
+                selectAllCheckbox.indeterminate = someChecked && !allChecked;
+            });
+        });
+    });
+</script>
+
 @endsection
