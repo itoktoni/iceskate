@@ -155,7 +155,9 @@
             scheduleItem.innerHTML = `
                 <h6 class="schedule-title">${item.jadwal_nama}</h6>
                 <p class="schedule-time">${item.jadwal_tanggal}</p>
-                <p class="schedule-description">${item.jadwal_keterangan || 'No description'}</p>
+                <p class="schedule-description">${item.jadwal_keterangan || 'No description'}</p></br>
+                <a class="schedule-title" href="${item.jadwal_link}">${item.jadwal_link || ''}</a></br>
+                <a class="text-muted" href="${item.jadwal_url}">${item.jadwal_url || ''}</a>
             `;
             scheduleList.appendChild(scheduleItem);
         });

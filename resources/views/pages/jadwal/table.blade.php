@@ -49,7 +49,13 @@
 										<td style="width: 50px">{{ $table->jadwal_id }}</td>
 										<td style="width: 250px">{{ $table->jadwal_nama }}</td>
 										<td style="width: 120px">{{ $table->jadwal_tanggal }}</td>
-										<td>{{ $table->jadwal_keterangan }}</td>
+										<td>
+                                            {{ $table->jadwal_keterangan }}
+                                            <br>
+                                            <a href="{{ $table->jadwal_url }}" target="_blank">{{ $table->jadwal_url }}</a>
+                                            <br>
+                                            <a href="{{ $table->jadwal_link }}" target="_blank">{{ $table->jadwal_link }}</a>
+                                        </td>
 
                                     </tr>
                                 @empty

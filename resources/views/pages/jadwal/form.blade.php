@@ -13,7 +13,9 @@
 
                 <x-form-input col="3" type="date" value="{{ $model->jadwal_tanggal ?? date('Y-m-d') }}" name="jadwal_tanggal" />
                 <x-form-select col="3" name="jadwal_nama" label="Type" :options="$jadwal" />
-                <x-form-textarea col="6" rows="5" name="jadwal_keterangan" />
+                <x-form-input col="3" name="jadwal_link" />
+                <x-form-input col="3" name="jadwal_url" />
+                <x-form-textarea col="12" rows="5" name="jadwal_keterangan" />
 
                 @if ($model)
 
