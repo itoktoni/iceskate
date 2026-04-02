@@ -156,8 +156,7 @@
                 <h6 class="schedule-title">${item.jadwal_nama}</h6>
                 <p class="schedule-time">${item.jadwal_tanggal}</p>
                 <p class="schedule-description">${item.jadwal_keterangan || 'No description'}</p></br>
-                <a target="_blank" class="schedule-title" href="${item.jadwal_link}">${item.jadwal_link || ''}</a></br>
-                <a target="_blank" class="text-muted" href="${item.jadwal_url}">${item.jadwal_url || ''}</a>
+                <a target="_blank" class="schedule-title" href="${item.jadwal_url}">${item.jadwal_link || ''}</a></br>
             `;
             scheduleList.appendChild(scheduleItem);
         });
