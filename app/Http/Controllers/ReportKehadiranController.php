@@ -33,7 +33,7 @@ class ReportKehadiranController extends ReportController
     {
         $query = Jadwal::query()
             ->select('*')
-            ->leftJoinRelationship('has_absen');
+            ->joinRelationship('has_absen');
 
         if($start = request()->get('start_date'))
         {
