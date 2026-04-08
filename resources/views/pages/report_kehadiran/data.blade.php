@@ -33,7 +33,7 @@
 				<th width="1">No. </th>
 				<th>JADWAL</th>
 				<th>TANGGAL</th>
-				<th>NAMA USER</th>
+				<th>NAMA Atlet</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -43,7 +43,7 @@
 				<td>{{ $loop->iteration }}</td>
 				<td>{{ $table->jadwal_nama }}</td>
 				<td>{{ formatDate($table->jadwal_tanggal) }}</td>
-				<td>{{ $table->name ?? 'User tidak ditemukan' }}</td>
+				<td>{{ $table->name ?? 'Atlet tidak ditemukan' }}</td>
 			</tr>
 
 			@empty

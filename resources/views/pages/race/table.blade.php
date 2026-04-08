@@ -14,7 +14,7 @@
                         <x-form-input type="date" col="3" label="End Date" name="end_date" />
 
                         <x-form-select col="3" name="jarak_id" label="Jarak" :options="$jarak" />
-                        <x-form-select col="3" name="id" label="User" :options="$user" />
+                        <x-form-select col="3" name="id" label="Atlet" :options="$user" />
 
                     </div>
                 </div>

@@ -58,7 +58,7 @@
 				</td>
 				<td>{{ $table->payment_done }}</td>
 				<td>{{ $table->payment_method }}</td>
-				<td>{{ $table->name ?? 'User tidak ditemukan' }}</td>
+				<td>{{ $table->name ?? 'Atlet tidak ditemukan' }}</td>
 				<td>
 					@if($table->payment_paid == 1)
 						<span class="badge bg-success">PAID</span>
