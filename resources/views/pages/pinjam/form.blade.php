@@ -7,7 +7,7 @@
                 @bind($model)
 
                     <x-form-select col="6" required name="pinjam_asset_id" label="Asset" :options="$asset" />
-                    <x-form-select col="6" required name="pinjam_user_id" label="User" :options="$user" />
+                    <x-form-select col="6" required name="pinjam_user_id" label="Atlet" :options="$user" />
                     <x-form-input col="6" name="pinjam_tanggal" label="Tanggal Pinjam" type="date" value="{{ $model->pinjam_tanggal ?? date('Y-m-d') }}" />
 
                     <br>

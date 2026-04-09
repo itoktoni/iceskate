@@ -33,7 +33,7 @@
 				<th width="1">No. </th>
 				<th>JADWAL</th>
 				<th>TANGGAL</th>
-				<th>NAMA Atlet</th>
+				<th>NAMA ATLET</th>
 			</tr>
 		</thead>
 		<tbody>
