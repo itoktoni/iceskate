@@ -9,12 +9,9 @@
                 <x-filter toggle="Filter" :fields="$fields" />
             </x-form>
 
-            <x-form method="POST" :upload="true"  action="{{ moduleRoute('getTable') }}">
+            <x-form method="POST" action="{{ moduleRoute('getTable') }}">
 
-                <x-action>
-                    <input type="file" name="file" accept=".xls,.xlsx" class="btn btn-primary btn-sm pb-2">
-                    <x-button type="submit" label="Upload" class="btn-dark" name="upload" />
-                </x-action>
+                <x-action />
 
                 <div class="container-fluid" id="table">
                     <div class="table-responsive">
@@ -25,15 +22,12 @@
                                         <input class="btn-check-d" type="checkbox">
                                     </th>
                                     <th class="text-center column-action">{{ __('Action') }}</th>
-                                    @foreach ($fields as $value)
-                                        <th {{ Template::extractColumn($value) }}>
-                                            {{ __($value->name) }}
-                                        </th>
-                                    @endforeach
+                                    <th>Payment Id</th>
+                                    <th>Payment Code</th>
                                     <th>Tanggal</th>
-                                    <th>Harga</th>
-                                    <th>Type</th>
-                                    <th>Token</th>
+                                    <th>User</th>
+                                    <th>Total</th>
+                                    <th>Lunas</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,12 +41,13 @@
                                             <x-crud :model="$table" />
                                         </td>
 
-										<td >{{ $table->iuran_id }}</td>
-										<td >{{ $table->iuran_nama }}</td>
-										<td >{{ $table->iuran_tanggal }}</td>
-										<td >{{ $table->iuran_harga }}</td>
-										<td >{{ $table->iuran_type }}</td>
-										<td >{{ $table->iuran_token }}</td>
+										<td >{{ $table->payment_id }}</td>
+										<td >{{ $table->payment_code }}</td>
+										<td >{{ formatDate($table->payment_tanggal) }}</td>
+										<td >{{ $table->name }}</td>
+										<td >{{ number_format($table->payment_value, 0) }}</td>
+										<td >{{ $table->payment_paid == 1 ? 'Lunas' : 'Belum Lunas' }}</td>
+
                                     </tr>
                                 @empty
                                 @endforelse

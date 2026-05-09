@@ -180,9 +180,16 @@
     <div id="de-loader"></div>
     <!-- page preloader close -->
 
+    @auth
     <a style="heigh:100px;position:fixed;right:1rem;bottom:1rem;z-index:99" target="_blank" href="https://wa.me/{{ $website_phone ?? null }}" class="wa">
-        <img style="height:70px" src="/wa.png" alt="">
+        <img style="height:70px" src="/qrcode.jpg" alt="">
     </a>
+    @else
+        <a style="heigh:100px;position:fixed;right:1rem;bottom:1rem;z-index:99" href="tel:{{ $website_phone ?? null }}" class="wa">
+            <img style="height:70px" src="/phone.png" alt="">
+        </a>
+    @endauth
+
 
     <!-- Javascript Files
     ================================================== -->

@@ -4,5 +4,8 @@
     "intelephense.environment.phpVersion": "8.1",
     "search.exclude": {
         "**/vendor": true
-    }
+    },
+    "workbench.colorTheme": "One Monokai",
+    "workbench.preferredHighContrastColorTheme": "One Monokai",
+    "workbench.preferredLightColorTheme": "Default High Contrast"
 }

@@ -3,15 +3,20 @@
 namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
-
+use App\Dao\Models\Core\User;
 
 /**
- * Class Absen
+ * Class Payment
  *
- * @property $jadwal_id
- * @property $id
- * @property $payment
- * @property $code
+ * @property $payment_id
+ * @property $payment_code
+ * @property $payment_tanggal
+ * @property $payment_id_user
+ * @property $payment_value
+ * @property $payment_paid
+ * @property $payment_url
+ * @property $payment_done
+ * @property $payment_method
  *
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
@@ -22,37 +27,17 @@ class Payment extends SystemModel
     protected $perPage = 20;
     protected $table = 'payment';
     protected $primaryKey = 'payment_id';
-    protected $keyType = 'string';
-    public $incrementing = false;
-
-    protected $casts = [
-        'payment_id' => 'string',
-    ];
-
-    protected $filters = [
-        'filter',
-    ];
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'payment_id',
-        'payment_code',
-        'payment_url',
-        'payment_tanggal',
-        'payment_done',
-        'payment_method',
-        'payment_paid',
-        'payment_id_user',
-        'payment_value',
-    ];
+    protected $fillable = ['payment_id', 'payment_code', 'payment_tanggal', 'payment_id_user', 'payment_value', 'payment_paid', 'payment_url', 'payment_done', 'payment_method'];
 
     public static function field_name()
     {
-        return 'jadwal_nama';
+        return 'payment_code';
     }
 
     public function getFieldNameAttribute()
@@ -60,22 +45,35 @@ class Payment extends SystemModel
         return $this->{$this->field_name()};
     }
 
+    public function has_iuran()
+    {
+        return $this->belongsToMany(
+            Iuran::class,
+            "payment_iuran",
+            "payment_id",
+            "iuran_id",
+        )->withPivot("iuran_harga", "token", 'tanggal');
+    }
+
+    public function has_user()
+    {
+        return $this->hasOne(User::class, 'id', 'payment_id_user');
+    }
+
     public function dataRepository($selected = [], $relation = [])
     {
-        $query = $this->select($this->getTable().'.*');
+        $query = $this->select($this->getTable() . ".*")
+            ->leftJoinRelationship("has_user")
+            ->addSelect(['name']);
 
-        if($selected)
-        {
+        if ($selected) {
             $query = $query->addSelect($selected);
         }
 
-        $query = env('PAGINATION_SIMPLE') ? $query->simplePaginate(env('PAGINATION_NUMBER')) : $query->paginate(env('PAGINATION_NUMBER'));
+        $query = env("PAGINATION_SIMPLE")
+            ? $query->simplePaginate(env("PAGINATION_NUMBER"))
+            : $query->paginate(env("PAGINATION_NUMBER"));
 
         return $query;
-    }
-
-    public function has_iuran()
-    {
-        return $this->belongsToMany(Iuran::class, 'payment_iuran', 'payment_id', 'iuran_id')->withPivot('iuran_harga');
     }
 }

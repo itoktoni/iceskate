@@ -34,7 +34,7 @@ class Iuran extends SystemModel
      *
      * @var array<int, string>
      */
-    protected $fillable = ['iuran_id', 'iuran_nama', 'iuran_tanggal', 'iuran_harga', 'iuran_type', 'iuran_keterangan', 'iuran_aktif'];
+    protected $fillable = ['iuran_id', 'iuran_nama', 'iuran_tanggal', 'iuran_harga', 'iuran_type', 'iuran_keterangan', 'iuran_token'];
 
     public static function field_name()
     {

@@ -11,12 +11,15 @@ use App\Dao\Models\Race;
 use App\Models\Menu;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use LaravelQRCode\Facades\QRCode;
 use Plugins\Cms;
 use Xendit\Configuration;
 use Xendit\Invoice\CreateInvoiceRequest;
 use Xendit\Invoice\InvoiceApi;
+use Illuminate\Support\Facades\Crypt;
 
 class PublicController extends Controller
 {
@@ -24,6 +27,17 @@ class PublicController extends Controller
     {
         $menu   = Menu::slug('top')->first();
         $jadwal = Jadwal::leftJoinRelationship('has_category')->get();
+
+        $voucher = DB::table('view_voucher')
+            ->where('payment_id_user', auth()->user()->id)
+            ->whereYear('tanggal', now()->format('Y'))
+            ->whereMonth('tanggal', now()->format('m'))
+            ->sum('token');
+
+        $encrypted = Crypt::encryptString(auth()->user()->id);
+
+        $path = public_path().'/qr-code.png';
+        $qr = QRCode::text($encrypted)->setOutfile($path )->png();
 
         $user = null;
         if (auth()->check()) {
@@ -50,6 +64,8 @@ class PublicController extends Controller
             'menu'                => $menu,
             'jadwal'              => $jadwal,
             'user'                => $user,
+            'voucher'                => $voucher,
+            'qr'                    => $qr,
         ];
 
         return array_merge($default, $data);

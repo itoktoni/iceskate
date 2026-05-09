@@ -12,6 +12,7 @@
         "aaronfrancis/fast-paginate": "^2.0",
         "arielmejiadev/larapex-charts": "*",
         "bensampo/laravel-enum": "^6.2",
+        "giauphan/laravel-qr-code": "v1.0.3",
         "intervention/image-laravel": "^1.5",
         "izniburak/laravel-auto-routes": "1.6.0",
         "jgrossi/corcel": "^9.0",

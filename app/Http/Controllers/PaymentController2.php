@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Dao\Models\Absen;
 use App\Dao\Models\Payment;
 use App\Http\Controllers\Core\MasterController;
 use App\Http\Function\CreateFunction;
 use App\Http\Function\UpdateFunction;
 use App\Services\Master\SingleService;
-use App\Facades\Model\AbsenModel;
 
-class AbsenController extends MasterController
+class PaymentController extends MasterController
 {
     use CreateFunction, UpdateFunction;
 
-    public function __construct(AbsenModel $model, SingleService $service)
+    public function __construct(Payment $model, SingleService $service)
     {
         self::$service = self::$service ?? $service;
         $this->model = $model::getModel();
@@ -22,7 +20,8 @@ class AbsenController extends MasterController
 
     public function getTable()
     {
-        $data = new Payment()->dataRepository();
+        $data = $this->getData();
+
         return moduleView(modulePathTable(), [
             "data" => $data,
             "fields" => $this->model::getModel()->getShowField(),

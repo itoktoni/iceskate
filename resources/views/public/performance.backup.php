@@ -23,23 +23,7 @@
 
             @if (auth()->user()->role == 'user')
 
-                @php
-                      $path = public_path().'/qr-code.png';
-                @endphp
-
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Display QR Code</h5>
-                            <p class="card-text text-center">
-                                <img src="/qr-code.png" alt="QR Code" class="img-fluid">
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-lg-6">
+                <div class="col-lg-8">
                     <div class="card">
                         <div class="card-body">
                            <div class="row">
@@ -57,11 +41,11 @@
                             </div>
                             <div id="">
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col-5">
                                         <small class="text-muted">Category</small>
                                         <div class="h5">{{ $user->has_category ? $user->has_category->field_name : '' }}</div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-5">
                                         <small class="text-muted">Age</small>
                                         <div class="h5">
                                             @php
@@ -73,35 +57,31 @@
                                             @endphp
                                         </div>
                                     </div>
+                                    <div class="col-2">
+                                        <small class="text-muted">Voucher</small>
+                                        <div class="h5">{{ 3 }}</div>
+                                    </div>
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-6">
+                                    <div class="col-5">
                                         <small class="text-muted">Phone</small>
                                         <div class="h5">{{ auth()->user()->phone ?? '' }}</div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-5">
                                         <small class="text-muted">ID Member</small>
                                         <div class="h5">{{ auth()->user()->id ?? '' }}</div>
                                     </div>
-                                </div>
-
-                                <div class="row mt-2">
-                                    <div class="col-6">
-                                        <small class="text-muted">Voucher</small>
-                                        <div class="h5">{{ $voucher ?? '' }}</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Scanned</small>
+                                    <div class="col-2">
+                                        <small class="text-muted">Penggunaan</small>
                                         <div class="h5">{{ 1 }}</div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="card">
                         <div class="card-body">
                             <h3>Performance Summary</h3>

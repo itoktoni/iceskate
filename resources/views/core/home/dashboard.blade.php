@@ -57,10 +57,12 @@
                                     Rp 0
                                 @endif
                             </h2>
-                            <div>Total Payment</div>
+                            <div>Total Voucher</div>
                         </div>
                         <div>
-                            <i class="fas fa-money-bill-wave fa-2x text-warning"></i>
+                            <a href="http://">
+                                <i class="fa-solid fa-qrcode fa-2x text-dark"></i>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -203,7 +203,7 @@ return [
         CrudServiceProvider::class,
         MegaphoneServiceProvider::class,
         Corcel\Laravel\CorcelServiceProvider::class,
-
+        LaravelQRCode\Providers\QRCodeServiceProvider::class,
     ],
 
     /*
@@ -266,6 +266,7 @@ return [
         'EnvEditor' => EnvEditor::class,
         'ModelGroup' => SystemGroup::class,
         'Cms' => Cms::class,
+        'QRCode' => LaravelQRCode\Facades\QRCode::class,
     ],
 
 ];

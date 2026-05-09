@@ -9,12 +9,9 @@
                 <x-filter toggle="Filter" :fields="$fields" />
             </x-form>
 
-            <x-form method="POST" :upload="true"  action="{{ moduleRoute('getTable') }}">
+            <x-form method="POST" action="{{ moduleRoute('getTable') }}">
 
-                <x-action>
-                    <input type="file" name="file" accept=".xls,.xlsx" class="btn btn-primary btn-sm pb-2">
-                    <x-button type="submit" label="Upload" class="btn-dark" name="upload" />
-                </x-action>
+                <x-action />
 
                 <div class="container-fluid" id="table">
                     <div class="table-responsive">
@@ -30,10 +27,6 @@
                                             {{ __($value->name) }}
                                         </th>
                                     @endforeach
-                                    <th>Tanggal</th>
-                                    <th>Harga</th>
-                                    <th>Type</th>
-                                    <th>Token</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -46,13 +39,13 @@
                                         <td class="col-md-2 text-center column-action">
                                             <x-crud :model="$table" />
                                         </td>
+                                        
+										<td >{{ $table->penggunaan_id }}</td>
+										<td >{{ $table->penggunaan_tanggal }}</td>
+										<td >{{ $table->penggunaan_id_iuran }}</td>
+										<td >{{ $table->penggunaan_id_jadwal }}</td>
+										<td >{{ $table->penggunaan_created_at }}</td>
 
-										<td >{{ $table->iuran_id }}</td>
-										<td >{{ $table->iuran_nama }}</td>
-										<td >{{ $table->iuran_tanggal }}</td>
-										<td >{{ $table->iuran_harga }}</td>
-										<td >{{ $table->iuran_type }}</td>
-										<td >{{ $table->iuran_token }}</td>
                                     </tr>
                                 @empty
                                 @endforelse
