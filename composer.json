@@ -27,7 +27,7 @@
         "spatie/simple-excel": "^3.7",
         "tbruckmaier/corcel-acf": "^1.12",
         "wildside/userstamps": "^2.2",
-        "xendit/xendit-php": "*"
+        "xendit/xendit-php": "^7.0"
     },
     "require-dev": {
         "andreaselia/laravel-api-to-postman": "^2.0",
