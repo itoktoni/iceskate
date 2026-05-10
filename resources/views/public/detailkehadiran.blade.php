@@ -31,6 +31,17 @@
 
     <div class="container payment">
 
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Display QR Code</h5>
+                    <p class="card-text text-center">
+                        <img src="/qr-code.png" alt="QR Code" class="img-fluid">
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- Profile Update Form -->
         <div class="col-lg-12">
             <div class="card">

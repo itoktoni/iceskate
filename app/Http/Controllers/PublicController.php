@@ -8,6 +8,7 @@ use App\Dao\Models\Iuran;
 use App\Dao\Models\Jadwal;
 use App\Dao\Models\Payment;
 use App\Dao\Models\Race;
+use App\Dao\Models\Token;
 use App\Models\Menu;
 use App\Models\Page;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ use Plugins\Cms;
 use Xendit\Configuration;
 use Xendit\Invoice\CreateInvoiceRequest;
 use Xendit\Invoice\InvoiceApi;
+use Illuminate\Support\Facades\Crypt;
+use LaravelQRCode\Facades\QRCode;
 
 class PublicController extends Controller
 {
@@ -156,11 +159,33 @@ class PublicController extends Controller
 
         $single = false;
         if (request()->has('id')) {
-            $id = Jadwal::find(request()->get('id'));
+            $jadwal = Jadwal::find(request()->get('id'));
 
-            if ($id) {
-                $single = $id;
+            if ($jadwal) {
+                $single = $jadwal;
             }
+
+            $user_id = auth()->user()->id;
+
+            $token = Token::query()
+                ->where('payment_id_user', $user_id)
+                ->where('total', '>=', 1)
+                ->whereYear('payment_tanggal', now()->format('Y'))
+                ->whereMonth('payment_tanggal', now()->format('m'))
+                ->first();
+
+            $qr = null;
+            $path = public_path() . '/qr-code.png';
+
+            $data = json_encode([
+                'u' => $user_id,
+                'j' => $jadwal->jadwal_id ?? null,
+                'p' => $token->payment_id ?? null,
+                't' => $token->total ?? 0
+            ]);
+
+            $encrypted = Crypt::encryptString($data);
+            $qr   = QRCode::text($encrypted)->setOutfile($path)->png();
 
             return view('public.detailkehadiran', $this->share([
                 'page'     => $page,
@@ -168,6 +193,7 @@ class PublicController extends Controller
                 'jadwal'   => $jadwal,
                 'single'   => $single,
                 'kehadiran'   => $kehadiran,
+                'qr'   => $qr,
             ]));
         }
 
@@ -190,20 +216,24 @@ class PublicController extends Controller
         $template = $page->acf->template;
         $iuran    = Iuran::where('iuran_tanggal', '>=', now()
                 ->addMonth(-2)->format('Y-m-d'))
+                ->orWhereIn('iuran_id', [1,2,3])
             ->orderBy('iuran_tanggal', 'asc')
             ->get()
         ;
 
-        $payment = Payment::where('payment_id_user', auth()->user()->id)
-        ->addSelect('*')
-        ->leftJoinRelationship('has_iuran')
-        ->get();
+        $five = Payment::where('payment_id_user', auth()->user()->id)
+            ->where('payment_paid', 1)
+            ->where('payment_iuran', 1)
+            ->whereYear('payment_done', now('Y'))
+            ->whereMonth('payment_done', now('m'))
+            ->whereDay('payment_done', '<=', 10)
+            ->count() > 1 ? true : false;
 
         return view('public.payment', $this->share([
             'page'     => $page,
             'template' => $template,
             'iuran'    => $iuran,
-            'payment'    => $payment,
+            'five'    => $five,
         ]));
     }
 

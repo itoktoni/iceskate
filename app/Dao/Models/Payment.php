@@ -3,19 +3,7 @@
 namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
-
-
-/**
- * Class Absen
- *
- * @property $jadwal_id
- * @property $id
- * @property $payment
- * @property $code
- *
- * @package App
- * @mixin \Illuminate\Database\Eloquent\Builder
- */
+use App\Facades\Model\UserModel;
 
 class Payment extends SystemModel
 {
@@ -41,18 +29,22 @@ class Payment extends SystemModel
     protected $fillable = [
         'payment_id',
         'payment_code',
-        'payment_url',
         'payment_tanggal',
-        'payment_done',
-        'payment_method',
-        'payment_paid',
         'payment_id_user',
         'payment_value',
+        'payment_paid',
+        'payment_url',
+        'payment_done',
+        'payment_method',
+        'payment_iuran',
+        'payment_voucher',
+        'payment_wa',
+        'payment_sent',
     ];
 
     public static function field_name()
     {
-        return 'jadwal_nama';
+        return 'payment_tanggal';
     }
 
     public function getFieldNameAttribute()
@@ -62,7 +54,8 @@ class Payment extends SystemModel
 
     public function dataRepository($selected = [], $relation = [])
     {
-        $query = $this->select($this->getTable().'.*');
+        $query = $this->select($this->getTable().'.*', 'name')
+            ->leftJoinRelationship('has_user');
 
         if($selected)
         {
@@ -77,5 +70,10 @@ class Payment extends SystemModel
     public function has_iuran()
     {
         return $this->belongsToMany(Iuran::class, 'payment_iuran', 'payment_id', 'iuran_id')->withPivot('iuran_harga');
+    }
+
+    public function has_user()
+    {
+        return $this->hasOne(UserModel::getModel(), UserModel::field_primary(), 'payment_id_user');
     }
 }

@@ -18,7 +18,7 @@ class IuranController extends MasterController
 {
     use CreateFunction, UpdateFunction;
 
- protected function beforeForm()
+    protected function beforeForm()
     {
         $iuran = IuranType::getOptions();
         $boolean = BooleanType::getOptions();

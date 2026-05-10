@@ -48,7 +48,7 @@
                                         {{ $loop->iteration }}
                                     </td>
                                     <td>
-                                        <b>{{ $item->iuran_nama }}</b> - ({{ Carbon\Carbon::parse($item->iuran_tanggal)->format('M Y') }})
+                                        <b>{{ $item->payment_id }} - {{ $item->iuran_nama }}</b> - ({{ Carbon\Carbon::parse($item->payment_tanggal)->format('M Y') }})
                                         <br>
                                         {!! nl2br($item->iuran_keterangan) !!}
                                     </td>
@@ -62,7 +62,7 @@
                         </div>
 
                         <div class="text-end">
-                            <a href="{{ route('payment') }}" style="margin-right: 10px;padding: 7px 15px;background: var(--primary-color);color: white;border-radius: 5px;text-decoration: none;">
+                            <a href="{{ route('payment') }}" style="padding: 7px 15px;background: var(--primary-color);color: white;border-radius: 5px;text-decoration: none;">
                                 <i class="fa fa-arrow-left"></i> Pembayaran
                             </a>
                         </div>

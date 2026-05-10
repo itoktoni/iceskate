@@ -78,7 +78,7 @@
 			@endforelse
 
 			<tr>
-				<td colspan="6" class="text-right"><b>Total Pembayaran</b></td>
+				<td colspan="7" class="text-right"><b>Total Pembayaran</b></td>
 				<td class="text-right"><b>{{ number_format($total_pembayaran, 0, ',', '.') }}</b></td>
 			</tr>
 

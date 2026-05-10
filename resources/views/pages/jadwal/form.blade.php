@@ -13,7 +13,7 @@
 
                 <x-form-input col="3" type="date" value="{{ $model->jadwal_tanggal ?? date('Y-m-d') }}" name="jadwal_tanggal" />
                 <x-form-select col="3" name="jadwal_nama" label="Type" :options="$jadwal" />
-                <x-form-input col="3" name="jadwal_link" />
+                <x-form-input col="3" label="Label" name="jadwal_link" />
                 <x-form-input col="3" name="jadwal_url" />
                 <x-form-textarea col="12" rows="5" name="jadwal_keterangan" />
 
@@ -28,13 +28,16 @@
                                     </th>
                                     <th>Nama</th>
                                     <th class="text-center column-action">Kehadiran</th>
+                                    <th class="text-center column-action">Voucher</th>
                                 </tr>
                             </thead>
                             <tbody>
 
                                 @forelse($user as $table)
                                     @php
-                                        $selected = $absen->where('id', $table->field_primary)->count()  > 0 ? 'checked' : null ;
+                                        $selected = $absen->where('id', $table->field_primary)->count()  > 0 ? true : false ;
+                                        $user = $absen->where('id', $table->field_primary)->first();
+                                        $voucher = $user->pivot->use_date ?? false;
                                     @endphp
                                     <tr>
                                         <td>
@@ -43,7 +46,8 @@
                                         </td>
 
 										<td data-label="Nama">{{ $table->field_name }}</td>
-										<td data-label="Kehadiran" class="text-center">{{ empty($selected) ? 'Absen' : 'Hadir' }}</td>
+										<td data-label="Kehadiran" class="text-center">{{ $selected ? 'Absen' : 'Hadir' }}</td>
+										<td data-label="Voucher" class="text-center">{{ $voucher ? 'Terpakai' : '-' }}</td>
                                     </tr>
                                 @empty
                                 @endforelse

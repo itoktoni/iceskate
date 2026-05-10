@@ -4,35 +4,20 @@ namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
 
-
-/**
- * Class Absen
- *
- * @property $jadwal_id
- * @property $id
- * @property $payment
- * @property $code
- *
- * @package App
- * @mixin \Illuminate\Database\Eloquent\Builder
- */
-
-class Payment2 extends SystemModel
+class Token extends SystemModel
 {
     protected $perPage = 20;
-    protected $table = 'payment';
-    protected $primaryKey = 'payment_code';
+    protected $table = 'view_token';
+    protected $primaryKey = 'payment_id';
     protected $keyType = 'string';
     public $incrementing = false;
 
     protected $casts = [
-        'payment_code' => 'string',
+        'payment_id' => 'string',
     ];
 
     protected $filters = [
         'filter',
-        'id',
-        'jadwal_id',
     ];
 
     /**
@@ -40,11 +25,19 @@ class Payment2 extends SystemModel
      *
      * @var array<int, string>
      */
-    protected $fillable = ['payment_code', 'jadwal_id', 'id', 'jadwal_tanggal','jadwal_nama','name','payment', 'code'];
+    protected $fillable = [
+        'payment_id',
+        'payment_tanggal',
+        'payment_id_user',
+        'payment_iuran',
+        'payment_voucher',
+        'used',
+        'total',
+    ];
 
     public static function field_name()
     {
-        return 'jadwal_nama';
+        return 'payment_tanggal';
     }
 
     public function getFieldNameAttribute()
@@ -54,7 +47,8 @@ class Payment2 extends SystemModel
 
     public function dataRepository($selected = [], $relation = [])
     {
-        $query = $this->select($this->getTable().'.*');
+        $query = $this->select($this->getTable().'.*', 'name')
+            ->leftJoinRelationship('has_user');
 
         if($selected)
         {
@@ -65,4 +59,5 @@ class Payment2 extends SystemModel
 
         return $query;
     }
+
 }

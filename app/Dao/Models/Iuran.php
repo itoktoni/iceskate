@@ -5,20 +5,6 @@ namespace App\Dao\Models;
 use App\Dao\Models\Core\SystemModel;
 
 
-/**
- * Class Iuran
- *
- * @property $iuran_id
- * @property $iuran_nama
- * @property $iuran_tanggal
- * @property $iuran_bulanan
- * @property $iuran_visit
- * @property $iuran_type
- *
- * @package App
- * @mixin \Illuminate\Database\Eloquent\Builder
- */
-
 class Iuran extends SystemModel
 {
     protected $perPage = 20;
@@ -34,7 +20,7 @@ class Iuran extends SystemModel
      *
      * @var array<int, string>
      */
-    protected $fillable = ['iuran_id', 'iuran_nama', 'iuran_tanggal', 'iuran_harga', 'iuran_type', 'iuran_keterangan', 'iuran_aktif'];
+    protected $fillable = ['iuran_id', 'iuran_nama', 'iuran_tanggal', 'iuran_harga', 'iuran_type', 'iuran_keterangan', 'iuran_aktif', 'iuran_voucher'];
 
     public static function field_name()
     {

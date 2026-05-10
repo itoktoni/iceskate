@@ -2,6 +2,8 @@
 
     <!-- User Information Section -->
 
+    @livewire('scan')
+
     <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="card">
@@ -9,7 +11,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h2 class="font-weight-bold mb-2">
-                                @if(isset($user))
+                                @if (isset($user))
                                     {{ count($user) }}
                                 @else
                                     0
@@ -30,7 +32,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h2 class="font-weight-bold mb-2">
-                                @if(isset($performance))
+                                @if (isset($performance))
                                     {{ $performance->count() }}
                                 @else
                                     0
@@ -51,7 +53,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h2 class="font-weight-bold mb-2">
-                                @if(isset($payment))
+                                @if (isset($payment))
                                     Rp {{ number_format($payment->sum('amount') ?? 0, 0, ',', '.') }}
                                 @else
                                     Rp 0
@@ -72,7 +74,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h2 class="font-weight-bold mb-2">
-                                @if(isset($jadwal))
+                                @if (isset($jadwal))
                                     {{ $jadwal->count() }}
                                 @else
                                     0
@@ -100,53 +102,59 @@
                         </div>
                         <div class="col-7">
                             <div class="form-group mb-0">
-                                <select id="userSelect" name="user" class="form-control selectuser" style="width: 100%;">
+                                <select id="userSelect" name="user" class="form-control selectuser"
+                                    style="width: 100%;">
                                     <option value="">All Users</option>
-                                        @foreach($user as $userId => $userName)
-                                            <option value="{{ $userId }}">{{ $userName }}</option>
-                                        @endforeach
+                                    @foreach ($user as $userId => $userName)
+                                        <option value="{{ $userId }}">{{ $userName }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    @if(isset($performance) && $performance->count() > 0)
+                    @if (isset($performance) && $performance->count() > 0)
                         @php
                             // Group performance data by distance (jarak) like PublicController
                             $groupedPerformance = $performance->groupBy('jarak_nama');
                         @endphp
 
-                        @foreach($groupedPerformance as $distance => $records)
-                        <div class="row mb-5 chart-row" id="chart-row-{{ Str::slug($distance) }}" style="display: none;">
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="mb-0">{{ $distance }} Performance Chart</h5>
-                                        <small class="text-muted">{{ $records->count() }} records</small>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
-                                            <canvas id="dashboardChart-{{ Str::slug($distance) }}"></canvas>
+                        @foreach ($groupedPerformance as $distance => $records)
+                            <div class="row mb-5 chart-row" id="chart-row-{{ Str::slug($distance) }}"
+                                style="display: none;">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">{{ $distance }} Performance Chart</h5>
+                                            <small class="text-muted">{{ $records->count() }} records</small>
                                         </div>
-                                        <div class="row mt-3 text-center">
-                                            <div class="col-4">
-                                                <small class="text-muted">Total Records</small>
-                                                <div class="h6" id="total-{{ Str::slug($distance) }}">{{ $records->count() }}</div>
+                                        <div class="card-body">
+                                            <div class="chart-container"
+                                                style="position: relative; height: 300px; width: 100%;">
+                                                <canvas id="dashboardChart-{{ Str::slug($distance) }}"></canvas>
                                             </div>
-                                            <div class="col-4">
-                                                <small class="text-muted">Average Time</small>
-                                                <div class="h6" id="avg-{{ Str::slug($distance) }}">{{ number_format($records->avg('race_waktu'), 2) }}s</div>
-                                            </div>
-                                            <div class="col-4">
-                                                <small class="text-muted">Best Time</small>
-                                                <div class="h6" id="best-{{ Str::slug($distance) }}">{{ number_format($records->min('race_waktu'), 2) }}s</div>
+                                            <div class="row mt-3 text-center">
+                                                <div class="col-4">
+                                                    <small class="text-muted">Total Records</small>
+                                                    <div class="h6" id="total-{{ Str::slug($distance) }}">
+                                                        {{ $records->count() }}</div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <small class="text-muted">Average Time</small>
+                                                    <div class="h6" id="avg-{{ Str::slug($distance) }}">
+                                                        {{ number_format($records->avg('race_waktu'), 2) }}s</div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <small class="text-muted">Best Time</small>
+                                                    <div class="h6" id="best-{{ Str::slug($distance) }}">
+                                                        {{ number_format($records->min('race_waktu'), 2) }}s</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @endforeach
                     @else
                         <div class="text-center py-5">
@@ -162,421 +170,423 @@
 
 
     @push('footer')
+        <!-- Font Awesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Chart.js and plugins -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js">
+        </script>
 
-    <!-- Chart.js and plugins -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+        <script>
+            let charts = {};
+            let performanceData = {};
 
-    <script>
-        let charts = {};
-        let performanceData = {};
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize all components
+                initializeCharts();
+                handleUserSelection();
+                initializePeityCharts();
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all components
-            initializeCharts();
-            handleUserSelection();
-            initializePeityCharts();
-
-            // Check URL query string for initial user selection and filter if needed
-            const urlParams = new URLSearchParams(window.location.search);
-            const userParam = urlParams.get('user');
-            console.log('URL user param:', userParam);
-            if (userParam && userParam !== '') {
-                updateChartsForUser(userParam);
-                updateStatistics(userParam);
-            } else {
-                hideAllCharts();
-            }
-
-        });
-
-        function initializePeityCharts() {
-            // Initialize the existing peity charts with better styling
-            if (typeof $ !== 'undefined' && typeof $.fn.peity !== 'undefined') {
-                $('.peity').each(function() {
-                    const $this = $(this);
-                    const type = $this.data('type') || 'pie';
-                    $this.peity(type, {
-                        radius: 30,
-                        innerRadius: 20,
-                        fill: ['#3f51b5', '#f44336', '#ff9800', '#4caf50', '#2196f3', '#9c27b0']
-                    });
-                });
-            }
-        }
-
-        function handleUserSelection() {
-            const userSelect = document.getElementById('userSelect');
-            if (userSelect) {
-                // Set current selected value if exists in URL
+                // Check URL query string for initial user selection and filter if needed
                 const urlParams = new URLSearchParams(window.location.search);
-                const selectedUser = urlParams.get('user');
-                if (selectedUser) {
-                    userSelect.value = selectedUser;
+                const userParam = urlParams.get('user');
+                console.log('URL user param:', userParam);
+                if (userParam && userParam !== '') {
+                    updateChartsForUser(userParam);
+                    updateStatistics(userParam);
                 } else {
-                    // Default to "All Users" if no user parameter in URL
-                    userSelect.value = '';
+                    hideAllCharts();
                 }
 
-                userSelect.addEventListener('change', function() {
-                    const selectedValue = this.value;
-
-                    // Update URL without reloading page
-                    const currentUrl = new URL(window.location);
-                    if (selectedValue && selectedValue !== '') {
-                        currentUrl.searchParams.set('user', selectedValue);
-                    } else {
-                        currentUrl.searchParams.delete('user');
-                    }
-                    window.history.replaceState({}, '', currentUrl);
-
-                    // Update charts and statistics dynamically
-                    if (selectedValue && selectedValue !== '') {
-                        updateChartsForUser(selectedValue);
-                        updateStatistics(selectedValue);
-                        showAllCharts();
-                    } else {
-                        hideAllCharts();
-                    }
-                });
-            }
-        }
-
-        function initializeCharts() {
-            try {
-                // Performance data from PHP grouped by distance
-                performanceData = @json($performance->groupBy('jarak_nama') ?? []);
-
-                // Create charts for each distance group (using line charts)
-                Object.keys(performanceData).forEach(distance => {
-                    createChartForDistance(distance);
-                });
-
-            } catch (error) {
-                console.error('Error initializing charts:', error);
-            }
-        }
-
-        function createChartForDistance(distance, filteredRecords = null) {
-            const canvasId = `dashboardChart-${distance.toLowerCase().replace(/\s+/g, '-')}`;
-            const ctx = document.getElementById(canvasId);
-
-            if (!ctx) return;
-
-            // Destroy existing chart
-            if (charts[distance]) {
-                charts[distance].destroy();
-            }
-
-            const records = filteredRecords || performanceData[distance] || [];
-
-            // Get unique race_ids for x-axis labels
-            const uniqueRaceIds = records.length > 0 ? [...new Set(records.map(record => record.race_id))] : [];
-
-            // Group records by user for multi-user display
-            const userGroups = {};
-            records.forEach(record => {
-                const userId = record.race_user_id;
-                const userName = record.name || 'User ' + userId;
-                if (!userGroups[userName]) {
-                    userGroups[userName] = [];
-                }
-                userGroups[userName].push(record);
             });
 
-            // Prepare datasets
-            const datasets = [];
-            const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14'];
-            let colorIndex = 0;
-
-            Object.keys(userGroups).forEach(userName => {
-                const userRecords = userGroups[userName];
-                // Create data array that matches uniqueRaceIds, using null for race IDs without data
-                const userTimes = uniqueRaceIds.map(raceId => {
-                    const recordForRaceId = userRecords.find(r => r.race_id === raceId);
-                    return recordForRaceId ? parseFloat(recordForRaceId.race_waktu) : null;
-                });
-
-                datasets.push({
-                    label: userName,
-                    data: userTimes,
-                    borderColor: colors[colorIndex % colors.length],
-                    backgroundColor: colors[colorIndex % colors.length] + '20',
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.4,
-                    pointBackgroundColor: colors[colorIndex % colors.length],
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                });
-
-                colorIndex++;
-            });
-
-            // Add target lines if available
-            const labels = uniqueRaceIds;
-            if (records.length > 0) {
-                // Create target arrays that match uniqueRaceIds
-                const asianTarget = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian || 0));
-                const australiaTarget = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_australia || 0));
-                const asianTrophy = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian_trophy || 0));
-                const asianOpen = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian_open || 0));
-
-                if (asianTarget.some(val => val > 0)) {
-                    datasets.push({
-                        label: 'ISU Qualifying',
-                        data: asianTarget,
-                        borderColor: '#17a2b8',
-                        backgroundColor: 'rgba(23, 162, 184, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        fill: false,
-                        tension: 0.1
-                    });
-                }
-
-                if (asianTrophy.some(val => val > 0)) {
-                    datasets.push({
-                        label: 'Sea Trophy',
-                        data: asianTrophy,
-                        borderColor: '#20c997',
-                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [15, 5],
-                        fill: false,
-                        tension: 0.1
-                    });
-                }
-
-                if (asianOpen.some(val => val > 0)) {
-                    datasets.push({
-                        label: 'Asian Open',
-                        data: asianOpen,
-                        borderColor: '#045bf0',
-                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [15, 5],
-                        fill: false,
-                        tension: 0.1
-                    });
-                }
-
-                if (australiaTarget.some(val => val > 0)) {
-                    datasets.push({
-                        label: 'Melbourne Open',
-                        data: australiaTarget,
-                        borderColor: '#6c757d',
-                        backgroundColor: 'rgba(108, 117, 125, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [10, 5],
-                        fill: false,
-                        tension: 0.1
+            function initializePeityCharts() {
+                // Initialize the existing peity charts with better styling
+                if (typeof $ !== 'undefined' && typeof $.fn.peity !== 'undefined') {
+                    $('.peity').each(function() {
+                        const $this = $(this);
+                        const type = $this.data('type') || 'pie';
+                        $this.peity(type, {
+                            radius: 30,
+                            innerRadius: 20,
+                            fill: ['#3f51b5', '#f44336', '#ff9800', '#4caf50', '#2196f3', '#9c27b0']
+                        });
                     });
                 }
             }
 
-            const config = {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
+            function handleUserSelection() {
+                const userSelect = document.getElementById('userSelect');
+                if (userSelect) {
+                    // Set current selected value if exists in URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const selectedUser = urlParams.get('user');
+                    if (selectedUser) {
+                        userSelect.value = selectedUser;
+                    } else {
+                        // Default to "All Users" if no user parameter in URL
+                        userSelect.value = '';
+                    }
+
+                    userSelect.addEventListener('change', function() {
+                        const selectedValue = this.value;
+
+                        // Update URL without reloading page
+                        const currentUrl = new URL(window.location);
+                        if (selectedValue && selectedValue !== '') {
+                            currentUrl.searchParams.set('user', selectedValue);
+                        } else {
+                            currentUrl.searchParams.delete('user');
+                        }
+                        window.history.replaceState({}, '', currentUrl);
+
+                        // Update charts and statistics dynamically
+                        if (selectedValue && selectedValue !== '') {
+                            updateChartsForUser(selectedValue);
+                            updateStatistics(selectedValue);
+                            showAllCharts();
+                        } else {
+                            hideAllCharts();
+                        }
+                    });
+                }
+            }
+
+            function initializeCharts() {
+                try {
+                    // Performance data from PHP grouped by distance
+                    performanceData = @json($performance->groupBy('jarak_nama') ?? []);
+
+                    // Create charts for each distance group (using line charts)
+                    Object.keys(performanceData).forEach(distance => {
+                        createChartForDistance(distance);
+                    });
+
+                } catch (error) {
+                    console.error('Error initializing charts:', error);
+                }
+            }
+
+            function createChartForDistance(distance, filteredRecords = null) {
+                const canvasId = `dashboardChart-${distance.toLowerCase().replace(/\s+/g, '-')}`;
+                const ctx = document.getElementById(canvasId);
+
+                if (!ctx) return;
+
+                // Destroy existing chart
+                if (charts[distance]) {
+                    charts[distance].destroy();
+                }
+
+                const records = filteredRecords || performanceData[distance] || [];
+
+                // Get unique race_ids for x-axis labels
+                const uniqueRaceIds = records.length > 0 ? [...new Set(records.map(record => record.race_id))] : [];
+
+                // Group records by user for multi-user display
+                const userGroups = {};
+                records.forEach(record => {
+                    const userId = record.race_user_id;
+                    const userName = record.name || 'User ' + userId;
+                    if (!userGroups[userName]) {
+                        userGroups[userName] = [];
+                    }
+                    userGroups[userName].push(record);
+                });
+
+                // Prepare datasets
+                const datasets = [];
+                const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14'];
+                let colorIndex = 0;
+
+                Object.keys(userGroups).forEach(userName => {
+                    const userRecords = userGroups[userName];
+                    // Create data array that matches uniqueRaceIds, using null for race IDs without data
+                    const userTimes = uniqueRaceIds.map(raceId => {
+                        const recordForRaceId = userRecords.find(r => r.race_id === raceId);
+                        return recordForRaceId ? parseFloat(recordForRaceId.race_waktu) : null;
+                    });
+
+                    datasets.push({
+                        label: userName,
+                        data: userTimes,
+                        borderColor: colors[colorIndex % colors.length],
+                        backgroundColor: colors[colorIndex % colors.length] + '20',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4,
+                        pointBackgroundColor: colors[colorIndex % colors.length],
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    });
+
+                    colorIndex++;
+                });
+
+                // Add target lines if available
+                const labels = uniqueRaceIds;
+                if (records.length > 0) {
+                    // Create target arrays that match uniqueRaceIds
+                    const asianTarget = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian || 0));
+                    const australiaTarget = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_australia || 0));
+                    const asianTrophy = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian_trophy || 0));
+                    const asianOpen = Array(uniqueRaceIds.length).fill(parseFloat(records[0].jarak_asian_open || 0));
+
+                    if (asianTarget.some(val => val > 0)) {
+                        datasets.push({
+                            label: 'ISU Qualifying',
+                            data: asianTarget,
+                            borderColor: '#17a2b8',
+                            backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1
+                        });
+                    }
+
+                    if (asianTrophy.some(val => val > 0)) {
+                        datasets.push({
+                            label: 'Sea Trophy',
+                            data: asianTrophy,
+                            borderColor: '#20c997',
+                            backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [15, 5],
+                            fill: false,
+                            tension: 0.1
+                        });
+                    }
+
+                    if (asianOpen.some(val => val > 0)) {
+                        datasets.push({
+                            label: 'Asian Open',
+                            data: asianOpen,
+                            borderColor: '#045bf0',
+                            backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [15, 5],
+                            fill: false,
+                            tension: 0.1
+                        });
+                    }
+
+                    if (australiaTarget.some(val => val > 0)) {
+                        datasets.push({
+                            label: 'Melbourne Open',
+                            data: australiaTarget,
+                            borderColor: '#6c757d',
+                            backgroundColor: 'rgba(108, 117, 125, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [10, 5],
+                            fill: false,
+                            tension: 0.1
+                        });
+                    }
+                }
+
+                const config = {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
                     },
-                    plugins: {
-                        title: {
-                            display: false
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
                         },
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 15,
-                                font: {
-                                    size: 11
+                        plugins: {
+                            title: {
+                                display: false
+                            },
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 15,
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#007bff',
+                                borderWidth: 1,
+                                cornerRadius: 6,
+                                displayColors: true,
+                                callbacks: {
+                                    title: function(context) {
+                                        return 'Race ID: ' + context[0].label;
+                                    },
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + ' seconds';
+                                    }
                                 }
                             }
                         },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: '#007bff',
-                            borderWidth: 1,
-                            cornerRadius: 6,
-                            displayColors: true,
-                            callbacks: {
-                                title: function(context) {
-                                    return 'Race ID: ' + context[0].label;
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                reverse: true,
+                                title: {
+                                    display: true,
+                                    text: 'Time (seconds)',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    }
                                 },
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + ' seconds';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            reverse: true,
-                            title: {
-                                display: true,
-                                text: 'Time (seconds)',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
                                 }
                             },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Race ID',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                }
                             }
                         },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Race ID',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
                         }
-                    },
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
                     }
-                }
-            };
+                };
 
-            charts[distance] = new Chart(ctx, config);
-        }
+                charts[distance] = new Chart(ctx, config);
+            }
 
-        function updateChartsForUser(userId) {
-            console.log('Filtering charts for user:', userId);
+            function updateChartsForUser(userId) {
+                console.log('Filtering charts for user:', userId);
 
-            // Filter data based on selected user
-            Object.keys(charts).forEach(distance => {
-                const records = performanceData[distance] || [];
+                // Filter data based on selected user
+                Object.keys(charts).forEach(distance => {
+                    const records = performanceData[distance] || [];
 
-                let filteredRecords = records;
-                if (userId && userId !== '') {
-                    filteredRecords = records.filter(record => record.race_user_id == userId);
-                }
+                    let filteredRecords = records;
+                    if (userId && userId !== '') {
+                        filteredRecords = records.filter(record => record.race_user_id == userId);
+                    }
 
-                // Recreate chart with filtered data
-                createChartForDistance(distance, filteredRecords);
+                    // Recreate chart with filtered data
+                    createChartForDistance(distance, filteredRecords);
+                });
+            }
+
+            function updateStatistics(userId) {
+                // Update statistics for each distance
+                Object.keys(performanceData).forEach(distance => {
+                    const records = performanceData[distance] || [];
+
+                    let filteredRecords = records;
+                    if (userId && userId !== '') {
+                        filteredRecords = records.filter(record => record.race_user_id == userId);
+                    }
+
+                    // Update DOM elements
+                    const totalElement = document.getElementById(
+                    `total-${distance.toLowerCase().replace(/\s+/g, '-')}`);
+                    const avgElement = document.getElementById(`avg-${distance.toLowerCase().replace(/\s+/g, '-')}`);
+                    const bestElement = document.getElementById(`best-${distance.toLowerCase().replace(/\s+/g, '-')}`);
+
+                    if (totalElement) totalElement.textContent = filteredRecords.length;
+                    if (avgElement && filteredRecords.length > 0) {
+                        const avg = filteredRecords.reduce((sum, r) => sum + parseFloat(r.race_waktu), 0) /
+                            filteredRecords.length;
+                        avgElement.textContent = avg.toFixed(2) + 's';
+                    } else if (avgElement) {
+                        avgElement.textContent = '0.00s';
+                    }
+                    if (bestElement && filteredRecords.length > 0) {
+                        const best = Math.min(...filteredRecords.map(r => parseFloat(r.race_waktu)));
+                        bestElement.textContent = best.toFixed(2) + 's';
+                    } else if (bestElement) {
+                        bestElement.textContent = '0.00s';
+                    }
+                });
+            }
+
+            function hideAllCharts() {
+                Object.keys(performanceData).forEach(distance => {
+                    const rowId = `chart-row-${distance.toLowerCase().replace(/\s+/g, '-')}`;
+                    const row = document.getElementById(rowId);
+                    if (row) {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            function showAllCharts() {
+                Object.keys(performanceData).forEach(distance => {
+                    const rowId = `chart-row-${distance.toLowerCase().replace(/\s+/g, '-')}`;
+                    const row = document.getElementById(rowId);
+                    if (row) {
+                        row.style.display = 'block';
+                    }
+                });
+            }
+
+
+            // Resize charts on window resize
+            window.addEventListener('resize', function() {
+                Object.values(charts).forEach(chart => chart.resize());
             });
-        }
+        </script>
 
-        function updateStatistics(userId) {
-            // Update statistics for each distance
-            Object.keys(performanceData).forEach(distance => {
-                const records = performanceData[distance] || [];
-
-                let filteredRecords = records;
-                if (userId && userId !== '') {
-                    filteredRecords = records.filter(record => record.race_user_id == userId);
-                }
-
-                // Update DOM elements
-                const totalElement = document.getElementById(`total-${distance.toLowerCase().replace(/\s+/g, '-')}`);
-                const avgElement = document.getElementById(`avg-${distance.toLowerCase().replace(/\s+/g, '-')}`);
-                const bestElement = document.getElementById(`best-${distance.toLowerCase().replace(/\s+/g, '-')}`);
-
-                if (totalElement) totalElement.textContent = filteredRecords.length;
-                if (avgElement && filteredRecords.length > 0) {
-                    const avg = filteredRecords.reduce((sum, r) => sum + parseFloat(r.race_waktu), 0) / filteredRecords.length;
-                    avgElement.textContent = avg.toFixed(2) + 's';
-                } else if (avgElement) {
-                    avgElement.textContent = '0.00s';
-                }
-                if (bestElement && filteredRecords.length > 0) {
-                    const best = Math.min(...filteredRecords.map(r => parseFloat(r.race_waktu)));
-                    bestElement.textContent = best.toFixed(2) + 's';
-                } else if (bestElement) {
-                    bestElement.textContent = '0.00s';
-                }
-            });
-        }
-
-        function hideAllCharts() {
-            Object.keys(performanceData).forEach(distance => {
-                const rowId = `chart-row-${distance.toLowerCase().replace(/\s+/g, '-')}`;
-                const row = document.getElementById(rowId);
-                if (row) {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        function showAllCharts() {
-            Object.keys(performanceData).forEach(distance => {
-                const rowId = `chart-row-${distance.toLowerCase().replace(/\s+/g, '-')}`;
-                const row = document.getElementById(rowId);
-                if (row) {
-                    row.style.display = 'block';
-                }
-            });
-        }
-
-
-        // Resize charts on window resize
-        window.addEventListener('resize', function() {
-            Object.values(charts).forEach(chart => chart.resize());
-        });
-    </script>
-
-    <style>
-        .chart-container {
-            min-height: 400px;
-        }
-
-        .btn-group .btn.active {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: white;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .card-footer {
-            background-color: #f8f9fa;
-            border-top: 1px solid #dee2e6;
-        }
-
-        .spinner-border {
-            width: 3rem;
-            height: 3rem;
-        }
-
-        @media (max-width: 768px) {
+        <style>
             .chart-container {
-                min-height: 300px;
+                min-height: 400px;
             }
 
-            .btn-group {
-                margin-top: 10px;
+            .btn-group .btn.active {
+                background-color: #007bff;
+                border-color: #007bff;
+                color: white;
             }
-        }
-    </style>
+
+            .card-header {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .card-footer {
+                background-color: #f8f9fa;
+                border-top: 1px solid #dee2e6;
+            }
+
+            .spinner-border {
+                width: 3rem;
+                height: 3rem;
+            }
+
+            @media (max-width: 768px) {
+                .chart-container {
+                    min-height: 300px;
+                }
+
+                .btn-group {
+                    margin-top: 10px;
+                }
+            }
+        </style>
     @endpush
 
 </x-layout>

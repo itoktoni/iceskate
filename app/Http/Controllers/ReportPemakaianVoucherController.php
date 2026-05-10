@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Dao\Models\History;
 use App\Dao\Models\Iuran;
 use App\Dao\Models\Payment;
+use App\Dao\Models\Voucher;
 use App\Http\Controllers\Core\ReportController;
 use Illuminate\Http\Request;
 use Plugins\Query;
 
-class ReportPembayaranController extends ReportController
+class ReportPemakaianVoucherController extends ReportController
 {
     public $data;
 
@@ -31,7 +32,7 @@ class ReportPembayaranController extends ReportController
 
     public function getData()
     {
-        $query = History::query()
+        $query = Voucher::query()
         ->addSelect('*');
 
         if($user = request()->get('user_id'))
@@ -56,7 +57,13 @@ class ReportPembayaranController extends ReportController
 
 
         // Join with user data to get payment information
-        return $query->get();
+        $data =  $query->orderBy('payment_tanggal', 'ASC')->get();
+
+        $map = $data->mapToGroups(function($item){
+            return [$item->payment_id => $item];
+        }) ?? [];
+
+        return $map;
     }
 
     public function getPrint(Request $request)

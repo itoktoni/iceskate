@@ -22,11 +22,11 @@
                                         <input class="btn-check-d" type="checkbox">
                                     </th>
                                     <th class="text-center column-action">{{ __('Action') }}</th>
-                                    <th>Jadwal ID</th>
-                                    <th>Member</th>
-                                    <th>Jadwal</th>
-                                    <th>Pembayaran</th>
-                                    <th>Code Billing</th>
+                                    <th>code pembayaran</th>
+                                    <th>Atlet</th>
+                                    <th>Tanggal</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,19 +39,19 @@
                                         <td class="col-md-2 text-center column-action">
                                             <x-crud :model="$table" :action="['blank']">
                                                 <x-button module="getDelete" key="{{ $table->field_primary }}" color="danger" label="Hapus"/>
-                                                <x-button module="getUpdate" key="{{ $table->field_primary }}" color="primary" label="Bayar"/>
+                                                <x-button module="getUpdate" key="{{ $table->field_primary }}" color="primary" label="Detail"/>
                                             </x-crud>
                                         </td>
 
-										<td class="column-action">{{ $table->payment_code }}</td>
-										<td >{{ $table->name }}</td>
-										<td >{{ $table->jadwal_nama.' - '.$table->jadwal_tanggal }}</td>
-										<td class="column-action text-center">
-                                            <span class="btn btn-{{ empty($table->payment) ? 'warning' : 'success' }}">
-                                                {{ empty($table->payment) ? 'Pending' : 'Paid' }}
+										<td data-label="Code">{{ $table->payment_id }}</td>
+										<td data-label="Atlet">{{ $table->name }}</td>
+										<td data-label="Tanggal">{{ formatDate($table->payment_tanggal) }}</td>
+										<td data-label="Total">{{ number_format($table->payment_value) }}</td>
+										<td data-label="Status" class="column-action text-center">
+                                            <span class="btn btn-{{ $table->payment_paid == 1 ? 'success' : 'warning' }}">
+                                                {{ $table->payment_paid == 1 ? 'Paid' : 'Pending' }}
                                             </span>
                                         </td>
-										<td >{{ $table->code }}</td>
 
                                     </tr>
                                 @empty

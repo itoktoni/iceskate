@@ -4,10 +4,10 @@ namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
 
-class Absen extends SystemModel
+class Voucher extends SystemModel
 {
     protected $perPage = 20;
-    protected $table = 'absen';
+    protected $table = 'view_voucher';
     protected $primaryKey = 'code';
 
     /**
@@ -15,7 +15,20 @@ class Absen extends SystemModel
      *
      * @var array<int, string>
      */
-    protected $fillable = ['jadwal_id', 'id', 'payment', 'code', 'use_date'];
+    protected $fillable = [
+        'payment_id_user',
+        'name',
+        'payment_id',
+        'payment_tanggal',
+        'iuran_id',
+        'iuran_nama',
+        'payment_voucher',
+        'code',
+        'use_date',
+        'jadwal_nama',
+        'jadwal_tanggal',
+        'jadwal_keterangan ',
+    ];
 
 
     public function dataRepository($selected = [], $relation = [])

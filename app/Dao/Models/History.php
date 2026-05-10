@@ -4,16 +4,6 @@ namespace App\Dao\Models;
 
 use App\Dao\Models\Core\SystemModel;
 
-/**
- * Class Category
- *
- * @property $category_id
- * @property $category_name
- * @property $category_user_id
- * @property User $user
- *
- * @mixin \Illuminate\Database\Eloquent\Builder
- */
 class History extends SystemModel
 {
     protected $perPage = 20;

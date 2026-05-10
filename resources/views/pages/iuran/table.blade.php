@@ -33,6 +33,7 @@
                                     <th>Tanggal</th>
                                     <th>Harga</th>
                                     <th>Type</th>
+                                    <th>Voucher</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -51,6 +52,7 @@
 										<td >{{ $table->iuran_tanggal }}</td>
 										<td >{{ $table->iuran_harga }}</td>
 										<td >{{ $table->iuran_type }}</td>
+										<td >{{ $table->iuran_voucher }}</td>
                                     </tr>
                                 @empty
                                 @endforelse

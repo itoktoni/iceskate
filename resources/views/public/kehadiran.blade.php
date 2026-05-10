@@ -59,7 +59,9 @@
                                     <td>{{ $item->jadwal_tanggal }} -  {!! nl2br($item->jadwal_keterangan) !!}</td>
                                     <td style="width: 100px; text-align: center; vertical-align: middle;">
                                         @if($hadir > 0)
-                                            <span style="">Hadir</span>
+                                            <a style="padding: 7px 15px;background:#198754 ;color: white;border-radius: 5px;text-decoration: none;" href="{{ route('kehadiran', ['id' => $item->jadwal_id]) }}">
+                                                Hadir
+                                            </a>
                                         @else
                                             <a style="padding: 7px 15px;background: var(--primary-color);color: white;border-radius: 5px;text-decoration: none;" href="{{ route('kehadiran', ['id' => $item->jadwal_id]) }}">
                                                 Detail
