@@ -33,8 +33,10 @@ class ReportKehadiranController extends ReportController
     {
         $query = Jadwal::query()
             ->select('*')
-            ->addSelect(['name'])
-            ->joinRelationship('has_absen');
+            ->addSelect(['name', 'iuran.iuran_nama'])
+            ->joinRelationship('has_absen')
+            ->leftJoin('payment', 'payment_id', 'payment')
+            ->leftJoin('iuran', 'payment_iuran', 'iuran.iuran_id');
 
         if($start = request()->get('start_date'))
         {
@@ -47,7 +49,7 @@ class ReportKehadiranController extends ReportController
         }
 
         // Join with user data to get payment information
-        return $query->orderBy('jadwal_tanggal', 'ASC')->showSql()->get();
+        return $query->orderBy('jadwal_tanggal', 'ASC')->get();
     }
 
     public function getPrint(Request $request)

@@ -34,6 +34,7 @@
 				<th>JADWAL</th>
 				<th>TANGGAL</th>
 				<th>NAMA ATLET</th>
+				<th>PENGGUNAAN VOUCHER</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -44,6 +45,13 @@
 				<td>{{ $table->jadwal_nama }}</td>
 				<td>{{ formatDate($table->jadwal_tanggal) }}</td>
 				<td>{{ $table->name ?? 'Atlet tidak ditemukan' }}</td>
+				<td>
+					@if($table->payment)
+					{{ $table->iuran_nama ?? '' }}
+					<br>
+					{{ $table->payment ?? '' }}
+					@endif
+				</td>
 			</tr>
 
 			@empty
