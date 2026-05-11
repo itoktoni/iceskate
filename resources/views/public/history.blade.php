@@ -39,6 +39,7 @@
                                     </td>
                                     <td>Nama</td>
                                     <td style="width: 150px; text-align: right;">Harga</td>
+                                    <td style="width: 150px; text-align: right;">Status</td>
                                 </tr>
 
                                 @foreach($history as $item)
@@ -53,6 +54,7 @@
                                         {!! nl2br($item->iuran_keterangan) !!}
                                     </td>
                                     <td style="text-align: right;">{{ number_format($item->iuran_harga, 0, ',', '.') }}</td>
+                                    <td class="text-center">{{ $item->payment_paid == 1 ? 'LUNAS' : 'PENDING' }}</td>
                                 </tr>
 
                                 @endforeach
