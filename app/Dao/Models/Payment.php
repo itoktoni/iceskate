@@ -54,7 +54,8 @@ class Payment extends SystemModel
 
     public function dataRepository($selected = [], $relation = [])
     {
-        $query = $this->select($this->getTable().'.*', 'name')
+        $query = $this->select($this->getTable().'.*', 'name', 'iuran_nama')
+            ->leftJoinRelationship('has_iuran')
             ->leftJoinRelationship('has_user');
 
         if($selected)
