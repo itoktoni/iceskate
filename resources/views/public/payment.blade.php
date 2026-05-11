@@ -116,10 +116,10 @@
                                                         <br>
                                                         {!! nl2br($item->iuran_keterangan) !!}
                                                     </td>
-                                                    <td style="text-align: right;">
+                                                    <td style="text-align: right;vertical-align: middle">
                                                         {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td style="vertical-align: middle" class="text-center">
                                                         <a href="{{ route('invoice', ['id' => $item->iuran_id]) }}"
                                                             style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
                                                             <i class="fa-solid fa-dollar"></i> Bayar

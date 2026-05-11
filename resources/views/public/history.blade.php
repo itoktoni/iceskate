@@ -53,12 +53,12 @@
                                         <br>
                                         {!! nl2br($item->iuran_keterangan) !!}
                                     </td>
-                                    <td style="text-align: right;">{{ number_format($item->iuran_harga, 0, ',', '.') }}</td>
-                                    <td class="text-center">
+                                    <td style="vertical-align: middle;text-align: right;">{{ number_format($item->iuran_harga, 0, ',', '.') }}</td>
+                                    <td style="vertical-align: middle" class="text-center">
                                         @if($item->payment_paid == 1)
                                         LUNAS
                                         @else
-                                        <a href="{{ $item->payment_url }}">PENDING</a>
+                                        <a class="text-primary" href="{{ $item->payment_url }}">PENDING</a>
                                         @endif
                                     </td>
                                 </tr>
