@@ -44,7 +44,7 @@ Route::get('/', [PublicController::class, 'index'])->name('public');
 Route::get('/register', [PublicController::class, 'index'])->name('register');
 Route::get('/payment', [PublicController::class, 'payment'])->name('payment')->middleware('auth');
 Route::post('/iuran', [PublicController::class, 'iuran'])->name('iuran')->middleware('auth');
-Route::get('/send/{id}', [PublicController::class, 'sendWa'])->name('send')->middleware('auth');
+Route::get('/invoice/{id}', [PublicController::class, 'invoice'])->name('invoice')->middleware('auth');
 Route::get('/kehadiran', [PublicController::class, 'kehadiran'])->name('kehadiran')->middleware('auth');
 Route::get('/history', [PublicController::class, 'history'])->name('history')->middleware('auth');
 Route::get('/hadir/{id}', [PublicController::class, 'hadir'])->name('hadir')->middleware('auth');

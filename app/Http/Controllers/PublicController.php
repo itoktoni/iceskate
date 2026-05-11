@@ -11,6 +11,7 @@ use App\Dao\Models\Race;
 use App\Dao\Models\Token;
 use App\Models\Menu;
 use App\Models\Page;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Hash;
@@ -293,7 +294,7 @@ class PublicController extends Controller
         return redirect()->to($url);
     }
 
-    public function sendWa($id)
+    public function invoice($id)
     {
         if (! auth()->check()) {
             return redirect('/');
@@ -314,6 +315,7 @@ class PublicController extends Controller
         ]);
 
         $url = $this->involke($payment, $code, $harga, $iuran->iuran_keterangan);
+        InvoiceService::generate($payment->payment_id);
 
         return redirect()->to($url);
     }

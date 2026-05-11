@@ -69,7 +69,7 @@ class Payment extends SystemModel
 
     public function has_iuran()
     {
-        return $this->belongsToMany(Iuran::class, 'payment_iuran', 'payment_id', 'iuran_id')->withPivot('iuran_harga');
+        return $this->hasOne(Iuran::class, 'iuran_id', 'payment_iuran');
     }
 
     public function has_user()
