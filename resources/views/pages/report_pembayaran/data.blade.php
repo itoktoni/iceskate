@@ -66,10 +66,10 @@
 						<span class="badge bg-danger">UNPAID</span>
 					@endif
 				</td>
-				<td class="text-right">{{ number_format($table->iuran_harga ?? 0, 0, ',', '.') }}</td>
+				<td class="text-right">{{ number_format($table->payment_value ?? 0, 0, ',', '.') }}</td>
 			</tr>
 			@php
-			$total_pembayaran += $table->iuran_harga ?? 0;
+			$total_pembayaran += $table->payment_value ?? 0;
 			@endphp
 			@empty
 			<tr>
