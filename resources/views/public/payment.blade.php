@@ -63,10 +63,10 @@
                                                 <td style="text-align: right;">
                                                     {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     <a href="{{ route('send', ['id' => $item->iuran_id]) }}"
                                                         style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
-                                                        <i class="fa-brands fa-whatsapp"></i> Bayar WA
+                                                        <i class="fa-solid fa-dollar"></i> Bayar
                                                     </a>
                                                 </td>
                                             </tr>
@@ -80,10 +80,10 @@
                                                 <td style="text-align: right;">
                                                     {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                 </td>
-                                                <td>
+                                                 <td class="text-center">
                                                     <a href="{{ route('send', ['id' => $item->iuran_id]) }}"
                                                         style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
-                                                        <i class="fa-brands fa-whatsapp"></i> Bayar WA
+                                                       <i class="fa-solid fa-dollar"></i> Bayar
                                                     </a>
                                                 </td>
                                             </tr>
@@ -99,10 +99,10 @@
                                                     <td style="text-align: right;">
                                                         {{ number_format($item->iuran_harga, 0, ',', '.') }}\
                                                     </td>
-                                                    <td>
+                                                     <td class="text-center">
                                                         <a href="{{ route('send', ['id' => $item->iuran_id]) }}"
                                                             style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
-                                                            <i class="fa-brands fa-whatsapp"></i> Bayar WA
+                                                            <i class="fa-solid fa-dollar"></i> Bayar
                                                         </a>
                                                     </td>
                                                 </tr>
@@ -119,10 +119,10 @@
                                                     <td style="text-align: right;">
                                                         {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                     </td>
-                                                    <td>
+                                                    <td class="text-center">
                                                         <a href="{{ route('send', ['id' => $item->iuran_id]) }}"
                                                             style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
-                                                            <i class="fa-brands fa-whatsapp"></i> Bayar WA
+                                                            <i class="fa-solid fa-dollar"></i> Bayar
                                                         </a>
                                                     </td>
                                                 </tr>
