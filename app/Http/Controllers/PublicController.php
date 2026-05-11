@@ -174,7 +174,7 @@ class PublicController extends Controller
                 ->whereMonth('payment_tanggal', now()->format('m'))
                 ->first();
 
-            $total = $token->total;
+            $total = $token->total ?? 0;
 
             $qr = null;
             $path = public_path() .'/qr/'.$user_id. '.png';
