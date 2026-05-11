@@ -37,6 +37,7 @@
 				<th>STATUS</th>
 				<th>USERNAME</th>
 				<th>EMAIL</th>
+				<th>NOMER TELPON</th>
 				<th>TANGGAL JOIN</th>
 			</tr>
 		</thead>
@@ -54,6 +55,7 @@
 				<td>{{ $table->member ?? 'TRIAL' }}</td>
 				<td>{{ $table->field_username }}</td>
 				<td>{{ $table->field_email }}</td>
+				<td>{{ $table->phone }}</td>
 				<td>{{ formatDate($table->created_at) }}</td>
 			</tr>
 			@empty
