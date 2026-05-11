@@ -39,7 +39,7 @@
                                     </td>
                                     <td>Nama</td>
                                     <td style="width: 150px; text-align: right;">Harga</td>
-                                    <td style="width: 150px; text-align: right;">Status</td>
+                                    <td style="width: 150px; text-align: center;">Status</td>
                                 </tr>
 
                                 @foreach($history as $item)
