@@ -310,7 +310,7 @@ class PublicController extends Controller
             'payment_tanggal' => now()->format('Y-m-d'),
             'payment_id_user' => auth()->user()->id,
             'payment_value'   => $harga,
-            'payment_iuran'   => $iuran->iuran_id,
+            'payment_iuran'   => $id,
             'payment_voucher'   => $token,
         ]);
 

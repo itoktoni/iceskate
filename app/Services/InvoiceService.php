@@ -15,24 +15,30 @@ class InvoiceService
             ->where('payment_id', $payment_id)
             ->firstOrFail();
 
-            $message = 'NOTIFIKASI PEMBAYARAN' . PHP_EOL . PHP_EOL;
-            $message = $message.'Altet : ' . $data->name . PHP_EOL;
-            $message = $message.'Voucher : ' . $data->iuran_nama . PHP_EOL;
-            $message = $message.'Total : ' . $data->payment_value . PHP_EOL.PHP_EOL;
-            $message = $message.'Link : ' . $data->payment_url . PHP_EOL;
+        $message = 'Notifikasi Pembayaran ' . PHP_EOL. PHP_EOL;
+        $message = $message.'Halo Bapak/Ibu Orang Tua ' .$data->name. PHP_EOL;
+        $message = $message.'Kami menginformasikan bahwa saat ini terdapat tagihan pembayaran atlet: ' . PHP_EOL. PHP_EOL;
+        $message = $message.'🧾 Voucher : ' . $data->iuran_nama . PHP_EOL;
+        $message = $message.'👤 Nama Atlet : ' . $data->name . PHP_EOL;
+        $message = $message.'📅 Periode : ' . formatDate($data->payment_tanggal, 'M Y') . PHP_EOL;
+        $message = $message.'💰 Total Tagihan : ' . number_format($data->payment_value, 0, ',', '.') . PHP_EOL.PHP_EOL;
+        $message = $message.'Mohon melakukan pembayaran sebelum tanggal jatuh tempo untuk menjaga kelancaran administrasi dan program latihan atlet.' . PHP_EOL;
+        $message = $message.'Terima kasih atas perhatian dan kerja samanya..' . PHP_EOL. PHP_EOL;
+        $message = $message.'Salam,' . PHP_EOL;
+        $message = $message.'Jakarta Ice Skate Team' . PHP_EOL;
 
-            $send = [
-                'target' => $data->phone,
-                'message' => $message,
-                // Optional: 'file' => storage_path('app/notifications/receipt_' . $send->id . '.jpg')
-            ];
 
-            $return = self::sendMessage($send);
-            Payment::find($payment_id)->update([
-                'payment_send' => now('Y-m-d'),
-                'payment_wa' => json_encode($return)
-            ]);
-        }
+        $send = [
+            'target' => $data->phone,
+            'message' => $message,
+            // Optional: 'file' => storage_path('app/notifications/receipt_' . $send->id . '.jpg')
+        ];
+
+        $return = self::sendMessage($send);
+        Payment::find($payment_id)->update([
+            'payment_sent' => now()->format('Y-m-d'),
+            'payment_wa' => json_encode($return)
+        ]);
     }
 
     /**
@@ -41,7 +47,7 @@ class InvoiceService
      * @param array $data
      * @return string|false
      */
-    private function sendMessage(array $data)
+    private static function sendMessage($data)
     {
         $gateway = env('WA_GATEWAY', 'fonnte');
 
