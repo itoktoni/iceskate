@@ -69,7 +69,7 @@ class Scan extends Component
                         'use_date' => date('Y-m-d')
                     ]);
 
-                    $this->error = 'Voucher berhasil digunakan !';
+                    $this->error = 'Success Record !';
                 }
             }
             else

@@ -22,10 +22,17 @@ class InvoiceService
         $message = $message.'👤 Nama Atlet : ' . $data->name . PHP_EOL;
         $message = $message.'📅 Periode : ' . formatDate($data->payment_tanggal, 'M Y') . PHP_EOL;
         $message = $message.'💰 Total Tagihan : ' . number_format($data->payment_value, 0, ',', '.') . PHP_EOL.PHP_EOL;
+
+        if(!empty($data->payment_url))
+        {
+            $message = $message.'Pembayaran : ' .$data->payment_url. PHP_EOL. PHP_EOL;
+        }
+
         $message = $message.'Mohon melakukan pembayaran sebelum tanggal jatuh tempo untuk menjaga kelancaran administrasi dan program latihan atlet.' . PHP_EOL;
         $message = $message.'Terima kasih atas perhatian dan kerja samanya..' . PHP_EOL. PHP_EOL;
         $message = $message.'Salam,' . PHP_EOL;
-        $message = $message.'Jakarta Ice Skate Team' . PHP_EOL;
+
+        $message = $message.'Jakarta Ice Skate Team' . PHP_EOL. PHP_EOL;
 
 
         $send = [

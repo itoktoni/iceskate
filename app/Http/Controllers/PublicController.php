@@ -36,7 +36,7 @@ class PublicController extends Controller
             $user = User::with('has_category')->find(auth()->user()->id);
         }
 
-        $performance = Race::select('*')
+        $performance = Race::select(['*', 'name'])
             ->leftJoinRelationship('has_jarak')
             ->leftJoinRelationship('has_user');
 
@@ -177,6 +177,20 @@ class PublicController extends Controller
                 ->whereMonth('payment_tanggal', now()->format('m'))
                 ->first();
 
+            $jumlah = Token::query()
+                ->where('payment_id_user', $user_id)
+                ->whereYear('payment_tanggal', now()->format('Y'))
+                ->whereMonth('payment_tanggal', now()->format('m'))
+                ->sum('total');
+
+            $usage = Token::query()
+                ->where('payment_id_user', $user_id)
+                ->whereYear('payment_tanggal', now()->format('Y'))
+                ->whereMonth('payment_tanggal', now()->format('m'))
+                ->sum('used');
+
+            $available = $jumlah - $usage;
+
             $total = $token->total ?? 0;
 
             $qr = null;
@@ -199,7 +213,7 @@ class PublicController extends Controller
                 'single'   => $single,
                 'kehadiran'   => $kehadiran,
                 'qr'   => $qr,
-                'total'   => $total,
+                'total'   => $available,
             ]));
         }
 
@@ -314,7 +328,13 @@ class PublicController extends Controller
             'payment_voucher'   => $token,
         ]);
 
-        $url = $this->involke($payment, $code, $harga, $iuran->iuran_keterangan);
+        $url = url()->full();
+
+        try {
+            $url = $this->involke($payment, $code, $harga, $iuran->iuran_keterangan);
+        } catch (\Throwable $th) {
+        }
+
         InvoiceService::generate($payment->payment_id);
 
         return redirect()->to($url);
