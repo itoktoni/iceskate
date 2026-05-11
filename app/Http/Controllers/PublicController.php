@@ -12,6 +12,7 @@ use App\Dao\Models\Token;
 use App\Models\Menu;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Plugins\Cms;
@@ -20,6 +21,7 @@ use Xendit\Invoice\CreateInvoiceRequest;
 use Xendit\Invoice\InvoiceApi;
 use Illuminate\Support\Facades\Crypt;
 use LaravelQRCode\Facades\QRCode;
+use WpOrg\Requests\Auth;
 
 class PublicController extends Controller
 {
@@ -259,6 +261,8 @@ class PublicController extends Controller
         ]));
     }
 
+
+
     public function iuran()
     {
         if (! auth()->check()) {
@@ -289,7 +293,32 @@ class PublicController extends Controller
         return redirect()->to($url);
     }
 
-    private function involke($payment, $code, $total)
+    public function sendWa($id)
+    {
+        if (! auth()->check()) {
+            return redirect('/');
+        }
+
+        $iuran = Iuran::find($id, ['iuran_harga', 'iuran_voucher']);
+        $harga = $iuran->iuran_harga;
+        $token = $iuran->iuran_voucher;
+
+        $code    = unic(10) . date('Ymd');
+        $payment = Payment::create([
+            'payment_id'      => $code,
+            'payment_tanggal' => now()->format('Y-m-d'),
+            'payment_id_user' => auth()->user()->id,
+            'payment_value'   => $harga,
+            'payment_iuran'   => $iuran->iuran_id,
+            'payment_voucher'   => $token,
+        ]);
+
+        $url = $this->involke($payment, $code, $harga, $iuran->iuran_keterangan);
+
+        return redirect()->to($url);
+    }
+
+    private function involke($payment, $code, $total, $description)
     {
         Configuration::setXenditKey(env('XENDIT_SECRET_KEY'));
 
@@ -298,7 +327,7 @@ class PublicController extends Controller
 
         $create_invoice_request = new CreateInvoiceRequest([
             'external_id'                      => $code,
-            'description'                      => 'Payment for Iceskate Membership',
+            'description'                      => $description,
             'amount'                           => $total,
             'invoice_duration'                 => 172800,
             'currency'                         => 'IDR',
@@ -307,23 +336,9 @@ class PublicController extends Controller
                 'CREDIT_CARD', 'OVO', 'ASTRAPAY', 'BNI', 'BSI', 'BRI', 'CIMB', 'BJB', 'PERMATA', 'QRIS', 'SHOPEEPAY', 'DANA', 'BCA', 'MANDIRI',
             ],
             'customer'                         => [
-                'email'       => auth()->user()->email,
+                // 'email'       => auth()->user()->email,
                 'given_names' => auth()->user()->name,
                 'surname'     => auth()->user()->name,
-            ],
-            "customer_notification_preference" => [
-                "invoice_created"  => [
-                    "whatsapp",
-                    "email",
-                ],
-                "invoice_reminder" => [
-                    "whatsapp",
-                    "email",
-                ],
-                "invoice_paid"     => [
-                    "whatsapp",
-                    "email",
-                ],
             ],
             'success_redirect_url'             => config('app.url').'payment',
             'failure_redirect_url'             => config('app.url').'payment',

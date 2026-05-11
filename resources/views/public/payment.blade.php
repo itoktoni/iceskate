@@ -64,7 +64,7 @@
                                                     {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-success" href="{{ route('history') }}"
+                                                    <a href="{{ route('send', ['id' => $item->iuran_id]) }}"
                                                         style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
                                                         <i class="fa-brands fa-whatsapp"></i> Bayar WA
                                                     </a>
@@ -81,7 +81,7 @@
                                                     {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-success" href="{{ route('history') }}"
+                                                    <a href="{{ route('send', ['id' => $item->iuran_id]) }}"
                                                         style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
                                                         <i class="fa-brands fa-whatsapp"></i> Bayar WA
                                                     </a>
@@ -100,7 +100,7 @@
                                                         {{ number_format($item->iuran_harga, 0, ',', '.') }}\
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success" href="{{ route('history') }}"
+                                                        <a href="{{ route('send', ['id' => $item->iuran_id]) }}"
                                                             style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
                                                             <i class="fa-brands fa-whatsapp"></i> Bayar WA
                                                         </a>
@@ -120,7 +120,7 @@
                                                         {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-success" href="{{ route('history') }}"
+                                                        <a href="{{ route('send', ['id' => $item->iuran_id]) }}"
                                                             style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
                                                             <i class="fa-brands fa-whatsapp"></i> Bayar WA
                                                         </a>
