@@ -21,6 +21,7 @@ class ReportUserController extends ReportController
     public function getData()
     {
         $query = User::select('*')
+            ->addSelect(['category_nama'])
             ->leftJoinRelationship('has_category')
             ->leftJoinRelationship('has_role')
             ->where('role', RoleType::User)

@@ -31,13 +31,17 @@
 
     <div class="container payment">
 
+
+
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title text-center">Display QR Code</h5>
+                    <h5 class="card-title text-center">Voucher Available {{ $total ?? 0 }}</h5>
+                    @if ($total > 0)
                     <p class="card-text text-center">
-                        <img src="/qr-code.png" alt="QR Code" class="img-fluid">
+                        <img src="/qr/{{ auth()->user()->id }}.png" alt="QR Code" class="img-fluid">
                     </p>
+                    @endif
                 </div>
             </div>
         </div>

@@ -174,8 +174,10 @@ class PublicController extends Controller
                 ->whereMonth('payment_tanggal', now()->format('m'))
                 ->first();
 
+            $total = $token->total;
+
             $qr = null;
-            $path = public_path() . '/qr-code.png';
+            $path = public_path() .'/qr/'.$user_id. '.png';
 
             $data = json_encode([
                 'u' => $user_id,
@@ -194,6 +196,7 @@ class PublicController extends Controller
                 'single'   => $single,
                 'kehadiran'   => $kehadiran,
                 'qr'   => $qr,
+                'total'   => $total,
             ]));
         }
 
