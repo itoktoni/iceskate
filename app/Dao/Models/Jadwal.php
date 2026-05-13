@@ -44,7 +44,7 @@ class Jadwal extends SystemModel
 
     public function has_absen()
     {
-        return $this->belongsToMany(User::class, 'absen', 'jadwal_id', 'id')->withPivot('payment', 'code', 'use_date', 'name');
+        return $this->belongsToMany(User::class, 'absen', 'jadwal_id', 'id')->withPivot('payment', 'code', 'use_date');
     }
 
     public function has_category()
