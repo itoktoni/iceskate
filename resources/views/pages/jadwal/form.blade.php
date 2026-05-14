@@ -46,7 +46,9 @@
                                         </td>
 
 										<td data-label="Nama">{{ $table->field_name }}</td>
-										<td data-label="Kehadiran" class="text-center">{{ $selected ? 'Absen' : 'Hadir' }}</td>
+										<td data-label="Kehadiran" class="text-center">
+                                            <span class="btn btn-{{ $selected ? 'success' : 'danger' }}">{{ $selected ? 'HADIR' : 'ABSEN' }}</span>
+                                        </td>
 										<td data-label="Voucher" class="text-center">{{ $voucher ? 'Terpakai' : '-' }}</td>
                                     </tr>
                                 @empty
