@@ -47,7 +47,7 @@
 
 										<td data-label="Nama">{{ $table->field_name }}</td>
 										<td data-label="Kehadiran" class="text-center">
-                                            <span class="btn btn-{{ $selected ? 'success' : 'danger' }}">{{ $selected ? 'HADIR' : 'ABSEN' }}</span>
+                                            <a href="{{ moduleRoute('getToggleHadir', ['jadwal' => $model->field_primary, 'id' => $table->field_primary]) }}" class="btn btn-{{ $selected ? 'success' : 'danger' }}">{{ $selected ? 'HADIR' : 'ABSEN' }}</a>
                                         </td>
 										<td data-label="Voucher" class="text-center">{{ $voucher ? 'Terpakai' : '-' }}</td>
                                     </tr>

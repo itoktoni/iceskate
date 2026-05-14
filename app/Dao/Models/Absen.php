@@ -15,7 +15,7 @@ class Absen extends SystemModel
      *
      * @var array<int, string>
      */
-    protected $fillable = ['jadwal_id', 'id', 'payment', 'code', 'use_date'];
+    protected $fillable = ['jadwal_id', 'id', 'payment', 'code', 'use_date', 'hadir'];
 
 
     public function dataRepository($selected = [], $relation = [])

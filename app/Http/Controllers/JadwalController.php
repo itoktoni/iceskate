@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Dao\Enums\Core\RoleType;
 use App\Dao\Enums\JadwalType;
+use App\Dao\Models\Absen;
 use App\Dao\Models\Category;
 use App\Dao\Models\Core\User;
 use App\Dao\Models\Jadwal;
@@ -68,6 +69,35 @@ class JadwalController extends MasterController
         $data = $service->update($this->model, $request, $code);
 
         return Response::redirectBack($data);
+    }
+
+    public function getToggleHadir($jadwal, $id)
+    {
+        $absen = Absen::where('jadwal_id', $jadwal)
+            ->where('id', $id)
+            ->first();
+
+        if($absen)
+        {
+            if(!empty($absen->use_date))
+            {
+                Alert::error("User sudah hadir dan tidak bisa diganti !");
+                return redirect()->back();
+            }
+
+            Alert::update("Status User berhasil dirubah !");
+            $absen->delete();
+        }
+        else{
+            Absen::create([
+                'jadwal_id' => $jadwal,
+                'id' => $id
+            ]);
+
+            Alert::create("Status User berhasil dirubah !");
+        }
+
+        return redirect()->back();
     }
 
     public function getRace($code)
