@@ -32,6 +32,7 @@
 			<tr>
 				<th width="1">No. </th>
 				<th>JADWAL</th>
+				<th>KETERANGAN</th>
 				<th>TANGGAL</th>
 				<th>NAMA ATLET</th>
 				<th>PENGGUNAAN VOUCHER</th>
@@ -43,6 +44,7 @@
 			<tr>
 				<td>{{ $loop->iteration }}</td>
 				<td>{{ $table->jadwal_nama }}</td>
+				<td>{{ $table->jadwal_keterangan }}</td>
 				<td>{{ formatDate($table->jadwal_tanggal) }}</td>
 				<td>{{ $table->name ?? 'Atlet tidak ditemukan' }}</td>
 				<td>
