@@ -48,7 +48,7 @@
 				<td>{{ $table->jadwal_nama }}</td>
 				<td>{{ $table->jadwal_keterangan }}</td>
 				<td>{{ formatDate($table->jadwal_tanggal) }}</td>
-				<td>{{ $table->name ?? 'Atlet tidak ditemukan' }}</td>
+				<td>{{ $table->name ?? '' }}</td>
 				<td>
 					@if($table->payment)
 					{{ $table->iuran_nama ?? '' }}
