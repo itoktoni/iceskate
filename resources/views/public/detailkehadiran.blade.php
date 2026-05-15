@@ -39,7 +39,7 @@
                     <h5 class="card-title text-center">Voucher Available {{ $total ?? 0 }}</h5>
                     @if ($total > 0)
                     <p class="card-text text-center">
-                        <img src="/qr/{{ auth()->user()->id }}.png" alt="QR Code" class="img-fluid">
+                        {{ QrCode::size(200)->generate($qr) }}
                     </p>
                     @endif
                 </div>

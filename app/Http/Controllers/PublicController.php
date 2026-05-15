@@ -21,8 +21,7 @@ use Xendit\Configuration;
 use Xendit\Invoice\CreateInvoiceRequest;
 use Xendit\Invoice\InvoiceApi;
 use Illuminate\Support\Facades\Crypt;
-use LaravelQRCode\Facades\QRCode;
-use WpOrg\Requests\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PublicController extends Controller
 {
@@ -204,7 +203,6 @@ class PublicController extends Controller
             ]);
 
             $encrypted = Crypt::encryptString($data);
-            $qr   = QRCode::text($encrypted)->setOutfile($path)->png();
 
             return view('public.detailkehadiran', $this->share([
                 'page'     => $page,
@@ -212,7 +210,7 @@ class PublicController extends Controller
                 'jadwal'   => $jadwal,
                 'single'   => $single,
                 'kehadiran'   => $kehadiran,
-                'qr'   => $qr,
+                'qr'   => $encrypted,
                 'total'   => $available,
             ]));
         }

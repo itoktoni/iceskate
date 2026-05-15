@@ -266,6 +266,7 @@ return [
         'EnvEditor' => EnvEditor::class,
         'ModelGroup' => SystemGroup::class,
         'Cms' => Cms::class,
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
     ],
 
 ];

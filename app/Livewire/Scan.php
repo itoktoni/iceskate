@@ -28,6 +28,7 @@ class Scan extends Component
         ]);
 
         $this->result = null;
+        $this->error = null;
 
         try {
             $decrypt = $encrypted = Crypt::decryptString($this->scan);
@@ -51,26 +52,24 @@ class Scan extends Component
                 return;
             }
 
-            $search = Absen::where('jadwal_id', $jadwal_id)->where('id', $user_id)->count();
+            $search = Absen::where('jadwal_id', $jadwal_id)->where('id', $user_id)->first();
 
-            if($search > 0)
+            if(!empty($search))
             {
-                if(!empty($search->use_code))
+                if(!empty($search->use_date))
                 {
                     $this->error = 'Voucher sudah terpakai !';
                 }
                 else
                 {
                     $update = Absen::where('jadwal_id', $jadwal_id)
-                    ->where('id', $user_id)->first();
-
-                    $update->update([
+                    ->where('id', $user_id)->update([
                         'payment' => $payment_id,
                         'code' => unic(10),
                         'use_date' => date('Y-m-d')
                     ]);
 
-                    $this->error = 'Success Update Record !';
+                    $this->result = 'Success Update Record !';
                 }
             }
             else
@@ -83,7 +82,7 @@ class Scan extends Component
                     'use_date' => date('Y-m-d')
                 ]);
 
-                $this->error = 'Success Create Record !';
+                $this->result = 'Success Create Record !';
             }
 
             $this->scan = '';

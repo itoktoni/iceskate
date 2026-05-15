@@ -15,16 +15,21 @@
 
         </div>
 
-        @if (!empty($error) && ($error != 'Success Create Record !' || $error != 'Success Update Record !'))
-            <div class="alert alert-danger mb-0">
-                <i class="fas fa-exclamation-circle"></i> <strong>Error:</strong> {{ $error }}
+         <!-- Perbaikan pada bagian Error Alert -->
+        @if (!empty($error))
+            <div class="alert alert-danger alert-dismissible mb-0 mt-3" role="alert">
+                <i id="alert" class="fas fa-exclamation-circle"></i> <strong>Error:</strong> {{ $error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
-        @if(!empty($error) && ($error == 'Success Create Record !' || $error == 'Success Update Record !'))
-         <div class="alert alert-success mb-0">
-                <i class="fas fa-check-circle"></i> <strong>Success :</strong> {{ $error }}
+        <!-- Perbaikan pada bagian Success Alert -->
+        @if (!empty($result))
+            <div class="alert alert-success alert-dismissible mb-0 mt-3">
+                <i id="alert" class="fas fa-check-circle"></i> <strong>Success :</strong> {{ $result }}
+                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
+
     </div>
 </div>
