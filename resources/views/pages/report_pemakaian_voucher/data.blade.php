@@ -60,7 +60,7 @@
 			@if(!empty($table->jadwal_nama))
 			<tr>
 				<td>
-					{{ $table->jadwal_nama }} {{ formatDate($table->jadwal_tanggal) }} - {{ $table->jadwal_keterangan }}
+					{{ $table->jadwal_id }} - {{ $table->jadwal_nama }} {{ formatDate($table->jadwal_tanggal) }} - {{ $table->jadwal_keterangan }}
 				</td>
 				<td>{{ $table->name ?? 'Atlet tidak ditemukan' }}</td>
 				<td>{{ formatDate($table->use_date) }}</td>
