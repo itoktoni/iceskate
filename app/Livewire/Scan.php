@@ -51,9 +51,9 @@ class Scan extends Component
                 return;
             }
 
-            $search = Absen::where('jadwal_id', $jadwal_id)->where('id', $user_id)->first();
+            $search = Absen::where('jadwal_id', $jadwal_id)->where('id', $user_id)->count();
 
-            if(!empty($search))
+            if($search > 0)
             {
                 if(!empty($search->use_code))
                 {
