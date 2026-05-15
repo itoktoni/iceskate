@@ -21,7 +21,7 @@
             </div>
         @endif
 
-        @if(!empty($error) && ($error != 'Success Create Record !' || $error != 'Success Update Record !'))
+        @if(!empty($error) && ($error == 'Success Create Record !' || $error == 'Success Update Record !'))
          <div class="alert alert-success mb-0">
                 <i class="fas fa-check-circle"></i> <strong>Success :</strong> {{ $error }}
             </div>
