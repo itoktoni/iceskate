@@ -189,7 +189,7 @@ class PublicController extends Controller
                 ->whereMonth('payment_tanggal', now()->format('m'))
                 ->sum('used');
 
-            $available = $jumlah - $usage;
+            $available = $jumlah;
 
             $total = $token->total ?? 0;
 

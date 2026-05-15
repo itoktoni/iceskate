@@ -47,17 +47,17 @@ class ReportPemakaianVoucherController extends ReportController
 
         if($start = request()->get('start_date'))
         {
-            $query = $query->whereDate('payment_tanggal','>=', $start);
+            $query = $query->whereDate('use_date','>=', $start);
         }
 
         if($start = request()->get('end_date'))
         {
-            $query = $query->whereDate('payment_tanggal', '<=',$start);
+            $query = $query->whereDate('use_date', '<=',$start);
         }
 
 
         // Join with user data to get payment information
-        $data =  $query->orderBy('payment_tanggal', 'ASC')->get();
+        $data =  $query->orderBy('use_date', 'ASC')->get();
 
         $map = $data->mapToGroups(function($item){
             return [$item->payment_id => $item];
