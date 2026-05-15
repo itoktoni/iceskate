@@ -31,6 +31,7 @@
 		<thead>
 			<tr>
 				<th width="1">No. </th>
+				<th>ID</th>
 				<th>JADWAL</th>
 				<th style="width: 300px">KETERANGAN</th>
 				<th>TANGGAL</th>
@@ -43,6 +44,7 @@
 			@forelse($data as $table)
 			<tr>
 				<td>{{ $loop->iteration }}</td>
+				<td>{{ $table->jadwal_id }}</td>
 				<td>{{ $table->jadwal_nama }}</td>
 				<td>{{ $table->jadwal_keterangan }}</td>
 				<td>{{ formatDate($table->jadwal_tanggal) }}</td>
