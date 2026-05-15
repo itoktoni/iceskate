@@ -32,10 +32,10 @@
 			<tr>
 				<th width="1">No. </th>
 				<th>JADWAL</th>
-				<th>KETERANGAN</th>
+				<th style="width: 300px">KETERANGAN</th>
 				<th>TANGGAL</th>
 				<th>NAMA ATLET</th>
-				<th>PENGGUNAAN VOUCHER</th>
+				<th style="width: 300px">PENGGUNAAN VOUCHER</th>
 			</tr>
 		</thead>
 		<tbody>
