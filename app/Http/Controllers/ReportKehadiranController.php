@@ -34,7 +34,7 @@ class ReportKehadiranController extends ReportController
         $query = Jadwal::query()
             ->select('*')
             ->addSelect(['name', 'iuran.iuran_nama'])
-            ->leftJoinRelationship('has_absen')
+            ->joinRelationship('has_absen')
             ->leftJoin('payment', 'payment_id', 'payment')
             ->leftJoin('iuran', 'payment_iuran', 'iuran.iuran_id');
 
