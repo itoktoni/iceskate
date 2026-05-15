@@ -61,9 +61,10 @@ class Scan extends Component
                 }
                 else
                 {
-                    Absen::where('jadwal_id', $jadwal_id)
-                    ->where('id', $user_id)
-                    ->update([
+                    $update = Absen::where('jadwal_id', $jadwal_id)
+                    ->where('id', $user_id)->first();
+
+                    $update->update([
                         'payment' => $payment_id,
                         'code' => unic(10),
                         'use_date' => date('Y-m-d')
