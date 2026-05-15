@@ -69,7 +69,7 @@ class Scan extends Component
                         'use_date' => date('Y-m-d')
                     ]);
 
-                    $this->error = 'Success Record !';
+                    $this->error = 'Success Update Record !';
                 }
             }
             else
@@ -82,7 +82,7 @@ class Scan extends Component
                     'use_date' => date('Y-m-d')
                 ]);
 
-                $this->error = 'Success Record !';
+                $this->error = 'Success Create Record !';
             }
 
             $this->scan = '';
