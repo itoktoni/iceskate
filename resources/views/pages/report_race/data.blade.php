@@ -44,7 +44,7 @@
 			<tr>
 				<td>{{ $loop->iteration }}</td>
 				<td>{{ formatDate($table->race_tanggal) }}</td>
-				<td>{{ $table->name ?? 'Atlet tidak ditemukan' }}</td>
+				<td>{{ $table->name ?? '' }}</td>
 				<td>{{ $table->jarak_nama }}</td>
 				<td>{{ number_format($table->race_waktu, 3) }}</td>
 				<td>{{ $table->race_notes }}</td>
