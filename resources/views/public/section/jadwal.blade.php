@@ -111,7 +111,10 @@
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const hasSchedule = scheduleData.some(item => item.jadwal_tanggal === dateStr);
 
-
+            if (hasSchedule) {
+                dayElement.classList.add('has-schedule');
+                dayElement.title = 'Has schedule';
+            }
 
             // Highlight today
             const today = new Date();
@@ -119,23 +122,9 @@
                 dayElement.classList.add('today');
             }
 
-            if (year == '2026' && (5 === month && day >= 15 && day <= 30) || (6 === month && day >= 1 && day <= 11)) {
+            if (year == '2026' && (5 === month && day >= 15 && day <= 30) && (day != 20 || day != '27') || (6 === month && day >= 1 && day <= 11) && (day != 4 && day != 11)) {
 
-                if (hasSchedule) {
-                    dayElement.classList.add('has-schedule');
-                    dayElement.title = 'Has schedule';
-                }
-                else{
-
-                    dayElement.classList.add('has-event');
-                }
-            }
-            else{
-
-                 if (hasSchedule) {
-                    dayElement.classList.add('has-schedule');
-                    dayElement.title = 'Has schedule';
-                }
+                dayElement.classList.add('has-event');
             }
 
             calendarDays.appendChild(dayElement);
