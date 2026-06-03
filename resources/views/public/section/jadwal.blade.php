@@ -119,11 +119,11 @@
 
             if (year == '2026') {
 
-                if ((5 === month) && (day >= 15 && day <= 30) && (day != 20 && day != 27)) {
+                if ((5 === month) && (day >= 15 && day <= 30) && (day != 20 && day != 21 && day != 27 && day != 28)) {
 
                     dayElement.classList.add('has-event');
                 }
-                else if (6 === month && (day >= 1 && day <= 10) && (day != 4)) {
+                else if (6 === month && (day >= 1 && day <= 10) && (day != 4 && day != 5)) {
                     dayElement.classList.add('has-event');
                 }
                 else{
