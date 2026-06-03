@@ -122,6 +122,10 @@
                 dayElement.classList.add('today');
             }
 
+            if (year == '2026' && (5 === month && day >= 15 && day <= 30) || (6 === month && day >= 1 && day <= 11)) {
+                dayElement.classList.add('has-event');
+            }
+
             calendarDays.appendChild(dayElement);
         }
     }
@@ -258,6 +262,12 @@
     }
 
     .calendar-day.today {
+        background: orange;
+        color: white;
+        font-weight: bold;
+    }
+
+    .calendar-day.has-event {
         background: #36b5f5;
         color: white;
         font-weight: bold;
