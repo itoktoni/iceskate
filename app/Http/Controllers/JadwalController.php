@@ -86,7 +86,10 @@ class JadwalController extends MasterController
             }
 
             Alert::update("Status User berhasil dirubah !");
-            $absen->delete();
+
+             $absen = Absen::where('jadwal_id', $jadwal)
+            ->where('id', $id)
+            ->delete();
         }
         else{
             Absen::create([

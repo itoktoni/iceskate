@@ -119,13 +119,22 @@
 
             if (year == '2026') {
 
-                if ((5 === month) && (day >= 15 && day <= 30) && (day != 20 && day != 21 && day != 27 && day != 28)) {
+                if ((5 === month) && (day >= 15 && day <= 30) && (day != 18 && day != 20 && day != 27 && day != 28)) {
 
                     dayElement.classList.add('has-event');
                 }
-                else if (6 === month && (day >= 1 && day <= 10) && (day != 4 && day != 5)) {
+
+
+                else if (6 === month && (day >= 1 && day <= 11) && (day != 5 && day != 11)) {
                     dayElement.classList.add('has-event');
+
                 }
+
+                else if (7 === month && (day >= 17 && day <= 20)) {
+                    dayElement.classList.add('has-event');
+
+                }
+
                 else{
 
                     if (hasSchedule) {
@@ -288,6 +297,9 @@
         background: #36b5f5;
         color: white;
         font-weight: bold;
+    }
+    .calendar-day.has-event:hover {
+        background: #2b90c4;
     }
 
     .calendar-day.has-schedule {
