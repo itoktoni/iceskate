@@ -135,17 +135,6 @@
 
                 }
 
-                else if ((8 === month) && (day >= 6 && day <= 27) && (day != 7 &&day != 8 &&day != 9 &&day != 10 &&day != 11 &&day != 12 &&day != 14 &&day != 15 &&day != 16 &&day != 17 &&day != 18 &&day != 19 &&day != 21 &&day != 22 &&day != 23 &&day != 24 &&day != 25 &&day != 26 && day != 28)) {
-
-                    dayElement.classList.add('has-event');
-                }
-
-                else if ((9 === month) && (day >= 4 && day <= 11) && (day != 5 &&day != 8 &&day != 6 &&day != 7 &&day != 8 &&day != 9 &&day != 10)) {
-
-                    dayElement.classList.add('has-event');
-                }
-
-
                 else{
 
                     if (hasSchedule) {

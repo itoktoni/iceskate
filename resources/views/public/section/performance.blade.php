@@ -18,7 +18,7 @@
     <div class="container mb-5">
 
         <div>
-            <iframe src="https://j1st-tracker.ai.studio" width="100%" height="2500px" style="border: none; "title="J1st Tracker"></iframe>
+            <iframe src="https://j1st-tracker.ai.studio" width="100%" height="2600px" style="border: none; "title="J1st Tracker"></iframe>
         </div>
 
     </div>
