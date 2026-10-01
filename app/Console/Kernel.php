@@ -23,7 +23,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Tagihan bulanan dibuat tiap tanggal 1 jam 00:30
+        $schedule->command('generate:payment')->monthlyOn(1, '00:30')->withoutOverlapping();
+
+        // Reminder WA dikirim tiap hari jam 07:00 (termasuk tagihan yang ke-skip)
+        $schedule->command('send:payment')->dailyAt('07:00')->withoutOverlapping();
     }
 
     /**

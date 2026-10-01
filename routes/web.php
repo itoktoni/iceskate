@@ -52,6 +52,8 @@ Route::get('/hadir/{id}', [PublicController::class, 'hadir'])->name('hadir')->mi
 Route::get('/performance', [PublicController::class, 'performance'])->name('performance');
 Route::get('/userprofile', [PublicController::class, 'userprofile'])->name('userprofile')->middleware('auth');
 Route::put('/userprofile/update', [PublicController::class, 'updateProfile'])->name('userprofileupdate')->middleware('auth');
+Route::get('/cron/generate', [PublicController::class, 'cronGenerate'])->name('cron.generate');
+Route::get('/cron/send', [PublicController::class, 'cronSend'])->name('cron.send');
 Route::get('/{slug}', [PublicController::class, 'page'])->name('page');
 Route::get('/blog/{slug}', [PublicController::class, 'blog'])->name('blog');
 

@@ -237,19 +237,29 @@ class PublicController extends Controller
             ->get()
         ;
 
-        $five = Payment::where('payment_id_user', auth()->user()->id)
+        $day = (int) now()->format('d');
+
+        // Sudah beli VOUCHER 5 (iuran_id 1) bulan ini?
+        $boughtV5 = Payment::where('payment_id_user', auth()->user()->id)
             ->where('payment_paid', 1)
             ->where('payment_iuran', 1)
-            ->whereYear('payment_done', now('Y'))
-            ->whereMonth('payment_done', now('m'))
-            ->whereDay('payment_done', '<=', 10)
-            ->count() > 1 ? true : false;
+            ->whereYear('payment_tanggal', now()->format('Y'))
+            ->whereMonth('payment_tanggal', now()->format('m'))
+            ->exists();
+
+        // Aturan voucher:
+        // - tgl 1-10 : VOUCHER 5 (belum beli) / VOUCHER 1+ (sudah beli V5, boleh beli berulang)
+        // - lewat tgl 10 : hanya VOUCHER 1
+        $five = $boughtV5 && $day <= 10; // tampilkan VOUCHER 1+
+        $late = $day > 10;               // tampilkan VOUCHER 1 saja
 
         return view('public.payment', $this->share([
             'page'     => $page,
             'template' => $template,
             'iuran'    => $iuran,
-            'five'    => $five,
+            'five'     => $five,
+            'late'     => $late,
+            'boughtV5' => $boughtV5,
         ]));
     }
 
@@ -350,8 +360,7 @@ class PublicController extends Controller
         return redirect()->to($url);
     }
 
-    public function checkStatus($id)
-    {
+    public function checkStatus($id)    {
         if (! auth()->check()) {
             return redirect('/');
         }
@@ -384,6 +393,37 @@ class PublicController extends Controller
         } catch (\Throwable $e) {
             Log::error('Cashi check-status exception: ' . $e->getMessage(), ['order_id' => $orderId]);
             return redirect()->route('payment')->with('error', 'Gagal cek status, silakan coba lagi.');
+        }
+    }
+
+    // Cron via URL (untuk hosting tanpa SSH): lindungi dengan CRON_KEY
+    public function cronGenerate()
+    {
+        if (request()->get('key') !== env('CRON_KEY', '')) {
+            abort(404);
+        }
+
+        try {
+            \Artisan::call('generate:payment');
+            return response()->json(['success' => true, 'output' => trim(\Artisan::output())]);
+        } catch (\Throwable $e) {
+            Log::error('cronGenerate: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function cronSend()
+    {
+        if (request()->get('key') !== env('CRON_KEY', '')) {
+            abort(404);
+        }
+
+        try {
+            \Artisan::call('send:payment');
+            return response()->json(['success' => true, 'output' => trim(\Artisan::output())]);
+        } catch (\Throwable $e) {
+            Log::error('cronSend: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 

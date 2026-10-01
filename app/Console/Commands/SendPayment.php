@@ -26,9 +26,11 @@ class SendPayment extends Command
         $payment = Payment::select(['payment.*', 'iuran.*', 'users.*'])
             ->leftJoinRelationship('has_iuran')
             ->leftJoinRelationship('has_user')
-            ->where('payment_tanggal', now()->format('Y-m-d'))
+            ->where('payment_tanggal', '<=', now()->format('Y-m-d'))
             ->where('payment_paid', 0)
             ->whereNull('payment_sent')
+            ->whereNotNull('users.phone')
+            ->orderBy('payment_tanggal')
             ->get();
 
         foreach ($payment as $data) {

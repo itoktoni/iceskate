@@ -64,10 +64,16 @@
                                                     {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="{{ route('invoice', ['id' => $item->iuran_id]) }}"
-                                                        style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
-                                                        <i class="fa-solid fa-dollar"></i> Bayar
-                                                    </a>
+                                                    @if ($boughtV5)
+                                                        <span style="padding: 7px 15px;background: #6c757d;color: white;border-radius: 5px;">
+                                                            Lunas
+                                                        </span>
+                                                    @else
+                                                        <a href="{{ route('invoice', ['id' => $item->iuran_id]) }}"
+                                                            style="padding: 7px 15px;background: #198754;color: white;border-radius: 5px;text-decoration: none;">
+                                                            <i class="fa-solid fa-dollar"></i> Bayar
+                                                        </a>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @elseif ($item->iuran_type == 'EVENT')
@@ -108,7 +114,7 @@
                                                 </tr>
                                             @endif
 
-                                            @if (!$five && $item->iuran_id == 3)
+                                            @if ($item->iuran_id == 3)
                                                 <tr>
                                                     <td>
                                                         <b>{{ $item->iuran_nama }}</b>
