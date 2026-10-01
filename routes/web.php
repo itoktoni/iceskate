@@ -43,6 +43,7 @@ Auth::routes(['verify' => true]);
 Route::get('/', [PublicController::class, 'index'])->name('public');
 Route::get('/register', [PublicController::class, 'index'])->name('register');
 Route::get('/payment', [PublicController::class, 'payment'])->name('payment')->middleware('auth');
+Route::get('/payment/check/{id}', [PublicController::class, 'checkStatus'])->name('payment.check')->middleware('auth');
 Route::post('/iuran', [PublicController::class, 'iuran'])->name('iuran')->middleware('auth');
 Route::get('/invoice/{id}', [PublicController::class, 'invoice'])->name('invoice')->middleware('auth');
 Route::get('/kehadiran', [PublicController::class, 'kehadiran'])->name('kehadiran')->middleware('auth');

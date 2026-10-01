@@ -44,3 +44,4 @@ use PHPUnit\TextUI\XmlConfiguration\Group;
 // Route::get('groups', [GroupsController::class, 'getData']);
 
 Route::post('/webhook/xendit', [PublicController::class, 'webhook'])->name('webhook');
+Route::post('/webhook/cashi', [PublicController::class, 'webhook'])->name('webhook.cashi');

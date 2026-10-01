@@ -15,11 +15,9 @@ use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Plugins\Cms;
-use Xendit\Configuration;
-use Xendit\Invoice\CreateInvoiceRequest;
-use Xendit\Invoice\InvoiceApi;
 use Illuminate\Support\Facades\Crypt;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -284,6 +282,16 @@ class PublicController extends Controller
 
         $total = request()->get('iuran') ? array_sum(request()->get('iuran')) : 0;
 
+        if(request()->get('iuran') == null)
+        {
+            return redirect()->back()->with('error', 'Tidak ada iuran yang dipilih');
+        }
+
+        if($total < 2000)
+        {
+            return redirect()->back()->with('error', 'Minimal pembayaran Rp 2.000');
+        }
+
         $code    = unic(10) . date('Ymd');
         $payment = Payment::create([
             'payment_id'      => $code,
@@ -292,16 +300,15 @@ class PublicController extends Controller
             'payment_value'   => $total,
         ]);
 
-        if(request()->get('iuran') == null)
-        {
-            return redirect()->back()->with('error', 'Tidak ada iuran yang dipilih');
-        }
-
         foreach (request()->get('iuran') as $key => $value) {
             $payment->has_iuran()->attach($key, ['iuran_harga' => $value]);
         }
 
         $url = $this->involke($payment, $code, $total);
+
+        if (empty($url)) {
+            return redirect()->back()->with('error', 'Gagal membuat pembayaran, silakan coba lagi.');
+        }
 
         return redirect()->to($url);
     }
@@ -331,50 +338,102 @@ class PublicController extends Controller
         try {
             $url = $this->involke($payment, $code, $harga, $iuran->iuran_keterangan);
         } catch (\Throwable $th) {
+            Log::error('Cashi involke exception: ' . $th->getMessage(), ['order_id' => $code]);
         }
 
         InvoiceService::generate($payment->payment_id);
 
+        if (empty($url) || $url === url()->full()) {
+            return redirect()->route('payment')->with('error', 'Gagal membuat pembayaran, silakan coba lagi.');
+        }
+
         return redirect()->to($url);
     }
 
-    private function involke($payment, $code, $total, $description)
+    public function checkStatus($id)
     {
-        Configuration::setXenditKey(env('XENDIT_SECRET_KEY'));
+        if (! auth()->check()) {
+            return redirect('/');
+        }
 
-        $apiInstance = new InvoiceApi;
-        $url         = '';
+        $payment = Payment::where('payment_id', $id)
+            ->where('payment_id_user', auth()->user()->id)
+            ->firstOrFail();
 
-        $create_invoice_request = new CreateInvoiceRequest([
-            'external_id'                      => $code,
-            'description'                      => $description,
-            'amount'                           => $total,
-            'invoice_duration'                 => 172800,
-            'currency'                         => 'IDR',
-            'reminder_time'                    => 1,
-            'payment_methods'                  => [
-                'CREDIT_CARD', 'OVO', 'ASTRAPAY', 'BNI', 'BSI', 'BRI', 'CIMB', 'BJB', 'PERMATA', 'QRIS', 'SHOPEEPAY', 'DANA', 'BCA', 'MANDIRI',
-            ],
-            'customer'                         => [
-                // 'email'       => auth()->user()->email,
-                'given_names' => auth()->user()->name,
-                'surname'     => auth()->user()->name,
-            ],
-            'success_redirect_url'             => config('app.url').'payment',
-            'failure_redirect_url'             => config('app.url').'payment',
-        ]);
+        if ($payment->payment_paid) {
+            return redirect()->route('payment')->with('success', 'Pembayaran sudah lunas.');
+        }
+
+        $baseUrl = rtrim(env('CASHI_BASE_URL', 'https://cashi.id'), '/');
+        $apiKey  = env('CASHI_KEY', '');
+        $orderId = $payment->payment_code ?: $payment->payment_id;
 
         try {
+            $response = Http::withHeaders(['x-api-key' => $apiKey])
+                ->timeout(30)
+                ->get($baseUrl . '/api/check-status/' . $orderId);
 
-            $result = $apiInstance->createInvoice($create_invoice_request);
-            $url    = $result->getInvoiceUrl();
-            $payment->payment_code = $result->getId();
+            $data = $response->json();
+
+            if (! empty($data['success']) && ($data['status'] ?? '') === 'SETTLED') {
+                $this->markPaid($payment->payment_id, null);
+                return redirect()->route('payment')->with('success', 'Pembayaran lunas, terima kasih.');
+            }
+
+            return redirect()->route('payment')->with('error', 'Pembayaran belum diterima (status: ' . ($data['status'] ?? 'unknown') . ').');
+        } catch (\Throwable $e) {
+            Log::error('Cashi check-status exception: ' . $e->getMessage(), ['order_id' => $orderId]);
+            return redirect()->route('payment')->with('error', 'Gagal cek status, silakan coba lagi.');
+        }
+    }
+
+    private function involke($payment, $code, $total, $description = null)
+    {
+        $url = '';
+        $amount = (int) $total;
+
+        // Cashi: min 2.000, max 10.000.000
+        if ($amount < 2000) {
+            Log::warning('Cashi: amount below minimum', ['order_id' => $code, 'amount' => $amount]);
+            return $url;
+        }
+
+        $baseUrl = rtrim(env('CASHI_BASE_URL', 'https://cashi.id'), '/');
+        $apiKey  = env('CASHI_KEY', '');
+
+        if (empty($apiKey)) {
+            Log::error('Cashi: CASHI_KEY missing in .env');
+            return $url;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'x-api-key'    => $apiKey,
+                'Content-Type' => 'application/json',
+            ])->timeout(30)->post($baseUrl . '/api/create-order', [
+                'amount'       => $amount,
+                'order_id'     => $code,
+                'kode_channel' => env('CASHI_CHANNEL', 'QRIS_CUSTOM'),
+            ]);
+
+            $data = $response->json();
+
+            if (! $response->successful() || empty($data['success'])) {
+                Log::error('Cashi create-order failed', [
+                    'order_id' => $code,
+                    'status'   => $response->status(),
+                    'body'     => $response->body(),
+                ]);
+                return $url;
+            }
+
+            $url = $data['checkout_url'] ?? '';
+            $payment->payment_code = $data['orderId'] ?? $code;
             $payment->payment_url  = $url;
             $payment->save();
 
-        } catch (\Xendit\XenditSdkException $e) {
-            echo 'Exception when calling InvoiceApi->createInvoice: ', $e->getMessage(), PHP_EOL;
-            echo 'Full Error: ', json_encode($e->getFullError()), PHP_EOL;
+        } catch (\Throwable $e) {
+            Log::error('Cashi create-order exception: ' . $e->getMessage(), ['order_id' => $code]);
         }
 
         return $url;
@@ -382,6 +441,43 @@ class PublicController extends Controller
 
     public function webhook(Request $request)
     {
+        $payload   = $request->getContent();
+        $signature = $request->header('X-Gateway-Signature', '');
+
+        // --- Cashi webhook path (HMAC-SHA256) ---
+        if (! empty($signature)) {
+            $secret = env('CASHI_WEBHOOK', '');
+
+            if (empty($secret)) {
+                Log::error('Cashi webhook: CASHI_WEBHOOK missing in .env');
+                return response()->json(['message' => 'Server misconfigured'], 500);
+            }
+
+            $expected = hash_hmac('sha256', $payload, $secret);
+
+            if (! hash_equals($expected, $signature)) {
+                Log::warning('Cashi webhook: invalid signature', ['ip' => $request->ip()]);
+                return response()->json(['message' => 'Invalid signature'], 401);
+            }
+
+            $data = json_decode($payload, true);
+
+            // Test connection dari dashboard Cashi
+            $orderId = $data['data']['order_id'] ?? '';
+            if (is_string($orderId) && strpos($orderId, 'TEST-') === 0) {
+                return response('Test connection successful', 200);
+            }
+
+            if (($data['event'] ?? '') === 'PAYMENT_SETTLED'
+                && ($data['data']['status'] ?? '') === 'SETTLED'
+            ) {
+                $this->markPaid($orderId, $data['data']['payment_method'] ?? $data['data']['channel'] ?? null);
+            }
+
+            return response()->json(['message' => 'OK']);
+        }
+
+        // --- Legacy Xendit fallback (IP whitelist) ---
         Log::info($request->all());
         $status = $request->get('status');
         $external_id = $request->get('external_id');
@@ -412,19 +508,30 @@ class PublicController extends Controller
 
         if($status == 'PAID')
         {
-            $payment =  Payment::find($external_id);
-
-            if(!empty($payment))
-            {
-                $payment->update([
-                    'payment_paid' => 1,
-                    'payment_done' => date('Y-m-d H:i:s'),
-                    'payment_method' => $method,
-                ]);
-            }
+            $this->markPaid($external_id, $method);
         }
 
         return response()->json($request->all());
+    }
+
+    private function markPaid($paymentId, $method = null)
+    {
+        if (empty($paymentId)) {
+            return;
+        }
+
+        // Cashi mengembalikan orderId internal; cocokkan payment_code dulu, lalu payment_id
+        $payment = Payment::where('payment_code', $paymentId)->first()
+            ?? Payment::find($paymentId);
+
+        if(!empty($payment) && ! $payment->payment_paid)
+        {
+            $payment->update([
+                'payment_paid' => 1,
+                'payment_done' => date('Y-m-d H:i:s'),
+                'payment_method' => $method,
+            ]);
+        }
     }
 
     public function updateProfile()
