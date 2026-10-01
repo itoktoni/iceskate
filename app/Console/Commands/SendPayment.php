@@ -6,7 +6,7 @@ use App\Dao\Models\Payment;
 use App\Services\InvoiceService;
 use Illuminate\Console\Command;
 
-class sendPayment extends Command
+class SendPayment extends Command
 {
     /**
      * The name and signature of the console command.
