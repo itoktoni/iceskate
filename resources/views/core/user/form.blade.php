@@ -12,7 +12,7 @@
                     <x-form-input col="3" type="date" name="birthday" />
                     <x-form-textarea col="6" name="address"/>
                     <x-form-textarea col="6" name="address_kk" label="Address KK"/>
-                    <x-form-input col="3" name="password" type="password" />
+                    <x-form-input col="3" name="password" type="password" :bind="false" placeholder="Isi hanya jika ganti password" />
                     <x-form-select col="3" class="search" name="role" :options="$roles" />
                     <x-form-select col="3" class="search" name="member" :options="$member" />
                     <x-form-select col="3" name="category" :options="$category" />

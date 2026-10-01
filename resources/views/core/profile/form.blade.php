@@ -33,7 +33,7 @@
                             <x-form-input col="6" name="phone" />
                             <x-form-input col="6" type="date" name="birthday" />
                             <x-form-input col="6" name="email" />
-                            <x-form-input col="6" name="password" type="password" />
+                            <x-form-input col="6" name="password" type="password" :bind="false" placeholder="Isi hanya jika ganti password" />
                         @endbind
 
                     </x-card>

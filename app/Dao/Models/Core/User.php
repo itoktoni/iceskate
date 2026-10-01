@@ -170,9 +170,17 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     {
         parent::saving(function ($model) {
 
-            if(!empty(request()->get('password')))
-            {
-                $model->password = Hash::make(request()->get('password'));
+            $plain = request()->get('password');
+
+            // Password kosong = tidak ganti, jangan timpa password lama
+            if (empty($plain)) {
+                unset($model->password);
+                return;
+            }
+
+            // Jangan hash ulang nilai yang sudah berupa hash (mis. kiriman form lama)
+            if (password_get_info($plain)['algo'] === null) {
+                $model->password = Hash::make($plain);
             }
         });
         parent::boot();
