@@ -41,6 +41,9 @@
                                             <x-crud :model="$table" :action="['blank']">
                                                 <x-button module="getDelete" key="{{ $table->field_primary }}" color="danger" label="Hapus"/>
                                                 <x-button module="getUpdate" key="{{ $table->field_primary }}" color="primary" label="Detail"/>
+                                                @if($table->payment_paid != 1)
+                                                <x-button module="getCheck" key="{{ $table->field_primary }}" color="info" label="Cek"/>
+                                                @endif
                                             </x-crud>
                                         </td>
 
@@ -54,7 +57,7 @@
                                                 {{ $table->payment_paid == 1 ? 'Paid' : 'Pending' }}
                                             </a>
                                             @if($table->payment_paid == 1)
-                                            <a href="{{ $table->payment_url }}">Link Xendit</a>
+                                            <a href="{{ $table->payment_url }}">Link Cashi</a>
                                             <br>
                                             <br>
                                             {{ $table->payment_method }}

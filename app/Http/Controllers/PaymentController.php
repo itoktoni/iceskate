@@ -14,6 +14,8 @@ use App\Http\Requests\Core\PaymentRequest;
 use App\Services\Master\CreateService;
 use App\Services\Master\SingleService;
 use App\Services\UpdatePaymentService;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Plugins\Response;
 
 class PaymentController extends MasterController
@@ -71,6 +73,46 @@ class PaymentController extends MasterController
             'model' => $model,
             'jadwal' => $jadwal
         ]));
+    }
+
+    public function getCheck($code)
+    {
+        $payment = Payment::where('payment_id', strval($code))->first();
+
+        if (empty($payment)) {
+            return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
+        if ($payment->payment_paid) {
+            return redirect()->back()->with('success', 'Pembayaran sudah lunas.');
+        }
+
+        $orderId = $payment->payment_code ?: $payment->payment_id;
+        $baseUrl = rtrim(env('CASHI_BASE_URL', 'https://cashi.id'), '/');
+
+        try {
+            $response = Http::withHeaders(['x-api-key' => env('CASHI_KEY', '')])
+                ->timeout(30)
+                ->get($baseUrl . '/api/check-status/' . $orderId);
+
+            $data = $response->json();
+
+            if (! empty($data['success']) && ($data['status'] ?? '') === 'SETTLED') {
+                $payment->update([
+                    'payment_paid'   => 1,
+                    'payment_done'   => date('Y-m-d H:i:s'),
+                    'payment_method' => $data['payment_method'] ?? $data['channel'] ?? $payment->payment_method,
+                ]);
+
+                return redirect()->back()->with('success', 'Pembayaran ' . $code . ' lunas.');
+            }
+
+            return redirect()->back()->with('error', 'Belum dibayar (status: ' . ($data['status'] ?? 'unknown') . ').');
+        } catch (\Throwable $e) {
+            Log::error('Cashi check-status exception: ' . $e->getMessage(), ['order_id' => $orderId]);
+
+            return redirect()->back()->with('error', 'Gagal cek ke Cashi, silakan coba lagi.');
+        }
     }
 
     public function getDelete()

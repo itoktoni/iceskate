@@ -461,18 +461,24 @@ class PublicController extends Controller
             }
 
             $data = json_decode($payload, true);
+            Log::info('Cashi webhook payload', ['body' => $data]);
 
             // Test connection dari dashboard Cashi
-            $orderId = $data['data']['order_id'] ?? '';
+            $orderId = trim($data['data']['order_id'] ?? '');
             if (is_string($orderId) && strpos($orderId, 'TEST-') === 0) {
                 return response('Test connection successful', 200);
             }
 
-            if (($data['event'] ?? '') === 'PAYMENT_SETTLED'
-                && ($data['data']['status'] ?? '') === 'SETTLED'
-            ) {
-                $this->markPaid($orderId, $data['data']['payment_method'] ?? $data['data']['channel'] ?? null);
+            $event  = strtoupper($data['event'] ?? '');
+            $status = strtoupper($data['data']['status'] ?? '');
+
+            if ($event === 'PAYMENT_SETTLED' && $status === 'SETTLED') {
+                $ok = $this->markPaid($orderId, $data['data']['payment_method'] ?? $data['data']['channel'] ?? null);
+
+                return response()->json(['message' => $ok ? 'OK' : 'Order not found']);
             }
+
+            Log::warning('Cashi webhook: event/status ignored', ['event' => $event, 'status' => $status, 'order_id' => $orderId]);
 
             return response()->json(['message' => 'OK']);
         }
@@ -516,22 +522,36 @@ class PublicController extends Controller
 
     private function markPaid($paymentId, $method = null)
     {
-        if (empty($paymentId)) {
-            return;
+        $paymentId = trim((string) $paymentId);
+
+        if ($paymentId === '') {
+            Log::warning('Cashi markPaid: empty order id');
+            return false;
         }
 
         // Cashi mengembalikan orderId internal; cocokkan payment_code dulu, lalu payment_id
         $payment = Payment::where('payment_code', $paymentId)->first()
             ?? Payment::find($paymentId);
 
-        if(!empty($payment) && ! $payment->payment_paid)
-        {
-            $payment->update([
-                'payment_paid' => 1,
-                'payment_done' => date('Y-m-d H:i:s'),
-                'payment_method' => $method,
-            ]);
+        if (empty($payment)) {
+            Log::warning('Cashi markPaid: payment not found', ['order_id' => $paymentId]);
+            return false;
         }
+
+        if ($payment->payment_paid) {
+            Log::info('Cashi markPaid: already paid', ['order_id' => $paymentId]);
+            return true;
+        }
+
+        $payment->update([
+            'payment_paid'   => 1,
+            'payment_done'   => date('Y-m-d H:i:s'),
+            'payment_method' => $method,
+        ]);
+
+        Log::info('Cashi markPaid: payment_paid=1', ['order_id' => $paymentId]);
+
+        return true;
     }
 
     public function updateProfile()
