@@ -351,7 +351,7 @@ class PublicController extends Controller
             Log::error('Cashi involke exception: ' . $th->getMessage(), ['order_id' => $code]);
         }
 
-        InvoiceService::generate($payment->payment_id);
+        //InvoiceService::generate($payment->payment_id);
 
         if (empty($url) || $url === url()->full()) {
             return redirect()->route('payment')->with('error', 'Gagal membuat pembayaran, silakan coba lagi.');
