@@ -103,7 +103,7 @@
                                                         {!! nl2br($item->iuran_keterangan) !!}
                                                     </td>
                                                     <td style="text-align: right;">
-                                                        {{ number_format($item->iuran_harga, 0, ',', '.') }}\
+                                                        {{ number_format($item->iuran_harga, 0, ',', '.') }}
                                                     </td>
                                                      <td class="text-center">
                                                         <a href="{{ route('invoice', ['id' => $item->iuran_id]) }}"
