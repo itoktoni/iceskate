@@ -75,9 +75,31 @@ class PaymentController extends MasterController
         ]));
     }
 
+    public static $settle_methods = [
+        'CASH'     => 'CASH - Bayar tunai di kasir',
+        'MANUAL'   => 'MANUAL - Koreksi / penyesuaian admin',
+        'TRANSFER' => 'TRANSFER - Transfer bank manual',
+    ];
+
+    private function getPaymentDetail($code)
+    {
+        return $this->model->select($this->model->getTable() . '.*', 'name', 'iuran_nama')
+            ->leftJoinRelationship('has_iuran')
+            ->leftJoinRelationship('has_user')
+            ->where($this->model->getTable() . '.payment_id', strval($code))
+            ->first();
+    }
+
+    private function settleBy()
+    {
+        $user = auth()->user();
+
+        return $user ? ($user->name ?? $user->email ?? ('#' . $user->id)) : 'system';
+    }
+
     public function getSettle($code)
     {
-        $payment = Payment::where('payment_id', strval($code))->first();
+        $payment = $this->getPaymentDetail($code);
 
         if (empty($payment)) {
             return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
@@ -87,28 +109,71 @@ class PaymentController extends MasterController
             return redirect()->back()->with('success', 'Pembayaran ' . $code . ' sudah lunas (' . ($payment->payment_method ?? '-') . ').');
         }
 
-        $method = strtoupper(trim(strval(request()->get('method', 'CASH'))));
-        $allowed = ['CASH', 'MANUAL', 'TRANSFER'];
-        if (! in_array($method, $allowed, true)) {
-            $method = 'CASH';
+        return moduleView('pages.payment.settle', [
+            'model'   => $payment,
+            'mode'    => 'settle',
+            'methods' => self::$settle_methods,
+        ]);
+    }
+
+    public function postSettle($code)
+    {
+        $payment = Payment::where('payment_id', strval($code))->first();
+
+        if (empty($payment)) {
+            return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
         }
 
+        if ($payment->payment_paid) {
+            return redirect()->back()->with('success', 'Pembayaran ' . $code . ' sudah lunas.');
+        }
+
+        $validated = request()->validate([
+            'method' => 'required|in:CASH,MANUAL,TRANSFER',
+            'note'   => 'required|string|min:5|max:1000',
+        ], [
+            'note.required' => 'Keterangan wajib diisi: kenapa pembayaran ini disettle manual (mis. bayar cash di kasir).',
+            'note.min'      => 'Keterangan terlalu pendek, jelaskan kenapa manual.',
+        ]);
+
         $payment->update([
-            'payment_paid'   => 1,
-            'payment_done'   => date('Y-m-d H:i:s'),
-            'payment_method' => $method,
+            'payment_paid'      => 1,
+            'payment_done'      => date('Y-m-d H:i:s'),
+            'payment_method'    => $validated['method'],
+            'payment_note'      => trim($validated['note']),
+            'payment_settle_by' => $this->settleBy(),
         ]);
 
         Log::info('Manual settle payment', [
-            'order_id' => $code,
-            'method'   => $method,
-            'admin_id' => auth()->id(),
+            'order_id'  => $code,
+            'method'    => $validated['method'],
+            'note'      => $validated['note'],
+            'admin_id'  => auth()->id(),
         ]);
 
-        return redirect()->back()->with('success', 'Pembayaran ' . $code . ' dilunasi manual (' . $method . ').');
+        return redirect()->route(moduleAction('getTable'))->with('success', 'Pembayaran ' . $code . ' dilunasi manual (' . $validated['method'] . ').');
     }
 
     public function getPending($code)
+    {
+        $payment = $this->getPaymentDetail($code);
+
+        if (empty($payment)) {
+            return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
+        if (! $payment->payment_paid) {
+            return redirect()->back()->with('success', 'Pembayaran ' . $code . ' masih pending.');
+        }
+
+        return moduleView('pages.payment.settle', [
+            'model'   => $payment,
+            'mode'    => 'pending',
+            'methods' => self::$settle_methods,
+        ]);
+    }
+
+    public function postPending($code)
     {
         $payment = Payment::where('payment_id', strval($code))->first();
 
@@ -120,18 +185,30 @@ class PaymentController extends MasterController
             return redirect()->back()->with('success', 'Pembayaran ' . $code . ' masih pending.');
         }
 
+        $validated = request()->validate([
+            'note' => 'required|string|min:5|max:1000',
+        ], [
+            'note.required' => 'Alasan pembatalan wajib diisi.',
+            'note.min'      => 'Alasan terlalu pendek, jelaskan kenapa dikembalikan ke pending.',
+        ]);
+
+        $prevMethod = $payment->payment_method;
+
         $payment->update([
-            'payment_paid' => 0,
-            'payment_done' => null,
+            'payment_paid'      => 0,
+            'payment_done'      => null,
+            'payment_note'      => trim($validated['note']),
+            'payment_settle_by' => $this->settleBy(),
         ]);
 
         Log::info('Manual pending payment', [
-            'order_id'      => $code,
-            'prev_method'   => $payment->payment_method,
-            'admin_id'      => auth()->id(),
+            'order_id'    => $code,
+            'prev_method' => $prevMethod,
+            'note'        => $validated['note'],
+            'admin_id'    => auth()->id(),
         ]);
 
-        return redirect()->back()->with('success', 'Pembayaran ' . $code . ' dikembalikan ke pending.');
+        return redirect()->route(moduleAction('getTable'))->with('success', 'Pembayaran ' . $code . ' dikembalikan ke pending.');
     }
 
     public function getCheck($code)

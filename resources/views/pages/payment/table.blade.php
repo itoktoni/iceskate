@@ -28,6 +28,7 @@
                                     <th>Voucher</th>
                                     <th>Total</th>
                                     <th>Status</th>
+                                    <th>Catatan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -43,16 +44,9 @@
                                                 <x-button module="getUpdate" key="{{ $table->field_primary }}" color="primary" label="Detail"/>
                                                 @if($table->payment_paid != 1)
                                                 <x-button module="getCheck" key="{{ $table->field_primary }}" color="info" label="Cek"/>
-                                                <a href="{{ moduleRoute('getSettle', ['code' => $table->field_primary]) }}?method=CASH"
-                                                   class="btn btn-success"
-                                                   onclick="return confirm('Lunasi {{ $table->field_primary }} sebagai CASH?')">Cash</a>
-                                                <a href="{{ moduleRoute('getSettle', ['code' => $table->field_primary]) }}?method=MANUAL"
-                                                   class="btn btn-primary"
-                                                   onclick="return confirm('Lunasi {{ $table->field_primary }} secara MANUAL?')">Manual</a>
+                                                <x-button module="getSettle" key="{{ $table->field_primary }}" color="success" label="Cash / Manual"/>
                                                 @else
-                                                <a href="{{ moduleRoute('getPending', ['code' => $table->field_primary]) }}"
-                                                   class="btn btn-warning"
-                                                   onclick="return confirm('Kembalikan {{ $table->field_primary }} ke PENDING?')">Batal</a>
+                                                <x-button module="getPending" key="{{ $table->field_primary }}" color="warning" label="Batal"/>
                                                 @endif
                                             </x-crud>
                                         </td>
@@ -87,6 +81,16 @@
                                                 @endif
                                             @endif
 
+                                        </td>
+                                        <td data-label="Catatan">
+                                            @if(! empty($table->payment_note))
+                                                {{ \Illuminate\Support\Str::limit($table->payment_note, 80) }}
+                                                @if(! empty($table->payment_settle_by))
+                                                    <br><small class="text-muted">oleh {{ $table->payment_settle_by }}</small>
+                                                @endif
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
                                         </td>
 
                                     </tr>

@@ -36,6 +36,8 @@ class Payment extends SystemModel
         'payment_url',
         'payment_done',
         'payment_method',
+        'payment_note',
+        'payment_settle_by',
         'payment_iuran',
         'payment_voucher',
         'payment_wa',
