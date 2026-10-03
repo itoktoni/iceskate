@@ -75,6 +75,65 @@ class PaymentController extends MasterController
         ]));
     }
 
+    public function getSettle($code)
+    {
+        $payment = Payment::where('payment_id', strval($code))->first();
+
+        if (empty($payment)) {
+            return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
+        if ($payment->payment_paid) {
+            return redirect()->back()->with('success', 'Pembayaran ' . $code . ' sudah lunas (' . ($payment->payment_method ?? '-') . ').');
+        }
+
+        $method = strtoupper(trim(strval(request()->get('method', 'CASH'))));
+        $allowed = ['CASH', 'MANUAL', 'TRANSFER'];
+        if (! in_array($method, $allowed, true)) {
+            $method = 'CASH';
+        }
+
+        $payment->update([
+            'payment_paid'   => 1,
+            'payment_done'   => date('Y-m-d H:i:s'),
+            'payment_method' => $method,
+        ]);
+
+        Log::info('Manual settle payment', [
+            'order_id' => $code,
+            'method'   => $method,
+            'admin_id' => auth()->id(),
+        ]);
+
+        return redirect()->back()->with('success', 'Pembayaran ' . $code . ' dilunasi manual (' . $method . ').');
+    }
+
+    public function getPending($code)
+    {
+        $payment = Payment::where('payment_id', strval($code))->first();
+
+        if (empty($payment)) {
+            return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
+        if (! $payment->payment_paid) {
+            return redirect()->back()->with('success', 'Pembayaran ' . $code . ' masih pending.');
+        }
+
+        $payment->update([
+            'payment_paid' => 0,
+            'payment_done' => null,
+        ]);
+
+        Log::info('Manual pending payment', [
+            'order_id'      => $code,
+            'prev_method'   => $payment->payment_method,
+            'admin_id'      => auth()->id(),
+        ]);
+
+        return redirect()->back()->with('success', 'Pembayaran ' . $code . ' dikembalikan ke pending.');
+    }
+
     public function getCheck($code)
     {
         $payment = Payment::where('payment_id', strval($code))->first();

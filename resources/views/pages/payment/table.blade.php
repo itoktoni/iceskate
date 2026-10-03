@@ -43,6 +43,16 @@
                                                 <x-button module="getUpdate" key="{{ $table->field_primary }}" color="primary" label="Detail"/>
                                                 @if($table->payment_paid != 1)
                                                 <x-button module="getCheck" key="{{ $table->field_primary }}" color="info" label="Cek"/>
+                                                <a href="{{ moduleRoute('getSettle', ['code' => $table->field_primary]) }}?method=CASH"
+                                                   class="btn btn-success"
+                                                   onclick="return confirm('Lunasi {{ $table->field_primary }} sebagai CASH?')">Cash</a>
+                                                <a href="{{ moduleRoute('getSettle', ['code' => $table->field_primary]) }}?method=MANUAL"
+                                                   class="btn btn-primary"
+                                                   onclick="return confirm('Lunasi {{ $table->field_primary }} secara MANUAL?')">Manual</a>
+                                                @else
+                                                <a href="{{ moduleRoute('getPending', ['code' => $table->field_primary]) }}"
+                                                   class="btn btn-warning"
+                                                   onclick="return confirm('Kembalikan {{ $table->field_primary }} ke PENDING?')">Batal</a>
                                                 @endif
                                             </x-crud>
                                         </td>
@@ -52,16 +62,29 @@
 										<td data-label="Tanggal">{{ formatDate($table->payment_tanggal) }}</td>
 										<td data-label="Voucher">{{ $table->iuran_nama }}</td>
 										<td data-label="Total">{{ number_format($table->payment_value) }}</td>
-										<td data-label="Status" class="column-action text-center">
+                                        <td data-label="Status" class="column-action text-center">
                                             <a href="{{ $table->payment_url ?? '#' }}" class="btn btn-{{ $table->payment_paid == 1 ? 'success' : 'warning' }}">
                                                 {{ $table->payment_paid == 1 ? 'Paid' : 'Pending' }}
                                             </a>
                                             @if($table->payment_paid == 1)
-                                            <a href="{{ $table->payment_url }}">Link Cashi</a>
-                                            <br>
-                                            <br>
-                                            {{ $table->payment_method }}
-
+                                                @php
+                                                    $isManual = in_array(strtoupper((string) $table->payment_method), ['CASH', 'MANUAL', 'TRANSFER']);
+                                                @endphp
+                                                <br>
+                                                <br>
+                                                <span class="badge bg-{{ $isManual ? 'primary' : 'success' }}">
+                                                    {{ $isManual ? 'Manual' : 'Cashi' }}
+                                                </span>
+                                                <br>
+                                                {{ $table->payment_method }}
+                                                @if(! $isManual && ! empty($table->payment_url))
+                                                    <br>
+                                                    <a href="{{ $table->payment_url }}">Link Cashi</a>
+                                                @endif
+                                                @if(! empty($table->payment_done))
+                                                    <br>
+                                                    <small>{{ $table->payment_done }}</small>
+                                                @endif
                                             @endif
 
                                         </td>
