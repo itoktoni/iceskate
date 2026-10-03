@@ -13,7 +13,6 @@ use App\Http\Function\UpdateFunction;
 use App\Http\Requests\Core\PaymentRequest;
 use App\Services\Master\CreateService;
 use App\Services\Master\SingleService;
-use App\Services\UpdatePaymentService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Plugins\Response;
@@ -36,6 +35,11 @@ class PaymentController extends MasterController
         self::$share = [
             'user' => $user,
             'iuran' => $iuran,
+            'status_bayar' => [
+                1 => 'Sudah bayar (Paid)',
+                0 => 'Belum bayar (Pending)',
+            ],
+            'method_options' => self::$settle_methods,
         ];
     }
 
@@ -55,11 +59,75 @@ class PaymentController extends MasterController
         return Response::redirectBack($data);
     }
 
-    public function postUpdate($code, PaymentRequest $request, UpdatePaymentService $service)
+    public function postUpdate($code)
     {
-        $data = $service->update($this->model, $request, $code);
+        $payment = Payment::where('payment_id', strval($code))->first();
 
-        return Response::redirectBack($data);
+        if (empty($payment)) {
+            return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
+        $validated = request()->validate([
+            'payment_tanggal' => 'required|date',
+            'payment_iuran'   => 'required',
+            'payment_id_user' => 'required',
+            'payment_paid'    => 'required|in:0,1',
+            'payment_method'  => 'nullable|string|max:50',
+            'payment_note'    => 'nullable|string|max:1000',
+        ]);
+
+        $paidNow    = (int) $validated['payment_paid'];
+        $paidBefore = (int) $payment->payment_paid;
+        $noteNow    = trim($validated['payment_note'] ?? '');
+        $noteBefore = trim($payment->payment_note ?? '');
+
+        // Status bayar dibalik tapi keterangan tidak diperbarui -> tolak, jejak audit wajib.
+        if ($paidNow !== $paidBefore && $noteNow === $noteBefore) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Ubah keterangan: jelaskan kenapa status bayar diubah (mis. ternyata belum terima uang / sudah bayar cash).');
+        }
+
+        $update = [
+            'payment_tanggal' => $validated['payment_tanggal'],
+            'payment_iuran'   => $validated['payment_iuran'],
+            'payment_id_user' => $validated['payment_id_user'],
+            'payment_paid'    => $paidNow,
+        ];
+
+        // Harga mengikuti iuran terpilih (perilaku lama).
+        if ($validated['payment_iuran'] != $payment->payment_iuran) {
+            $iuran = Iuran::find($validated['payment_iuran'], ['iuran_harga', 'iuran_voucher']);
+            if ($iuran) {
+                $update['payment_value']   = $iuran->iuran_harga;
+                $update['payment_voucher'] = $iuran->iuran_voucher;
+            }
+        }
+
+        if ($paidNow === 1 && $paidBefore === 0) {
+            $update['payment_done']   = date('Y-m-d H:i:s');
+            $update['payment_method'] = $validated['payment_method'] ?: 'MANUAL';
+        } elseif ($paidNow === 0 && $paidBefore === 1) {
+            $update['payment_done'] = null;
+        } elseif (! empty($validated['payment_method'])) {
+            $update['payment_method'] = $validated['payment_method'];
+        }
+
+        if ($noteNow !== $noteBefore || $paidNow !== $paidBefore) {
+            $update['payment_note']      = $noteNow ?: null;
+            $update['payment_settle_by'] = $this->settleBy();
+        }
+
+        $payment->update($update);
+
+        Log::info('Edit payment via detail', [
+            'order_id'    => $code,
+            'paid_before' => $paidBefore,
+            'paid_now'    => $paidNow,
+            'admin_id'    => auth()->id(),
+        ]);
+
+        return redirect()->route(moduleAction('getTable'))->with('success', 'Pembayaran ' . $code . ' berhasil diperbarui.');
     }
 
     public function getUpdate($code)
@@ -68,6 +136,13 @@ class PaymentController extends MasterController
         $jadwal = Voucher::where('payment_id', $code)->get();
 
         $this->beforeForm();
+
+        // Pertahankan metode gateway (mis. QRIS) agar tetap bisa dipilih.
+        $methods = self::$settle_methods;
+        if (! empty($model?->payment_method) && ! isset($methods[$model->payment_method])) {
+            $methods = [$model->payment_method => $model->payment_method . ' (Cashi)'] + $methods;
+        }
+        self::$share['method_options'] = $methods;
 
         return moduleView(modulePathForm(path: self::$is_core), $this->share([
             'model' => $model,
