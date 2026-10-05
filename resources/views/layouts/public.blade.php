@@ -125,11 +125,6 @@
     <footer class="pb-5">
         <div class="container">
             <div class="row ">
-                 <div class="col-lg-2 col-sm-6">
-                    <div class="widget">
-                        <img src="{{ $logo_url }}" style="width: 100%;margin-top:0rem" alt="" >
-                    </div>
-                </div>
                 <div class="col-lg-6 col-sm-6">
                    {!! nl2br($website_description) ?? '' !!}
                 </div>
@@ -148,10 +143,49 @@
 
                     </div>
                 </div>
+                <div class="col-lg-2 col-sm-6">
+                    <div class="widget">
+                        <div class="fw-bold">Quick Links</div>
+                        @php
+                            $footerTree = [];
+                            try {
+                                if (optional($footerMenu ?? null)->items && ($footerMenu ?? null)->items->count()) {
+                                    $footerTree = \App\Services\MenuTreeBuilder::toTree(
+                                        \App\Services\MenuTreeBuilder::fromCorcel(($footerMenu ?? null)->items)
+                                    );
+                                }
+                            } catch (\Throwable $e) { $footerTree = []; }
+                        @endphp
+                        @if(count($footerTree))
+                            <ul class="footer-menu-side" style="list-style:none;padding-left:0;margin:0;">
+                                @foreach($footerTree as $node)
+                                @php
+                                    $m = $node['item']['_model'] ?? null;
+                                    $inst = null;
+                                    try { $inst = $m ? $m->instance() : null; } catch (\Throwable $e) {}
+                                    $t = $inst->post_title ?? $m->title ?? $node['item']['title'] ?? 'Menu';
+                                    $mu = null;
+                                    try { $mu = $m->meta->_menu_item_url ?? null; } catch (\Throwable $e) {}
+                                    $sl = $inst->post_name ?? $m->post_name ?? null;
+                                    $href = $mu ?: $sl ?: '#';
+                                @endphp
+                                <li><a href="{{ $href }}" target="_blank" rel="noopener">{{ $t }}</a></li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
 
     </footer>
+    <style>
+        .footer-menu-side {
+            display: block; list-style: none; padding-left: 0; margin: 0;
+        }
+        .footer-menu-side li { display: block; margin: 3px 0; }
+        .footer-menu-side a { text-decoration: none; font-weight: 400; }
+    </style>
 
     <div class="float-text show-on-scroll">
         <span><a href="#">Scroll to top</a></span>

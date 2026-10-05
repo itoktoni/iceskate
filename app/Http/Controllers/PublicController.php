@@ -26,6 +26,7 @@ class PublicController extends Controller
     public function share($data)
     {
         $menu   = Menu::slug('top')->first();
+        $footerMenu = Menu::slug('footer')->first();
         $jadwal = Jadwal::leftJoinRelationship('has_category')->get();
 
         $user = null;
@@ -51,6 +52,7 @@ class PublicController extends Controller
             'website_phone'       => Cms::website_phone(),
             'performance'         => $performance,
             'menu'                => $menu,
+            'footerMenu'          => $footerMenu,
             'jadwal'              => $jadwal,
             'user'                => $user,
         ];

@@ -22,6 +22,34 @@
                     </div>
                 @endif
 
+                @php
+                    $heroQuickLinks = [];
+                    try {
+                        if (isset($footerMenu) && optional($footerMenu)->items && $footerMenu->items->count()) {
+                            $heroQuickLinks = \App\Services\MenuTreeBuilder::toTree(
+                                \App\Services\MenuTreeBuilder::fromCorcel($footerMenu->items)
+                            );
+                        }
+                    } catch (\Throwable $e) { $heroQuickLinks = []; }
+                @endphp
+                @if(count($heroQuickLinks))
+                    <ul class="hero-quick-links wow fadeInUp" data-wow-delay=".6s">
+                        @foreach($heroQuickLinks as $node)
+                        @php
+                            $m = $node['item']['_model'] ?? null;
+                            $inst = null;
+                            try { $inst = $m ? $m->instance() : null; } catch (\Throwable $e) {}
+                            $t = $inst->post_title ?? $m->title ?? $node['item']['title'] ?? 'Menu';
+                            $mu = null;
+                            try { $mu = $m->meta->_menu_item_url ?? null; } catch (\Throwable $e) {}
+                            $sl = $inst->post_name ?? $m->post_name ?? null;
+                            $href = $mu ?: $sl ?: '#';
+                        @endphp
+                        <li><a href="{{ $href }}">{{ $t }}</a></li>
+                        @endforeach
+                    </ul>
+                @endif
+
             </div>
         </div>
     </div>
@@ -43,6 +71,29 @@
     .spacer-double {
         padding-top: 6rem;
         padding-bottom: 6rem;
+    }
+
+    /* Bar horizontal di bawah deskripsi hero */
+    .hero-quick-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem 1.5rem;
+        list-style: none;
+        padding-left: 0;
+        margin-top: 1.5rem;
+        margin-bottom: 0;
+    }
+    .hero-quick-links a {
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255,255,255,.4);
+        padding-bottom: 2px;
+    }
+    .hero-quick-links a:hover { border-color: #fff; }
+    @media (max-width: 576px) {
+        .hero-quick-links { flex-wrap: nowrap; overflow-x: auto; gap: 0 1.25rem; padding-bottom: .5rem; }
+        .hero-quick-links li { white-space: nowrap; }
     }
 </style>
 
