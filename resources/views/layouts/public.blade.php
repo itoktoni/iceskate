@@ -49,36 +49,18 @@
                         <div class="de-flex-col">
                             <div class="de-flex-col header-col-mid">
                                 <ul id="mainmenu">
-                                    @if(optional($menu)->items->count())
-                                        @foreach ($menu->items as $item)
-                                            @if ($item->post_parent == 0)
-                                                @php
-                                                    $main_instance = $item->instance();
-                                                @endphp
-
-                                                <li>
-                                                    <a class="menu-item" href="{{ $main_instance->post_name ?? $item->post_name }}">
-                                                        {{ $main_instance->post_title ?? $item->title }}
-                                                    </a>
-
-                                                    @if($item->children->count())
-                                                        <ul>
-                                                            @foreach($item->children as $subMenuItem)
-                                                                @php
-                                                                    $sub_instance = $subMenuItem->instance();
-                                                                @endphp
-
-                                                                <li>
-                                                                    <a class="menu-item" href="{{ $sub_instance->post_name ?? $subMenuItem->post_name }}">
-                                                                        {{ $sub_instance->post_title ?? $subMenuItem->title }}
-                                                                    </a>
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @endif
-                                                </li>
-                                            @endif
-                                        @endforeach
+                                    @php
+                                        $menuTree = [];
+                                        try {
+                                            if (optional($menu)->items && $menu->items->count()) {
+                                                $menuTree = \App\Services\MenuTreeBuilder::toTree(
+                                                    \App\Services\MenuTreeBuilder::fromCorcel($menu->items)
+                                                );
+                                            }
+                                        } catch (\Throwable $e) { $menuTree = []; }
+                                    @endphp
+                                    @if(count($menuTree))
+                                        @include('components.menu-nodes', ['nodes' => $menuTree])
                                     @else
                                         <li>Menu items not found or empty.</li>
                                     @endif
