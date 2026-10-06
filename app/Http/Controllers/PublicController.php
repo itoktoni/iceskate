@@ -241,18 +241,21 @@ class PublicController extends Controller
 
         $day = (int) now()->format('d');
 
-        // Sudah beli VOUCHER 5 (iuran_id 1) bulan ini?
-        $boughtV5 = Payment::where('payment_id_user', auth()->user()->id)
+        // VOUCHER 5 (iuran_id 1): tanpa batas jumlah, hanya tgl 1-10
+        $countV5 = Payment::where('payment_id_user', auth()->user()->id)
             ->where('payment_paid', 1)
             ->where('payment_iuran', 1)
             ->whereYear('payment_tanggal', now()->format('Y'))
             ->whereMonth('payment_tanggal', now()->format('m'))
-            ->exists();
+            ->count();
+
+        $boughtV5Once = $countV5 >= 1; // sudah beli >=1x -> buka akses VOUCHER 1+
+        $boughtV5 = false; // VOUCHER 5 tidak dikunci Lunas, boleh beli berulang
 
         // Aturan voucher:
-        // - tgl 1-10 : VOUCHER 5 (belum beli) / VOUCHER 1+ (sudah beli V5, boleh beli berulang)
+        // - tgl 1-10 : VOUCHER 5 (tanpa batas) / VOUCHER 1+ (sudah beli V5 >=1x, boleh beli berulang)
         // - lewat tgl 10 : hanya VOUCHER 1
-        $five = $boughtV5 && $day <= 10; // tampilkan VOUCHER 1+
+        $five = $boughtV5Once && $day <= 10; // tampilkan VOUCHER 1+
         $late = $day > 10;               // tampilkan VOUCHER 1 saja
 
         return view('public.payment', $this->share([
@@ -332,6 +335,12 @@ class PublicController extends Controller
         }
 
         $iuran = Iuran::find($id, ['iuran_harga', 'iuran_voucher']);
+
+        // VOUCHER 5 (iuran_id 1): tanpa batas jumlah, hanya boleh tgl 1-10
+        if ((int) $id === 1 && (int) now()->format('d') > 10) {
+            return redirect()->route('payment')->with('error', 'VOUCHER 5 hanya bisa dibeli tanggal 1-10.');
+        }
+
         $harga = $iuran->iuran_harga;
         $token = $iuran->iuran_voucher;
 
