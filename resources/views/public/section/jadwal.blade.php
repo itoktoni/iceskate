@@ -109,7 +109,7 @@
 
             // Check if this date has schedule
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const hasSchedule = scheduleData.some(item => item.jadwal_tanggal === dateStr);
+            const daySchedules = scheduleData.filter(item => item.jadwal_tanggal === dateStr);
 
             // Highlight today
             const today = new Date();
@@ -117,51 +117,15 @@
                 dayElement.classList.add('today');
             }
 
-            if (year == '2026') {
-
-                if ((5 === month) && (day >= 15 && day <= 30) && (day != 18 && day != 20 && day != 27 && day != 28)) {
-
-                    dayElement.classList.add('has-event');
-                }
-
-
-                else if (6 === month && (day >= 1 && day <= 11) && (day != 5 && day != 11)) {
-                    dayElement.classList.add('has-event');
-
-                }
-
-                else if (7 === month && (day >= 17 && day <= 20)) {
-                    dayElement.classList.add('has-event');
-
-                }
-
-                else if ((8 === month) && (day >= 6 && day <= 27) && (day != 7 &&day != 8 &&day != 9 &&day != 10 &&day != 11 &&day != 12 &&day != 14 &&day != 15 &&day != 16 &&day != 17 &&day != 18 &&day != 19 &&day != 21 &&day != 22 &&day != 23 &&day != 24 &&day != 25 &&day != 26 && day != 28)) {
-
-                    dayElement.classList.add('has-event');
-                }
-
-                else if ((9 === month) && (day >= 4 && day <= 11) && (day != 5 &&day != 8 &&day != 6 &&day != 7 &&day != 8 &&day != 9 &&day != 10)) {
-
-                    dayElement.classList.add('has-event');
-                }
-
-
-                else{
-
-                    if (hasSchedule) {
-                        dayElement.classList.add('has-schedule');
-                        dayElement.title = 'Has schedule';
-                    }
-                }
-
+            // Warna mengikuti field baru jadwal_type: EVENT = biru, selain itu = hijau.
+            // Tidak ada lagi tanggal hardcode di file ini.
+            if (daySchedules.some(item => (item.jadwal_type || 'LATIHAN').toUpperCase() === 'EVENT')) {
+                dayElement.classList.add('has-event');
+                dayElement.title = 'Event';
+            } else if (daySchedules.length > 0) {
+                dayElement.classList.add('has-schedule');
+                dayElement.title = 'Has schedule';
             }
-            else
-                {
-                     if (hasSchedule) {
-                        dayElement.classList.add('has-schedule');
-                        dayElement.title = 'Has schedule';
-                    }
-                }
 
             calendarDays.appendChild(dayElement);
         }
@@ -193,7 +157,9 @@
         schedule.forEach(item => {
             const scheduleItem = document.createElement('div');
             scheduleItem.className = 'schedule-item';
+            const type = (item.jadwal_type || 'LATIHAN').toUpperCase();
             scheduleItem.innerHTML = `
+                <span class="schedule-type${type === 'EVENT' ? ' type-event' : ''}">${type}</span>
                 <h6 class="schedule-title">${item.jadwal_nama}</h6>
                 <p class="schedule-time">${item.jadwal_tanggal}</p>
                 <p class="schedule-description">${item.jadwal_keterangan || 'No description'}</p></br>
@@ -221,6 +187,14 @@
 
 <!-- Calendar CSS -->
 <style>
+    /* Warna kalender terpusat di sini. Ganti 2 baris ini untuk ganti tema. */
+    :root {
+        --schedule-blue: #36b5f5;       /* EVENT */
+        --schedule-blue-dark: #2b90c4;  /* EVENT hover */
+        --schedule-green: #28a745;      /* LATIHAN / lainnya */
+        --schedule-green-dark: #218838; /* LATIHAN hover */
+    }
+
     .calendar-container {
         background: white;
         border-radius: 8px;
@@ -229,7 +203,7 @@
     }
 
     .calendar-header {
-        background: #36b5f5;
+        background: var(--schedule-blue);
         color: white;
         padding: 20px;
         display: flex;
@@ -305,22 +279,22 @@
     }
 
     .calendar-day.has-event {
-        background: #36b5f5;
+        background: var(--schedule-blue);
         color: white;
         font-weight: bold;
     }
     .calendar-day.has-event:hover {
-        background: #2b90c4;
+        background: var(--schedule-blue-dark);
     }
 
     .calendar-day.has-schedule {
-        background: #28a745;
+        background: var(--schedule-green);
         color: white;
         font-weight: bold;
     }
 
     .calendar-day.has-schedule:hover {
-        background: #218838;
+        background: var(--schedule-green-dark);
     }
 
     .schedule-details {
@@ -331,7 +305,7 @@
     }
 
     .schedule-item {
-        border-left: 4px solid #36b5f5;
+        border-left: 4px solid var(--schedule-blue);
         padding: 15px;
         margin-bottom: 15px;
         background: #f8f9fa;
@@ -340,7 +314,22 @@
 
     .schedule-title {
         margin: 0 0 5px 0;
-        color: #36b5f5;
+        color: var(--schedule-blue);
+    }
+
+    .schedule-type {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-bottom: 5px;
+        background: var(--schedule-green);
+        color: white;
+    }
+
+    .schedule-type.type-event {
+        background: var(--schedule-blue);
     }
 
     .schedule-time {

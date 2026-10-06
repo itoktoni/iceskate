@@ -11,6 +11,7 @@ use App\Facades\Model\UserModel;
  * Class Jadwal
  *
  * @property $jadwal_id
+ * @property $jadwal_type
  * @property $jadwal_nama
  * @property $jadwal_tanggal
  * @property $jadwal_keterangan
@@ -30,7 +31,7 @@ class Jadwal extends SystemModel
      *
      * @var array<int, string>
      */
-    protected $fillable = ['jadwal_id', 'jadwal_category_id', 'jadwal_nama', 'jadwal_tanggal', 'jadwal_keterangan', 'jadwal_url', 'jadwal_link'];
+    protected $fillable = ['jadwal_id', 'jadwal_category_id', 'jadwal_type', 'jadwal_nama', 'jadwal_tanggal', 'jadwal_keterangan', 'jadwal_url', 'jadwal_link'];
 
     public static function field_name()
     {
