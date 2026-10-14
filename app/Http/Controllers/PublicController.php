@@ -429,53 +429,85 @@ class PublicController extends Controller
         }
     }
 
+    private static function ipaymuSignature(array $body): array
+    {
+        $jsonBody = json_encode($body, JSON_UNESCAPED_SLASHES);
+        $bodyHash = strtolower(hash('sha256', $jsonBody));
+        $va = env('IPAYMU_VA', '');
+        $apiKey = env('IPAYMU_API_KEY', '');
+        $stringToSign = 'POST:' . $va . ':' . $bodyHash . ':' . $apiKey;
+
+        return [
+            'json' => $jsonBody,
+            'signature' => hash_hmac('sha256', $stringToSign, $apiKey),
+            'timestamp' => date('YmdHis'),
+        ];
+    }
+
     private function involke($payment, $code, $total, $description = null)
     {
         $url = '';
         $amount = (int) $total;
 
-        // Cashi: min 2.000, max 10.000.000
-        if ($amount < 2000) {
-            Log::warning('Cashi: amount below minimum', ['order_id' => $code, 'amount' => $amount]);
+        if ($amount <= 0) {
+            Log::warning('iPaymu: invalid amount', ['order_id' => $code, 'amount' => $total]);
             return $url;
         }
 
-        $baseUrl = rtrim(env('CASHI_BASE_URL', 'https://cashi.id'), '/');
-        $apiKey  = env('CASHI_KEY', '');
+        $baseUrl = rtrim(env('IPAYMU_BASE_URL', 'https://sandbox.ipaymu.com'), '/');
+        $va = env('IPAYMU_VA', '');
 
-        if (empty($apiKey)) {
-            Log::error('Cashi: CASHI_KEY missing in .env');
+        if (empty($va) || empty(env('IPAYMU_API_KEY', ''))) {
+            Log::error('iPaymu: IPAYMU_VA / IPAYMU_API_KEY missing in .env');
             return $url;
+        }
+
+        $user = auth()->user();
+        $label = $description ?: ('Tagihan ' . $code);
+        $body = [
+            'product' => [$label],
+            'qty' => ['1'],
+            'price' => [$amount],
+            'description' => [$label],
+            'returnUrl' => route('payment'),
+            'notifyUrl' => route('webhook.ipaymu'),
+            'cancelUrl' => route('payment'),
+            'referenceId' => $code,
+        ];
+        if ($user) {
+            $body['buyerName'] = $user->name ?? '';
+            $body['buyerEmail'] = $user->email ?? '';
+            $body['buyerPhone'] = $user->phone ?? '';
         }
 
         try {
+            $signed = self::ipaymuSignature($body);
             $response = Http::withHeaders([
-                'x-api-key'    => $apiKey,
+                'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-            ])->timeout(30)->post($baseUrl . '/api/create-order', [
-                'amount'       => $amount,
-                'order_id'     => $code,
-                'kode_channel' => env('CASHI_CHANNEL', 'QRIS_CUSTOM'),
-            ]);
+                'va' => $va,
+                'signature' => $signed['signature'],
+                'timestamp' => $signed['timestamp'],
+            ])->timeout(30)->withBody($signed['json'], 'application/json')
+                ->post($baseUrl . '/api/v2/payment');
 
             $data = $response->json();
 
-            if (! $response->successful() || empty($data['success'])) {
-                Log::error('Cashi create-order failed', [
+            if (! $response->successful() || ($data['Status'] ?? null) !== 200 || empty($data['Data']['Url'])) {
+                Log::error('iPaymu create-redirect failed', [
                     'order_id' => $code,
-                    'status'   => $response->status(),
-                    'body'     => $response->body(),
+                    'status' => $response->status(),
+                    'body' => $response->body(),
                 ]);
                 return $url;
             }
 
-            $url = $data['checkout_url'] ?? '';
-            $payment->payment_code = $data['orderId'] ?? $code;
-            $payment->payment_url  = $url;
+            $url = $data['Data']['Url'];
+            $payment->payment_code = $data['Data']['SessionID'] ?? $code;
+            $payment->payment_url = $url;
             $payment->save();
-
         } catch (\Throwable $e) {
-            Log::error('Cashi create-order exception: ' . $e->getMessage(), ['order_id' => $code]);
+            Log::error('iPaymu create-redirect exception: ' . $e->getMessage(), ['order_id' => $code]);
         }
 
         return $url;
