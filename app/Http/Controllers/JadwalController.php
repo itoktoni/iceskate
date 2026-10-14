@@ -18,6 +18,10 @@ use App\Http\Requests\Core\GeneralRequest;
 use App\Http\Requests\Core\JadwalRequest;
 use App\Services\UpdateJadwalRaceService;
 use App\Services\UpdateJadwalService;
+use Carbon\Carbon;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Style;
 use Plugins\Alert;
 use Plugins\Query;
 use Spatie\SimpleExcel\SimpleExcelReader;
@@ -131,6 +135,38 @@ class JadwalController extends MasterController
         return Response::redirectBack($data);
     }
 
+    public function getContoh()
+    {
+        // Download contoh = semua data jadwal bulan lalu + bulan berjalan.
+        // Format kolom sama persis dengan yang diterima upload (Nama | Tanggal | Keterangan | Type).
+        $start = Carbon::now()->subMonthNoOverflow()->startOfMonth()->toDateString();
+        $end = Carbon::now()->endOfMonth()->toDateString();
+
+        $data = Jadwal::whereBetween('jadwal_tanggal', [$start, $end])
+            ->orderBy('jadwal_tanggal', 'ASC')
+            ->get();
+
+        $filename = 'contoh-jadwal-' . Carbon::now()->format('Y-m') . '.xlsx';
+        $path = storage_path('app/public/files/jadwal/' . $filename);
+
+        $dateStyle = (new Style())->setFormat('yyyy-mm-dd');
+
+        $writer = new \OpenSpout\Writer\XLSX\Writer();
+        $writer->openToFile($path);
+        $writer->addRow(Row::fromValues(['Nama Jadwal', 'Tanggal', 'Keterangan', 'Type']));
+        foreach ($data as $item) {
+            $writer->addRow(new Row([
+                Cell::fromValue($item->jadwal_nama ?? ''),
+                Cell::fromValue(Carbon::parse($item->jadwal_tanggal), $dateStyle),
+                Cell::fromValue($item->jadwal_keterangan ?? ''),
+                Cell::fromValue($item->jadwal_type ?? 'LATIHAN'),
+            ]));
+        }
+        $writer->close();
+
+        return response()->download($path, $filename)->deleteFileAfterSend(true);
+    }
+
     public function postTable()
     {
         if (request()->exists('delete')) {
@@ -163,12 +199,20 @@ class JadwalController extends MasterController
                     ->each(function (array $row) use ($category) {
                         if ($row[0] != "Nama Jadwal") {
 
-                            $nama = $row[0] ?? null;
+                            $nama = trim($row[0] ?? '');
                             $tanggal = ($row[1])->format('Y-m-d') ?? null;
                             $keterangan = $row[2] ?? null;
 
+                            // Kolom ke-4 (opsional): Type EVENT / LATIHAN.
+                            // Selain itu default LATIHAN.
+                            $type = strtoupper(trim($row[3] ?? 'LATIHAN'));
+                            if (! in_array($type, ['LATIHAN', 'EVENT'])) {
+                                $type = 'LATIHAN';
+                            }
+
                             $this->insert[] = [
-                                'jadwal_nama' => $nama,
+                                'jadwal_type' => $type,
+                                'jadwal_nama' => $nama !== '' ? $nama : $type,
                                 'jadwal_tanggal' => $tanggal,
                                 'jadwal_keterangan' => $keterangan,
                             ];
@@ -182,8 +226,24 @@ class JadwalController extends MasterController
                 {
                     try {
 
-                        Jadwal::insert($this->insert);
-                        Alert::create('Data berhasil di upload');
+                        // Update jika kombinasi Nama + Tanggal sudah ada, selain itu insert baru.
+                        // Jadi upload ulang file yang sama tidak bikin duplikat.
+                        $created = 0;
+                        $updated = 0;
+                        foreach ($this->insert as $item) {
+                            $model = Jadwal::updateOrCreate(
+                                [
+                                    'jadwal_nama' => $item['jadwal_nama'],
+                                    'jadwal_tanggal' => $item['jadwal_tanggal'],
+                                ],
+                                [
+                                    'jadwal_type' => $item['jadwal_type'],
+                                    'jadwal_keterangan' => $item['jadwal_keterangan'],
+                                ]
+                            );
+                            $model->wasRecentlyCreated ? $created++ : $updated++;
+                        }
+                        Alert::create("Data berhasil di upload ({$created} baru, {$updated} diupdate)");
 
                     } catch (\Throwable $th) {
                         Alert::error($th->getMessage());

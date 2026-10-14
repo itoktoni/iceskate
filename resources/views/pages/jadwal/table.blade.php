@@ -14,6 +14,7 @@
                 <x-action>
                     <input type="file" name="file" accept=".xls,.xlsx" class="btn btn-primary btn-sm pb-2">
                     <x-button type="submit" label="Upload" class="btn-dark" name="upload" />
+                    <a href="{{ moduleRoute('getContoh') }}" class="btn btn-success btn-sm pb-2">Download Contoh</a>
                 </x-action>
 
                 <div class="container-fluid" id="table">
@@ -27,6 +28,7 @@
                                     <th class="text-center">{{ __('Action') }}</th>
                                     <th>ID</th>
                                     <th>Nama</th>
+                                    <th>Type</th>
                                     <th>Tanggal</th>
                                     <th>Keterangan</th>
                                 </tr>
@@ -48,6 +50,7 @@
 
 										<td style="width: 50px">{{ $table->jadwal_id }}</td>
 										<td style="width: 250px">{{ $table->jadwal_nama }}</td>
+										<td style="width: 100px"><span class="badge bg-{{ ($table->jadwal_type ?? 'LATIHAN') == 'EVENT' ? 'primary' : 'success' }}">{{ $table->jadwal_type ?? 'LATIHAN' }}</span></td>
 										<td style="width: 120px">{{ $table->jadwal_tanggal }}</td>
 										<td>
                                             {{ $table->jadwal_keterangan }}

@@ -11,6 +11,6 @@ class JadwalType extends Enum implements LocalizedEnum
     use StatusTrait;
 
     public const LATIHAN = 'LATIHAN';
-    public const LOMBA = 'LOMBA';
+    public const EVENT = 'EVENT';
 
 }
