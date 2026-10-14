@@ -67,13 +67,13 @@
                                                 <br>
                                                 <br>
                                                 <span class="badge bg-{{ $isManual ? 'primary' : 'success' }}">
-                                                    {{ $isManual ? 'Manual' : 'Cashi' }}
+                                                    {{ $isManual ? 'Manual' : 'iPaymu' }}
                                                 </span>
                                                 <br>
                                                 {{ $table->payment_method }}
                                                 @if(! $isManual && ! empty($table->payment_url))
                                                     <br>
-                                                    <a href="{{ $table->payment_url }}">Link Cashi</a>
+                                                    <a href="{{ $table->payment_url }}">Link iPaymu</a>
                                                 @endif
                                                 @if(! empty($table->payment_done))
                                                     <br>
