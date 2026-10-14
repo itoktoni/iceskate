@@ -350,7 +350,7 @@ class PublicController extends Controller
         try {
             $url = $this->involke($payment, $code, $harga, $iuran->iuran_keterangan);
         } catch (\Throwable $th) {
-            Log::error('Cashi involke exception: ' . $th->getMessage(), ['order_id' => $code]);
+            Log::error('iPaymu involke exception: ' . $th->getMessage(), ['order_id' => $code]);
         }
 
         //InvoiceService::generate($payment->payment_id);
@@ -513,117 +513,105 @@ class PublicController extends Controller
         return $url;
     }
 
-    public function webhook(Request $request)
+    private static function isValidIpaymuCallback(array $data, string $receivedSignature, string $secret): bool
     {
-        $payload   = $request->getContent();
-        $signature = $request->header('X-Gateway-Signature', '');
+        unset($data['signature']);
 
-        // --- Cashi webhook path (HMAC-SHA256) ---
-        if (! empty($signature)) {
-            $secret = env('CASHI_WEBHOOK', '');
-
-            if (empty($secret)) {
-                Log::error('Cashi webhook: CASHI_WEBHOOK missing in .env');
-                return response()->json(['message' => 'Server misconfigured'], 500);
+        $normalized = [];
+        foreach ($data as $key => $value) {
+            if ($key === 'is_escrow') {
+                $normalized[$key] = ($value === true || $value === '1' || $value === 1 || $value === 'true');
+            } elseif (in_array($key, ['trx_id', 'status_code', 'transaction_status_code', 'paid_off'], true)) {
+                $normalized[$key] = (int) $value;
+            } elseif ($key === 'additional_info') {
+                $normalized[$key] = ($value === '[]' || $value === '' || $value === null) ? [] : $value;
+            } else {
+                $normalized[$key] = (string) $value;
             }
-
-            $expected = hash_hmac('sha256', $payload, $secret);
-
-            if (! hash_equals($expected, $signature)) {
-                Log::warning('Cashi webhook: invalid signature', ['ip' => $request->ip()]);
-                return response()->json(['message' => 'Invalid signature'], 401);
-            }
-
-            $data = json_decode($payload, true);
-            Log::info('Cashi webhook payload', ['body' => $data]);
-
-            // Test connection dari dashboard Cashi
-            $orderId = trim($data['data']['order_id'] ?? '');
-            if (is_string($orderId) && strpos($orderId, 'TEST-') === 0) {
-                return response('Test connection successful', 200);
-            }
-
-            $event  = strtoupper($data['event'] ?? '');
-            $status = strtoupper($data['data']['status'] ?? '');
-
-            if ($event === 'PAYMENT_SETTLED' && $status === 'SETTLED') {
-                $ok = $this->markPaid($orderId, $data['data']['payment_method'] ?? $data['data']['channel'] ?? null);
-
-                return response()->json(['message' => $ok ? 'OK' : 'Order not found']);
-            }
-
-            Log::warning('Cashi webhook: event/status ignored', ['event' => $event, 'status' => $status, 'order_id' => $orderId]);
-
-            return response()->json(['message' => 'OK']);
+        }
+        if (! array_key_exists('additional_info', $normalized)) {
+            $normalized['additional_info'] = [];
         }
 
-        // --- Legacy Xendit fallback (IP whitelist) ---
-        Log::info($request->all());
-        $status = $request->get('status');
-        $external_id = $request->get('external_id');
-        $method = $request->get('payment_method');
+        ksort($normalized, SORT_STRING);
+        $json = str_replace('/', '\\/', json_encode($normalized, JSON_UNESCAPED_SLASHES));
+        $calculated = hash_hmac('sha256', $json, $secret);
 
-        $allow = [
-            '52.89.130.89',
-            '52.41.247.32',
-            '52.11.161.195',
-            '18.142.75.249',
-            '18.142.89.214',
-            '18.142.84.176',
-            '52.221.140.31',
-            '18.139.168.99',
-            '18.142.72.148',
-            '54.188.50.182',
-            '54.245.87.198',
-            '44.239.222.129',
-        ];
-
-        $ip = $request->ip();
-        Log::info($ip);
-
-        if(!in_array($ip, $allow)){
-            Log::alert($ip);
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        if($status == 'PAID')
-        {
-            $this->markPaid($external_id, $method);
-        }
-
-        return response()->json($request->all());
+        return hash_equals($calculated, $receivedSignature);
     }
 
-    private function markPaid($paymentId, $method = null)
+    public function webhook(Request $request)
     {
-        $paymentId = trim((string) $paymentId);
+        $receivedSignature = $request->header('X-Signature', '');
+        $secret = env('IPAYMU_VA', '');
 
-        if ($paymentId === '') {
-            Log::warning('Cashi markPaid: empty order id');
-            return false;
+        if (empty($receivedSignature) || empty($secret)) {
+            Log::warning('iPaymu webhook: missing signature or IPAYMU_VA', ['ip' => $request->ip()]);
+            return response()->json(['message' => 'Invalid signature'], 401);
         }
 
-        // Cashi mengembalikan orderId internal; cocokkan payment_code dulu, lalu payment_id
-        $payment = Payment::where('payment_code', $paymentId)->first()
-            ?? Payment::find($paymentId);
+        $data = $request->all();
+
+        if (! self::isValidIpaymuCallback($data, $receivedSignature, $secret)) {
+            Log::warning('iPaymu webhook: invalid signature', ['ip' => $request->ip()]);
+            return response()->json(['message' => 'Invalid signature'], 401);
+        }
+
+        Log::info('iPaymu webhook payload', ['body' => $data]);
+
+        $status = strtolower((string) ($data['status'] ?? ''));
+        $statusCode = (int) ($data['status_code'] ?? 0);
+
+        if ($status === 'berhasil' && $statusCode === 1) {
+            $reference = trim((string) ($data['reference_id'] ?? $data['referenceId'] ?? ''));
+            $sid = trim((string) ($data['sid'] ?? ''));
+            $method = ($data['via'] ?? null) && ($data['channel'] ?? null)
+                ? ($data['via'] . '/' . $data['channel'])
+                : ($data['via'] ?? $data['channel'] ?? null);
+
+            $ok = $this->markPaid($reference !== '' ? $reference : $sid, $method, $sid);
+
+            return response()->json(['message' => $ok ? 'OK' : 'Order not found']);
+        }
+
+        Log::info('iPaymu webhook: non-success status ignored', [
+            'status' => $data['status'] ?? null,
+            'status_code' => $data['status_code'] ?? null,
+        ]);
+
+        return response()->json(['message' => 'OK']);
+    }
+
+    private function markPaid($paymentId, $method = null, $sid = null)
+    {
+        $paymentId = trim((string) $paymentId);
+        $sid = trim((string) ($sid ?? ''));
+
+        $payment = $paymentId !== ''
+            ? Payment::find($paymentId)
+            : null;
+
+        if (empty($payment) && $sid !== '') {
+            $payment = Payment::where('payment_code', $sid)->first();
+        }
 
         if (empty($payment)) {
-            Log::warning('Cashi markPaid: payment not found', ['order_id' => $paymentId]);
+            Log::warning('iPaymu markPaid: payment not found', ['order_id' => $paymentId, 'sid' => $sid]);
             return false;
         }
 
         if ($payment->payment_paid) {
-            Log::info('Cashi markPaid: already paid', ['order_id' => $paymentId]);
+            Log::info('iPaymu markPaid: already paid', ['order_id' => $payment->payment_id]);
             return true;
         }
 
         $payment->update([
-            'payment_paid'   => 1,
-            'payment_done'   => date('Y-m-d H:i:s'),
+            'payment_paid' => 1,
+            'payment_done' => date('Y-m-d H:i:s'),
             'payment_method' => $method,
         ]);
 
-        Log::info('Cashi markPaid: payment_paid=1', ['order_id' => $paymentId]);
+        Log::info('iPaymu markPaid: payment_paid=1', ['order_id' => $payment->payment_id]);
 
         return true;
     }
