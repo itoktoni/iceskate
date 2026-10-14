@@ -375,27 +375,14 @@ class PublicController extends Controller
             return redirect()->route('payment')->with('success', 'Pembayaran sudah lunas.');
         }
 
-        $baseUrl = rtrim(env('CASHI_BASE_URL', 'https://cashi.id'), '/');
-        $apiKey  = env('CASHI_KEY', '');
-        $orderId = $payment->payment_code ?: $payment->payment_id;
-
-        try {
-            $response = Http::withHeaders(['x-api-key' => $apiKey])
-                ->timeout(30)
-                ->get($baseUrl . '/api/check-status/' . $orderId);
-
-            $data = $response->json();
-
-            if (! empty($data['success']) && ($data['status'] ?? '') === 'SETTLED') {
-                $this->markPaid($payment->payment_id, null);
-                return redirect()->route('payment')->with('success', 'Pembayaran lunas, terima kasih.');
-            }
-
-            return redirect()->route('payment')->with('error', 'Pembayaran belum diterima (status: ' . ($data['status'] ?? 'unknown') . ').');
-        } catch (\Throwable $e) {
-            Log::error('Cashi check-status exception: ' . $e->getMessage(), ['order_id' => $orderId]);
-            return redirect()->route('payment')->with('error', 'Gagal cek status, silakan coba lagi.');
+        if (! empty($payment->payment_url)) {
+            return redirect()->route('payment')->with(
+                'error',
+                'Pembayaran belum diterima. Silakan lanjutkan pembayaran: ' . $payment->payment_url
+            );
         }
+
+        return redirect()->route('payment')->with('error', 'Pembayaran belum diterima.');
     }
 
     // Cron via URL (untuk hosting tanpa SSH): lindungi dengan CRON_KEY
