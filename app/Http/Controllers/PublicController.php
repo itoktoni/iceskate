@@ -463,17 +463,20 @@ class PublicController extends Controller
         $body = [
             'product' => [$label],
             'qty' => ['1'],
-            'price' => [$amount],
+            'price' => [(string) $amount],
             'description' => [$label],
             'returnUrl' => route('payment'),
             'notifyUrl' => route('webhook.ipaymu'),
             'cancelUrl' => route('payment'),
             'referenceId' => $code,
         ];
+        // iPaymu menolak signature (401) bila ada field kosong; kirim buyer hanya bila terisi
         if ($user) {
-            $body['buyerName'] = $user->name ?? '';
-            $body['buyerEmail'] = $user->email ?? '';
-            $body['buyerPhone'] = $user->phone ?? '';
+            foreach (['buyerName' => $user->name ?? '', 'buyerEmail' => $user->email ?? '', 'buyerPhone' => $user->phone ?? ''] as $key => $value) {
+                if (trim((string) $value) !== '') {
+                    $body[$key] = (string) $value;
+                }
+            }
         }
 
         try {

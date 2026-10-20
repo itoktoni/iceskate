@@ -132,7 +132,7 @@
                 <div class="col-lg-4 col-sm-6 order-lg-2 order-sm-1">
                     <div class="widget">
 
-                        <div class="fw-bold"><i class="icofont-location-pin me-2 id-color"></i>Ice Rink Location</div>
+                        <div class="fw-bold"><i class="icofont-location-pin me-2 id-color"></i>Our Office</div>
                         {{ $website_address }}
 
                         <div class="spacer-20"></div>
