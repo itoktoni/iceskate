@@ -512,7 +512,7 @@ class PublicController extends Controller
         return $url;
     }
 
-    private static function isValidIpaymuCallback(array $data, string $receivedSignature, string $secret): bool
+    private static function isValidIpaymuCallback(array $data, string $receivedSignature, string $secret, ?string &$canonicalJson = null, ?string &$calculated = null): bool
     {
         unset($data['signature']);
 
@@ -536,15 +536,16 @@ class PublicController extends Controller
 
         ksort($normalized, SORT_STRING);
         $json = str_replace('/', '\\/', json_encode($normalized, JSON_UNESCAPED_SLASHES));
+        $canonicalJson = $json;
         $calculated = hash_hmac('sha256', $json, $secret);
 
-        return hash_equals($calculated, $receivedSignature);
+        return hash_equals($calculated, strtolower(trim($receivedSignature)));
     }
 
     public function webhook(Request $request)
     {
         $receivedSignature = $request->header('X-Signature', '');
-        $secret = env('IPAYMU_VA', '');
+        $secret = trim((string) env('IPAYMU_VA', ''));
 
         if (empty($receivedSignature) || empty($secret)) {
             Log::warning('iPaymu webhook: missing signature or IPAYMU_VA', ['ip' => $request->ip()]);
@@ -559,8 +560,18 @@ class PublicController extends Controller
             $data = $request->all();
         }
 
-        if (! self::isValidIpaymuCallback($data, $receivedSignature, $secret)) {
-            Log::warning('iPaymu webhook: invalid signature', ['ip' => $request->ip(), 'body' => $data]);
+        // shortcut: verbose forensics until signature verified, then trim back to ip-only log.
+        if (! self::isValidIpaymuCallback($data, $receivedSignature, $secret, $canonicalJson, $calculated)) {
+            Log::warning('iPaymu webhook: invalid signature', [
+                'ip' => $request->ip(),
+                'content_type' => $request->header('Content-Type'),
+                'received_prefix' => substr($receivedSignature, 0, 12) . '...len=' . strlen($receivedSignature),
+                'calculated_prefix' => substr((string) $calculated, 0, 12) . '...',
+                'canonical' => $canonicalJson,
+                'raw' => mb_substr((string) $request->getContent(), 0, 2000),
+                'va_len' => strlen($secret),
+                'body' => $data,
+            ]);
             return response()->json(['message' => 'Invalid signature'], 401);
         }
 
