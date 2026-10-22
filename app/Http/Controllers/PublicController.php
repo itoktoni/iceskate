@@ -552,9 +552,18 @@ class PublicController extends Controller
             return response()->json(['message' => 'Invalid signature'], 401);
         }
 
-        $data = $request->isJson()
-            ? ($request->json()->all() ?? [])
-            : $request->post();
+        // shortcut: parse raw wire so TrimStrings/ConvertEmptyStringsToNull middleware
+        // cannot change what iPaymu signed ("" must stay "", null must stay null).
+        $rawBody = (string) $request->getContent();
+        if ($request->isJson()) {
+            $decoded = json_decode($rawBody, true);
+            $data = is_array($decoded) ? $decoded : [];
+        } else {
+            parse_str($rawBody, $data);
+            if (! is_array($data)) {
+                $data = [];
+            }
+        }
 
         if (empty($data)) {
             $data = $request->all();

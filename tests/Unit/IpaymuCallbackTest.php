@@ -70,4 +70,30 @@ class IpaymuCallbackTest extends TestCase
             '1179000899'
         ));
     }
+
+    public function test_empty_string_field_validates_against_wire_signature(): void
+    {
+        $payload = $this->payload();
+        $payload['payment_no'] = '';
+
+        $this->assertTrue($this->callValidate(
+            $payload,
+            '753ef8f70af527f0ee3f31308ec4883de7205d1d19aa0b60dfae22dda3a1c06b',
+            '1179000899'
+        ));
+    }
+
+    public function test_null_instead_of_empty_string_rejected(): void
+    {
+        // Laravel middleware converts "" to null; the signer signed "",
+        // so null must NOT validate against the "" signature.
+        $payload = $this->payload();
+        $payload['payment_no'] = null;
+
+        $this->assertFalse($this->callValidate(
+            $payload,
+            '753ef8f70af527f0ee3f31308ec4883de7205d1d19aa0b60dfae22dda3a1c06b',
+            '1179000899'
+        ));
+    }
 }
