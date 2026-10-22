@@ -44,3 +44,4 @@ use PHPUnit\TextUI\XmlConfiguration\Group;
 // Route::get('groups', [GroupsController::class, 'getData']);
 
 Route::post('/webhook/ipaymu', [PublicController::class, 'webhook'])->name('webhook.ipaymu');
+Route::get('/webhook/ipaymu', fn () => response()->json(['message' => 'Method not allowed, use POST'], 405));

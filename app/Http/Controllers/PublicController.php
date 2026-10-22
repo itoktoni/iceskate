@@ -524,6 +524,8 @@ class PublicController extends Controller
                 $normalized[$key] = (int) $value;
             } elseif ($key === 'additional_info') {
                 $normalized[$key] = ($value === '[]' || $value === '' || $value === null) ? [] : $value;
+            } elseif ($value === null) {
+                $normalized[$key] = null;
             } else {
                 $normalized[$key] = (string) $value;
             }
@@ -549,10 +551,16 @@ class PublicController extends Controller
             return response()->json(['message' => 'Invalid signature'], 401);
         }
 
-        $data = $request->all();
+        $data = $request->isJson()
+            ? ($request->json()->all() ?? [])
+            : $request->post();
+
+        if (empty($data)) {
+            $data = $request->all();
+        }
 
         if (! self::isValidIpaymuCallback($data, $receivedSignature, $secret)) {
-            Log::warning('iPaymu webhook: invalid signature', ['ip' => $request->ip()]);
+            Log::warning('iPaymu webhook: invalid signature', ['ip' => $request->ip(), 'body' => $data]);
             return response()->json(['message' => 'Invalid signature'], 401);
         }
 
