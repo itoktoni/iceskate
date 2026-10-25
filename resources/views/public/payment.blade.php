@@ -31,7 +31,7 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        Profil : {{ $profileName ?? ($user->name ?? auth()->user()->name) }}<br>
+                        {{ $profileName ?? ($user->name ?? auth()->user()->name) }}<br>
                         e-voucher : {{ $evoucher ?? 0 }}<br>
                         Paket Asah Bending : {{ $paket ?? 0 }}<br>
                         Voucher 1 : {{ $voucher1 ?? 0 }}
