@@ -232,9 +232,13 @@ class PublicController extends Controller
 
         $page     = Page::slug('payment')->first();
         $template = $page->acf->template;
-        $iuran    = Iuran::where('iuran_tanggal', '>=', now()
-                ->addMonth(-2)->format('Y-m-d'))
-                ->orWhereIn('iuran_id', [1,2,3])
+        $cutoff = now()->addMonth(-2)->format('Y-m-d');
+        $iuran    = Iuran::where(function ($q) use ($cutoff) {
+                $q->where('iuran_tanggal', '>=', $cutoff)
+                    ->orWhereNull('iuran_tanggal')
+                    ->orWhere('iuran_tanggal', '')
+                    ->orWhereIn('iuran_id', [1, 2, 3]);
+            })
             ->orderBy('iuran_tanggal', 'asc')
             ->get()
         ;
@@ -258,6 +262,34 @@ class PublicController extends Controller
         $five = $boughtV5Once && $day <= 10; // tampilkan VOUCHER 1+
         $late = $day > 10;               // tampilkan VOUCHER 1 saja
 
+        $userId = auth()->user()->id;
+        $userName = auth()->user()->name;
+        if (auth()->user()->role == \App\Dao\Enums\Core\RoleType::User) {
+            $profile = \App\Dao\Models\Core\User::find($userId);
+            $userName = $profile->name ?? $userName;
+        }
+
+        // shortcut: sisa e-voucher bulan berjalan (view_token.total = sisa)
+        $evoucher = (int) \App\Dao\Models\Token::query()
+            ->where('payment_id_user', $userId)
+            ->whereYear('payment_tanggal', now()->format('Y'))
+            ->whereMonth('payment_tanggal', now()->format('m'))
+            ->sum('total');
+
+        $paket = (int) \App\Dao\Models\Payment::where('payment_id_user', $userId)
+            ->where('payment_paid', 1)
+            ->where('payment_iuran', 14)
+            ->whereYear('payment_tanggal', now()->format('Y'))
+            ->whereMonth('payment_tanggal', now()->format('m'))
+            ->sum('payment_voucher');
+
+        $voucher1 = (int) \App\Dao\Models\Payment::where('payment_id_user', $userId)
+            ->where('payment_paid', 1)
+            ->where('payment_iuran', 3)
+            ->whereYear('payment_tanggal', now()->format('Y'))
+            ->whereMonth('payment_tanggal', now()->format('m'))
+            ->sum('payment_voucher');
+
         return view('public.payment', $this->share([
             'page'     => $page,
             'template' => $template,
@@ -265,6 +297,10 @@ class PublicController extends Controller
             'five'     => $five,
             'late'     => $late,
             'boughtV5' => $boughtV5,
+            'profileName' => $userName,
+            'evoucher' => $evoucher,
+            'paket' => $paket,
+            'voucher1' => $voucher1,
         ]));
     }
 

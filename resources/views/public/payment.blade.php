@@ -30,6 +30,12 @@
                     <h3 class="mb-0">Pembayaran Iuran</h3>
                 </div>
                 <div class="card-body">
+                    <div class="mb-3">
+                        Profil : {{ $profileName ?? ($user->name ?? auth()->user()->name) }}<br>
+                        e-voucher : {{ $evoucher ?? 0 }}<br>
+                        Paket Asah Bending : {{ $paket ?? 0 }}<br>
+                        Voucher 1 : {{ $voucher1 ?? 0 }}
+                    </div>
                     <form action="{{ route('iuran') }}" method="POST">
                         @csrf
 
@@ -114,7 +120,7 @@
                                                 </tr>
                                             @endif
 
-                                            @if ($item->iuran_id == 3)
+                                            @if ($item->iuran_id == 3 || ($item->iuran_id != 1 && $item->iuran_id != 2))
                                                 <tr>
                                                     <td>
                                                         <b>{{ $item->iuran_nama }}</b>
