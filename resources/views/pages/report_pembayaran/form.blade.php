@@ -7,8 +7,9 @@
                 <x-form-input col="6" type="date" label="Tanggal Awal" name="start_date" />
                 <x-form-input col="6" type="date" label="Tanggal Akhir" name="end_date" />
 
-                <x-form-select col="6" name="iuran_id" label="Iuran" :options="$iuran" />
-                <x-form-select col="6" name="id" label="Member" :options="$user" />
+                <x-form-select col="4" name="payment_iuran" label="Iuran" :options="$iuran" />
+                <x-form-select col="4" name="payment_id_user" label="Member" :options="$user" />
+                <x-form-select col="4" name="payment_paid" label="Paid" :options="['1' => 'PAID', '0' => 'UNPAID']" />
 
                 <input type="hidden" name="queue" value="batch" />
             @endbind

@@ -39,6 +39,11 @@ class ReportPembayaranController extends ReportController
             $query = $query->where('payment_id_user', $user);
         }
 
+        if($paid = request()->get('payment_paid'))
+        {
+            $query = $query->where('payment_paid', $paid);
+        }
+
         if($iuran = request()->get('iuran_id'))
         {
             $query = $query->where('iuran_id', $iuran);

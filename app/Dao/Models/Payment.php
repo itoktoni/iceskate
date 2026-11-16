@@ -19,6 +19,10 @@ class Payment extends SystemModel
 
     protected $filters = [
         'filter',
+        'payment_iuran',
+        'payment_id_user',
+        'payment_paid',
+
     ];
 
     /**
