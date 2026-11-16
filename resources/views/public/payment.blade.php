@@ -120,7 +120,7 @@
                                                 </tr>
                                             @endif
 
-                                            @if ($item->iuran_id == 3 || ($item->iuran_id != 1 && $item->iuran_id != 2))
+                                            @if ($item->iuran_id == 3 && !$five || ($item->iuran_id != 1 && $item->iuran_id != 2 && $item->iuran_id != 3))
                                                 <tr>
                                                     <td>
                                                         <b>{{ $item->iuran_nama }}</b>

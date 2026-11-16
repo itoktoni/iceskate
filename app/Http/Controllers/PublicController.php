@@ -257,9 +257,10 @@ class PublicController extends Controller
         $boughtV5 = false; // VOUCHER 5 tidak dikunci Lunas, boleh beli berulang
 
         // Aturan voucher:
-        // - tgl 1-10 : VOUCHER 5 (tanpa batas) / VOUCHER 1+ (sudah beli V5 >=1x, boleh beli berulang)
-        // - lewat tgl 10 : hanya VOUCHER 1
-        $five = $boughtV5Once && $day <= 10; // tampilkan VOUCHER 1+
+        // - tgl 1-10 : VOUCHER 5 boleh dibeli (tanpa batas jumlah)
+        // - sudah beli V5 >=1x di bulan berjalan : berhak beli VOUCHER 1+ kapan saja bulan itu
+        // - lewat tgl 10 : hanya VOUCHER 1 (tanpa syarat)
+        $five = $boughtV5Once; // tampilkan VOUCHER 1+
         $late = $day > 10;               // tampilkan VOUCHER 1 saja
 
         $userId = auth()->user()->id;
@@ -375,6 +376,19 @@ class PublicController extends Controller
         // VOUCHER 5 (iuran_id 1): tanpa batas jumlah, hanya boleh tgl 1-10
         if ((int) $id === 1 && (int) now()->format('d') > 10) {
             return redirect()->route('payment')->with('error', 'VOUCHER 5 hanya bisa dibeli tanggal 1-10.');
+        }
+
+        // VOUCHER 1+ (iuran_id 2): hanya berhak bila sudah beli VOUCHER 5 di bulan berjalan
+        if ((int) $id === 2) {
+            $hasV5 = Payment::where('payment_id_user', auth()->user()->id)
+                ->where('payment_paid', 1)
+                ->where('payment_iuran', 1)
+                ->whereYear('payment_tanggal', now()->format('Y'))
+                ->whereMonth('payment_tanggal', now()->format('m'))
+                ->exists();
+            if (! $hasV5) {
+                return redirect()->route('payment')->with('error', 'VOUCHER 1+ hanya bisa dibeli setelah membeli VOUCHER 5.');
+            }
         }
 
         $harga = $iuran->iuran_harga;
