@@ -28,6 +28,11 @@ class CreatePayment extends Command
      */
     public function handle()
     {
+        if (! env('GENERATE_PAYMENT_ENABLED', true)) {
+            $this->error('generate:payment dimatikan via GENERATE_PAYMENT_ENABLED=false.');
+            return;
+        }
+
         // Iuran bulanan aktif (tidak hardcode id, tidak tergantung view_payment)
         $iuran = Iuran::where('iuran_type', IuranType::BULANAN)
             ->where('iuran_aktif', 1)

@@ -451,6 +451,10 @@ class PublicController extends Controller
             abort(404);
         }
 
+        if (! env('GENERATE_PAYMENT_ENABLED', true)) {
+            return response()->json(['success' => false, 'message' => 'generate:payment dimatikan via GENERATE_PAYMENT_ENABLED=false.']);
+        }
+
         try {
             \Artisan::call('generate:payment');
             return response()->json(['success' => true, 'output' => trim(\Artisan::output())]);
